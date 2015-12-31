@@ -37,7 +37,7 @@ Features
 --------
 
 * Supported 48 KBytes IRAM option.
-* Supported quick start using [ESP Rapid Loader](../ESP_Rapid_Loader).
+* Supported quick start using [ESP Rapid Loader](//github.com/katyo/ESP_Rapid_Loader).
 * Supported flash size from 512 KB and up to 16 MB.
 
 Memory usage

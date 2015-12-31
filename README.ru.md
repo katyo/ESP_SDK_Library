@@ -37,7 +37,7 @@ MinEspSDK (meSDK)
 -----------
 
 * Поддерживается опция 48 КБайт IRAM.
-* Поддерживается [ESP Rapid Loader](../ESP_Rapid_Loader)
+* Поддерживается [ESP Rapid Loader](//github.com/katyo/ESP_Rapid_Loader)
 * Поддерживается размер Flash от 512 Килобайт до 16 Мегабайт.
 
 Использование памяти
