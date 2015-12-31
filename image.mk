@@ -3,7 +3,9 @@ IMG_P = bin/$(1).bin
 
 # Programing setup
 ESPTOOL ?= esptool.py
-ESPTOOL_OPTION ?= -p /dev/ttyUSB0 -b 256000
+ESPPORT ?= /dev/ttyUSB0
+ESPBAUD ?= 256000
+ESPOPTION ?= $(if $(ESPPORT),-p $(ESPPORT)) $(if $(ESPBAUD),-b $(ESPBAUD))
 
 # Image
 DEFAULT_ADDR := 0x7C000
@@ -143,4 +145,8 @@ clean: clean.img.$(1)
 clean.img.$(1):
 	@echo TARGET $(1) IMG CLEAN
 	$(Q)rm -f $$($(1).IMG) $$(call IMG_P,$(1)-addld) $$(call IMG_P,$(1)-$(IMG1_ADDR)) $$(call IMG_P,$(1)-$(IMG2_ADDR))
+
+flash.img.$(1): $$($(1).IMG)
+	@echo TARGET $(1) IMG FLASH
+	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $(IMG1_ADDR) $$($(1).IMG1) $(IMG2_ADDR) $$($(1).IMG2)
 endef
