@@ -18,6 +18,16 @@ CFLAGS += -mlongcalls -mtext-section-literals
 
 CDIRS += include
 
+DEBUG_UART ?= 1
+DEBUG_LEVEL ?= 2
+UART0_BAUD ?= 115200
+UART1_BAUD ?= 230400
+
+CDEFS += DEBUG_UART=$(DEBUG_UART)
+CDEFS += DEBUGSOO=$(DEBUG_LEVEL)
+CDEFS += DEBUG_UART0_BAUD=$(UART0_BAUD)
+CDEFS += DEBUG_UART1_BAUD=$(UART1_BAUD)
+
 TARGET.LIBS += librapid_loader
 librapid_loader.CDEFS += __ets__
 librapid_loader.SRCS += \
