@@ -103,17 +103,21 @@ endif
 
 # Application
 
-LDSCRIPTS += \
-  ld/eagle.app.v6.ld \
-  ld/eagle.rom.addr.v6.ld
+LOADER.LDSCRIPTS += \
+  ld/eagle.app.v6-loader.ld \
+  ld/eagle.rom.addr.v6-loader.ld
 
 LOADER.LDFLAGS += \
 	-nostdlib \
-  -Tld/eagle.app.v6.ld \
+  -Tld/eagle.app.v6-loader.ld \
 	-Wl,--no-check-sections	\
   -u call_user_start \
 	-u loader_flash_boot \
   -Wl,-static
+
+FIRMWARE.LDSCRIPTS += \
+  ld/eagle.app.v6.ld \
+  ld/eagle.rom.addr.v6.ld
 
 FIRMWARE.LDFLAGS += \
   -nostartfiles \

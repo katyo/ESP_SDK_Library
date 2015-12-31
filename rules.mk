@@ -102,8 +102,10 @@ $(1).BIN := $$(call BIN_P,$(1))
 $(1).MAP := $$(call MAP_P,$(1))
 
 ifneq (,$$($(1).ISLOADER))
+  $(1).LDSCRIPTS += $$(LOADER.LDSCRIPTS)
   $(1).LDFLAGS += $$(LOADER.LDFLAGS)
 else
+  $(1).LDSCRIPTS += $$(FIRMWARE.LDSCRIPTS)
   $(1).LDFLAGS += $$(FIRMWARE.LDFLAGS)
 endif
 
