@@ -101,6 +101,12 @@ $(1).DEPLIBS_FULL := $$(patsubst %,$$(call LIB_P,%),$$($(1).DEPLIBS))
 $(1).BIN := $$(call BIN_P,$(1))
 $(1).MAP := $$(call MAP_P,$(1))
 
+ifneq (,$$($(1).ISLOADER))
+  $(1).LDFLAGS += $$(LOADER.LDFLAGS)
+else
+  $(1).LDFLAGS += $$(FIRMWARE.LDFLAGS)
+endif
+
 build: build.bin.$(1)
 build.bin.$(1): $$($(1).BIN)
 

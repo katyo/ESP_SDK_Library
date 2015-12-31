@@ -98,19 +98,46 @@ IMG2_ADDR := 0x40000
 define IMG_RULES
 $$(eval $$(call BIN_RULES,$(1)))
 
-$(1).IMG := $$(call IMG_P,$(1))
+$(1).IMG1 := $$(call IMG_P,$(1)-$(IMG1_ADDR))
+$(1).IMG2 := $$(call IMG_P,$(1)-$(IMG2_ADDR))
+
+ifneq (,$$($(1).ISLOADER))
+  $(1).IMG := $$(call IMG_P,$(1))
+else
+  $(1).IMG := $$($(1).IMG1) $$($(1).IMG2)
+
+  ifneq (,$$($(1).LOADER))
+    $(1).LDR := $$($$($(1).LOADER).IMG)
+  else
+    ifneq (,$$(LOADER))
+      $(1).LDR := $$($$(LOADER).IMG)
+    endif
+  endif
+endif
 
 build: build.img.$(1)
 build.img.$(1): $$($(1).IMG)
 
-$$($(1).IMG): $$($(1).BIN)
+$$($(1).IMG): $$($(1).BIN) $$($(1).LDR)
 	@echo TARGET $(1) IMAGE
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(OBJCOPY) --only-section .lit4 -O binary $$< $$(call IMG_P,$(1)-addld)
-	$(Q)$(ESPTOOL) elf2image -o $$(dir $$@)$(1)- $(IMG_OPTION) $$<
-	$(Q)$(ESPTOOL) image_info $$(call IMG_P,$(1)-$(IMG1_ADDR))
-	$(Q)cp -f $$(call IMG_P,$(1)-$(IMG1_ADDR)) $$@
-	$(Q)dd if=$$(call IMG_P,$(1)-addld) >>$$@
+	$(Q)$(ESPTOOL) elf2image -o $$(dir $$(firstword $$($(1).IMG)))$(1)- $(IMG_OPTION) $$($(1).BIN)
+	$(Q)$(ESPTOOL) image_info $$($(1).IMG1)
+ifneq (,$$($(1).ISLOADER))
+	@echo TARGET $(1) MAKE LOADER
+	$(Q)$(OBJCOPY) --only-section .lit4 -O binary $$< $$($(1).IMG)~addld
+	$(Q)cp -f $$($(1).IMG1) $$($(1).IMG)
+	$(Q)dd if=$$($(1).IMG)~addld >>$$($(1).IMG)
+	$(Q)rm -f $$($(1).IMG)~addld
+else
+  ifdef $(1).LDR
+	@echo TARGET $(1) ADD LOADER
+	$(Q)mv -f $$($(1).IMG1) $$($(1).IMG1)~orig
+	$(Q)dd if=$$($(1).LDR) >$$($(1).IMG1)
+	$(Q)dd if=$$($(1).IMG1)~orig >>$$($(1).IMG1)
+	$(Q)rm -f $$($(1).IMG1)~orig
+  endif
+endif
 
 clean: clean.img.$(1)
 clean.img.$(1):

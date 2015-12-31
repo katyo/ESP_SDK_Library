@@ -18,6 +18,17 @@ CFLAGS += -mlongcalls -mtext-section-literals
 
 CDIRS += include
 
+TARGET.LIBS += librapid_loader
+librapid_loader.CDEFS += __ets__
+librapid_loader.SRCS += \
+  src/loader/loader.c \
+  src/loader/loader_flash_boot.S
+
+TARGET.IMGS += rapid_loader
+LOADER ?= rapid_loader
+rapid_loader.ISLOADER = y
+rapid_loader.DEPLIBS += librapid_loader
+
 TARGET.LIBS += lwip/api/liblwipapi
 lwip/api/liblwipapi.SRCS = $(wildcard src/lwip/api/*.c)
 
@@ -95,7 +106,16 @@ endif
 LDSCRIPTS += \
   ld/eagle.app.v6.ld \
   ld/eagle.rom.addr.v6.ld
-LDFLAGS += \
+
+LOADER.LDFLAGS += \
+	-nostdlib \
+  -Tld/eagle.app.v6.ld \
+	-Wl,--no-check-sections	\
+  -u call_user_start \
+	-u loader_flash_boot \
+  -Wl,-static
+
+FIRMWARE.LDFLAGS += \
   -nostartfiles \
 	-nodefaultlibs \
 	-nostdlib \
