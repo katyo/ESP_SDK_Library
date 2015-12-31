@@ -78,7 +78,9 @@ espconn_copy_partial(struct espconn *pesp_dest, struct espconn *pesp_source)
 void ICACHE_FLASH_ATTR espconn_list_creat(espconn_msg **phead, espconn_msg* pinsert)
 {
 	espconn_msg *plist = NULL;
-//	espconn_msg *ptest = NULL;
+	espconn_msg *ptest = NULL;
+	(void)ptest;
+
 	if (*phead == NULL)
 		*phead = pinsert;
 	else {
@@ -106,7 +108,9 @@ void ICACHE_FLASH_ATTR espconn_list_creat(espconn_msg **phead, espconn_msg* pins
 void ICACHE_FLASH_ATTR espconn_list_delete(espconn_msg **phead, espconn_msg* pdelete)
 {
 	espconn_msg *plist = NULL;
-//	espconn_msg *ptest = NULL;
+	espconn_msg *ptest = NULL;
+	(void)ptest;
+
 	plist = *phead;
 	if (plist == NULL){
 		*phead = NULL;
@@ -267,6 +271,7 @@ espconn_connect(struct espconn *espconn)
 	sint8 value = ESPCONN_OK;
 	espconn_msg *plist = NULL;
 	remot_info *pinfo = NULL;
+	(void)pinfo;
 
     if (espconn == NULL) {
         return ESPCONN_ARG;
@@ -452,6 +457,7 @@ espconn_sendto(struct espconn *espconn, uint8 *psent, uint16 length)
 	espconn_msg *pnode = NULL;
 	bool value = false;
 	err_t error = ESPCONN_OK;
+	(void)error;
 
 	if (espconn == NULL || psent == NULL || length == 0) {
 		return ESPCONN_ARG;
@@ -680,6 +686,8 @@ sint8 ICACHE_FLASH_ATTR espconn_tcp_set_buf_count(struct espconn *espconn, uint8
 
 	if (plist == NULL)
 		return ESPCONN_ARG;
+
+	return ESPCONN_OK;
 }
 
 /******************************************************************************

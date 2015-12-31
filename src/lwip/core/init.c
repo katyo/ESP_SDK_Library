@@ -214,6 +214,7 @@
 static void ICACHE_FLASH_ATTR
 lwip_sanity_check(void)
 {
+	LWIP_PLATFORM_DIAG(("RUN lwip_sanity_check()\n"));
   /* Warnings */
 #if LWIP_NETCONN
   if (MEMP_NUM_NETCONN > (MEMP_NUM_TCP_PCB+MEMP_NUM_TCP_PCB_LISTEN+MEMP_NUM_UDP_PCB+MEMP_NUM_RAW_PCB))
@@ -259,6 +260,7 @@ lwip_sanity_check(void)
 void
 lwip_init(void)
 {
+	LWIP_PLATFORM_DIAG(("RUN lwip_init()\n"));
   MEMP_NUM_TCP_PCB = 5;
   TCP_WND = (4 * TCP_MSS);
   TCP_MAXRTX = 12;

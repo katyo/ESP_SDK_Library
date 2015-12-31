@@ -819,6 +819,15 @@ ip_output(struct pbuf *p, ip_addr_t *src, ip_addr_t *dest,
   return ip_output_if(p, src, dest, ttl, tos, proto, netif);
 }
 
+void ip_addr_debug_print(uint32 debug, void* ipaddr)
+{
+  LWIP_DEBUGF(debug, ("%"U16_F".%"U16_F".%"U16_F".%"U16_F,
+                      ipaddr != NULL ? ip4_addr1_16(ipaddr) : 0,
+                      ipaddr != NULL ? ip4_addr2_16(ipaddr) : 0,
+                      ipaddr != NULL ? ip4_addr3_16(ipaddr) : 0,
+                      ipaddr != NULL ? ip4_addr4_16(ipaddr) : 0));
+}
+
 #if LWIP_NETIF_HWADDRHINT
 /** Like ip_output, but takes and addr_hint pointer that is passed on to netif->addr_hint
  *  before calling ip_output_if.
@@ -872,9 +881,11 @@ void
 ip_debug_print(struct pbuf *p)
 {
   struct ip_hdr *iphdr = (struct ip_hdr *)p->payload;
-  u8_t *payload;
 
+  //error: variable 'payload' set but not used [-Werror=unused-but-set-variable]
+  u8_t *payload;
   payload = (u8_t *)iphdr + IP_HLEN;
+  (void)payload;
 
   LWIP_DEBUGF(IP_DEBUG, ("IP header:\n"));
   LWIP_DEBUGF(IP_DEBUG, ("+-------------------------------+\n"));

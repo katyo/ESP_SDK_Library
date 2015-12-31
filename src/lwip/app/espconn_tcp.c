@@ -28,6 +28,8 @@
 #include "lwip/mem.h"
 #include "lwip/app/espconn_tcp.h"
 
+#include "lwip/app/espconn.h"
+
 #ifdef MEMLEAK_DEBUG
 static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
 #endif
@@ -157,6 +159,8 @@ void ICACHE_FLASH_ATTR espconn_kill_pcb(u16_t port)
 	uint8 i = 0;
 	struct tcp_pcb *inactive = NULL;
 	struct tcp_pcb *prev = NULL;
+	(void)prev;
+
 	u8_t pcb_remove;
 	/* Check if the address already is in use (on all lists) */
 	for (i = 1; i < 4; i++) {
@@ -191,7 +195,23 @@ struct tcp_pcb *ICACHE_FLASH_ATTR espconn_find_current_pcb(espconn_msg *pcurrent
 	uint16 local_port = pcurrent_msg->pcommon.local_port;
 	uint32 local_ip = pcurrent_msg->pcommon.local_ip;
 	uint16 remote_port = pcurrent_msg->pcommon.remote_port;
-	uint32 remote_ip = *((uint32*)&pcurrent_msg->pcommon.remote_ip);
+	uint8_t* remip = (pcurrent_msg->pcommon.remote_ip);
+
+	//convert uint8* to uint32* can lead to unaligned reading
+	//uint32 remote_ip = *((uint32*)&pcurrent_msg->pcommon.remote_ip);
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+	uint32 remote_ip = (uint32_t)ip4_addr1(remip)        |
+						(uint32_t)ip4_addr2(remip) << 8  |
+						(uint32_t)ip4_addr3(remip) << 16 |
+						(uint32_t)ip4_addr4(remip) << 24;
+#else
+	uint32 remote_ip = (uint32_t)ip4_addr1(remip)  << 24 |
+						(uint32_t)ip4_addr2(remip) << 16 |
+						(uint32_t)ip4_addr3(remip) << 8  |
+						(uint32_t)ip4_addr4(remip);
+#endif /*else BYTE_ORDER == LITTLE_ENDIAN */
+
 	struct tcp_pcb *find_pcb = NULL;
 	if (pcurrent_msg ->preverse == NULL){/*Find the server's TCP block*/
 		if (local_ip == 0|| local_port == 0) return pcurrent_msg->pcommon.pcb;
@@ -299,6 +319,8 @@ espconn_tcp_disconnect_successful(void *arg)
 		struct espconn *espconn = pdiscon_cb->preverse;
 
 		dis_err = pdiscon_cb->pcommon.err;
+		(void)dis_err;
+
 		if (pdiscon_cb->pespconn != NULL){
 			struct tcp_pcb *pcb = NULL;
 			if (espconn != NULL){/*Process the server's message block*/
@@ -442,6 +464,7 @@ espconn_tcp_sent(void *arg, uint8 *psent, uint16 length)
     err_t err = 0;
     u16_t len = 0;
     u8_t data_to_send = false;
+    (void)data_to_send;
 
     espconn_printf("espconn_tcp_sent ptcp_sent %p psent %p length %d\n", ptcp_sent, psent, length);
 
@@ -804,6 +827,8 @@ espconn_client_err(void *arg, err_t err)
 						break;
 					case CLOSED:
 						perr_cb->pcommon.err = ESPCONN_CONN;
+						break;
+					default:
 						break;
 				}
 			} else {
@@ -1330,7 +1355,7 @@ espconn_tcp_server(struct espconn *espconn)
 *******************************************************************************/
 sint8 ICACHE_FLASH_ATTR espconn_tcp_delete(struct espconn *pdeletecon)
 {
-	err_t err;
+	err_t err= ERR_OK;
 	remot_info *pinfo = NULL;
 	espconn_msg *pdelete_msg = NULL;
 	struct tcp_pcb *pcb = NULL;

@@ -60,8 +60,9 @@ extern uint32 phy_get_rand(void);
 	} while(0)
 #define os_printf_plus rom_printf
 #else
-#define os_printf	rom_printf
+#define os_printf	os_printf_plus
 #endif
-
+#define os_sprintf  ets_sprintf
 #endif
-
+/*  __attribute__ ((format (printf, 1, 2)))*/
+extern int os_printf_plus(const char *format, ...);

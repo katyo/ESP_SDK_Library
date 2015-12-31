@@ -17,6 +17,23 @@
 #define  espconn_keepalive_disable(pcb)   ((pcb)->so_options &= ~SOF_KEEPALIVE)
 
 /******************************************************************************
+ * FunctionName : espconn_tcp_write
+ * Description  : write the packet which in the active connection's list.
+ * Parameters   : arg -- the node pointer which reverse the packet
+ * Returns      : ESPCONN_MEM: memory error
+ * 				  ESPCONN_OK:have enough space for write packet
+*******************************************************************************/
+err_t ICACHE_FLASH_ATTR espconn_tcp_write(void *arg);
+
+/******************************************************************************
+ * FunctionName : espconn_tcp_delete
+ * Description  : delete the server: delete a listening PCB and free it
+ * Parameters   : pdeletecon -- the espconn used to delete a server
+ * Returns      : none
+*******************************************************************************/
+sint8 ICACHE_FLASH_ATTR espconn_tcp_delete(struct espconn *pdeletecon);
+
+/******************************************************************************
  * FunctionName : espconn_kill_oldest_pcb
  * Description  : A oldest incoming connection has been killed.
  * Parameters   : none

@@ -2,11 +2,17 @@
 #define __ESPCONN_H__
 
 #include "lwipopts.h"
-#ifdef USE_ESPCONN
+
 #include "lwip/dns.h"
+
+#ifdef USE_ESPCONN
+
+//first defined in lwip/dns.h but compiler can't find it !?!?
+typedef void (*dns_found_callback)(const char *name, ip_addr_t *ipaddr, void *callback_arg);
+
 #include "os_type.h"
 
-#if 0
+#ifdef LWIP_DEBUG
 #define espconn_printf(fmt, args...) os_printf(fmt,## args)
 #else 
 #define espconn_printf(fmt, args...)
@@ -215,6 +221,14 @@ enum espconn_sig {
     SIG_ESPCONN_READ,
     SIG_ESPCONN_CLOSE
 };
+
+/******************************************************************************
+ * FunctionName : espconn_pbuf_delete
+ * Description  : remove the node from the active connection list
+ * Parameters   : arg -- Additional argument to pass to the callback function
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR espconn_pbuf_delete(espconn_buf **phead, espconn_buf* pdelete);
 
 /******************************************************************************
  * FunctionName : espconn_copy_partial

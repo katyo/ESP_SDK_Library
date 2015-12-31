@@ -22,8 +22,13 @@
 #include "lwip/mem.h"
 #include "lwip/tcp_impl.h"
 #include "lwip/udp.h"
+#include "lwip/igmp.h"
+#include "lwip/mdns.h"
 
 #include "lwip/app/espconn_udp.h"
+
+#include "user_interface.h"
+#include "wlan_lwip_if.h"
 
 #ifdef MEMLEAK_DEBUG
 static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
@@ -288,6 +293,7 @@ espconn_udp_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 {
     espconn_msg *precv = arg;
     struct pbuf *q = NULL;
+    (void)q;
     u8_t *pdata = NULL;
     u16_t length = 0;
     struct ip_info ipconfig;
@@ -304,7 +310,22 @@ espconn_udp_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 	if (wifi_get_opmode() != 1) {
 		wifi_get_ip_info(1, &ipconfig);
 
-		if (!ip_addr_netcmp((struct ip_addr *)precv->pespconn->proto.udp->remote_ip, &ipconfig.ip, &ipconfig.netmask)) {
+		struct ip_addr remoteIP;
+		uint8* u8_remote_IP = precv->pespconn->proto.udp->remote_ip;
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+		remoteIP.addr = (uint32_t)ip4_addr1(u8_remote_IP)      |
+						(uint32_t)ip4_addr2(u8_remote_IP) << 8  |
+						(uint32_t)ip4_addr3(u8_remote_IP) << 16 |
+						(uint32_t)ip4_addr4(u8_remote_IP) << 24;
+#else
+		remoteIP.addr = (uint32_t)ip4_addr1(u8_remote_IP)<< 24 |
+						(uint32_t)ip4_addr2(u8_remote_IP) << 16 |
+						(uint32_t)ip4_addr3(u8_remote_IP) << 8  |
+						(uint32_t)ip4_addr4(u8_remote_IP);
+#endif /*else BYTE_ORDER == LITTLE_ENDIAN */
+
+		if (!ip_addr_netcmp(&remoteIP, &ipconfig.ip, &ipconfig.netmask)) {
 			wifi_get_ip_info(0, &ipconfig);
 		}
 	} else {

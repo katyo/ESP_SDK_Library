@@ -55,8 +55,8 @@
 
 #include <string.h>
 
-#include "sdk/rom2ram.h"
-#define system_get_data_of_array_8(a,b) get_align4_chr(&a[b])
+extern char system_get_data_of_array_8(const char *ps);
+#define _system_get_data_of_array_8(a,b) system_get_data_of_array_8(&a[b])
 
 #ifdef MEMLEAK_DEBUG
 static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
@@ -809,7 +809,7 @@ tcp_slowtmr(void)
         /* If snd_wnd is zero, use persist timer to send 1 byte probes
          * instead of using the standard retransmission mechanism. */
         pcb->persist_cnt++;
-        if (pcb->persist_cnt >= system_get_data_of_array_8(tcp_persist_backoff, pcb->persist_backoff-1)) {
+        if (pcb->persist_cnt >= _system_get_data_of_array_8(tcp_persist_backoff, pcb->persist_backoff-1)) {
           pcb->persist_cnt = 0;
           if (pcb->persist_backoff < sizeof(tcp_persist_backoff)) {
             pcb->persist_backoff++;
@@ -830,7 +830,7 @@ tcp_slowtmr(void)
           /* Double retransmission time-out unless we are trying to
            * connect to somebody (i.e., we are in SYN_SENT). */
           if (pcb->state != SYN_SENT) {
-            pcb->rto = ((pcb->sa >> 3) + pcb->sv) << system_get_data_of_array_8(tcp_backoff, pcb->nrtx);
+            pcb->rto = ((pcb->sa >> 3) + pcb->sv) << _system_get_data_of_array_8(tcp_backoff, pcb->nrtx);
 //			if (pcb->rto >= TCP_MAXRTO)
 //            	pcb->rto >>= 1;
           }
@@ -1529,7 +1529,8 @@ tcp_eff_send_mss(u16_t sendmss, ip_addr_t *addr)
 const char*
 tcp_debug_state_str(enum tcp_state s)
 {
-  system_get_string_from_flash(tcp_state_str_rodata[s], tcp_state_str, 12);
+	os_memcpy(tcp_state_str, tcp_state_str_rodata[s], strlen(tcp_state_str_rodata[s]));
+//  system_get_string_from_flash(tcp_state_str_rodata[s], tcp_state_str, 12);
 
   return tcp_state_str;
 }
