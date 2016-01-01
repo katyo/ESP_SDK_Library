@@ -27,7 +27,7 @@
 #define STARTUP_CPU_CLK 160
 
 #ifndef ICACHE_FLASH // (назначается в MakeFile -DICACHE_FLASH)
-	#define ICACHE_FLASH
+#define ICACHE_FLASH
 //	#define ICACHE_FLASH_ATTR __attribute__((section(".irom0.text")))
 //	#define ICACHE_RODATA_ATTR __attribute__((aligned(4), section(".irom.text")))
 #endif
@@ -66,20 +66,6 @@
 
 //#define USE_ETS_RUN_NEW // использовать ets_run_new() вместо ets_run()
 
-//------------------------------------------------------------------------------
-/* LwIP Options */
-
-#ifndef LWIP_OPEN_SRC // (назначается в MakeFile -DLWIP_OPEN_SRC)
-	#define LWIP_OPEN_SRC
-#endif
-
-#ifndef PBUF_RSV_FOR_WLAN // (назначается в MakeFile -DPBUF_RSV_FOR_WLAN)
-	#define PBUF_RSV_FOR_WLAN
-#endif
-#ifndef EBUF_LWIP // (назначается в MakeFile -DEBUF_LWIP)
-	#define EBUF_LWIP
-#endif
-//------------------------------------------------------------------------------
 #ifdef USE_ETS_RUN_NEW
 	#define ets_run ets_run_new
 #endif

@@ -6,11 +6,7 @@ CFLAGS += -Wall -Wno-pointer-sign
 CFLAGS += -fno-tree-ccp -foptimize-register-move
 CFLAGS += -mno-target-align -mno-serialize-volatile
 
-CDEFS += \
-  ICACHE_FLASH \
-  PBUF_RSV_FOR_WLAN \
-  LWIP_OPEN_SRC \
-  EBUF_LWIP
+CDEFS += ICACHE_FLASH
 
 CFLAGS += -Wundef -Wpointer-arith -Werror
 CFLAGS += -Wl,-EL -fno-inline-functions -nostdlib
@@ -18,15 +14,47 @@ CFLAGS += -mlongcalls -mtext-section-literals
 
 CDIRS += include
 
+USE_OPEN_LWIP ?= y
+USE_OPEN_DHCPS ?= y
 DEBUG_UART ?= 1
 DEBUG_LEVEL ?= 2
 UART0_BAUD ?= 115200
 UART1_BAUD ?= 230400
 
-CDEFS += DEBUG_UART=$(DEBUG_UART)
-CDEFS += DEBUGSOO=$(DEBUG_LEVEL)
-CDEFS += DEBUG_UART0_BAUD=$(UART0_BAUD)
-CDEFS += DEBUG_UART1_BAUD=$(UART1_BAUD)
+ifneq (,$(DEBUG_UART))
+  CDEFS += DEBUG_UART=$(DEBUG_UART)
+endif
+
+ifneq (,$(DEBUG_LEVEL))
+  CDEFS += DEBUGSOO=$(DEBUG_LEVEL)
+endif
+
+ifneq (,$(UART0_BAUD))
+  CDEFS += DEBUG_UART0_BAUD=$(UART0_BAUD)
+endif
+
+ifneq (,$(UART1_BAUD))
+  CDEFS += DEBUG_UART1_BAUD=$(UART1_BAUD)
+endif
+
+ifeq (y,$(USE_OPEN_LWIP))
+  libsdk.DEPLIBS += lwip/liblwip
+  CDEFS += \
+    USE_OPEN_LWIP \
+    PBUF_RSV_FOR_WLAN \
+    LWIP_OPEN_SRC \
+    EBUF_LWIP
+else
+  libsdk.SDKLIBS += \
+    liblwipif \
+    libmlwip
+endif
+
+ifeq (y,$(USE_OPEN_DHCPS))
+  CDEFS += USE_OPEN_DHCPS
+else
+  libsdk.SDKLIBS += libdhcps
+endif
 
 TARGET.LIBS += librapid_loader
 librapid_loader.CDEFS += __ets__
@@ -75,41 +103,19 @@ TARGET.LIBS += wpa/libaddwpa
 wpa/libaddwpa.SRCS = $(wildcard src/wpa/*.c)
 
 TARGET.LIBS += libsdk
-libsdk.DEPLIBS += \
-  system/libaddmmain \
-  phy/libaddmphy \
-  pp/libaddpp \
-  wpa/libaddwpa
-
-USE_OPEN_LWIP ?= 140
-USE_OPEN_DHCPS ?= 1
-
-ifneq (,$(USE_OPEN_LWIP))
-  libsdk.DEPLIBS += lwip/liblwip
-  CDEFS += USE_OPEN_LWIP
-endif
-
-ifneq (,$(USE_OPEN_DHCPS))
-  CDEFS += USE_OPEN_DHCPS
-endif
-
-libsdk.DEPLIBS += $(addprefix esp/,\
+libsdk.SDKLIBS += \
   libmgcc \
   libmmain \
   libmphy \
   libpp \
   libmwpa \
-  libnet80211)
-
-ifeq (,$(USE_OPEN_LWIP))
-  libsdk.DEPLIBS += $(addprefix esp/,\
-    liblwipif \
-    libmlwip)
-endif
-
-ifeq (,$(USE_OPEN_DHCPS))
-  libsdk.DEPLIBS += esp/libdhcps
-endif
+  libnet80211
+libsdk.DEPLIBS += \
+  system/libaddmmain \
+  phy/libaddmphy \
+  pp/libaddpp \
+  wpa/libaddwpa \
+  $(addprefix esp/,$(libsdk.SDKLIBS))
 
 # Application
 
