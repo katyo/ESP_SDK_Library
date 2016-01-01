@@ -1,10 +1,6 @@
 #ifndef _sdk_config_h_
 #define _sdk_config_h_
 
-#ifndef USE_ESPCONN
-#define USE_ESPCONN 1
-#endif
-
 #define DEF_SDK_VERSION 1410 // 1302 // ver 1.3.0 + patch (lib_1.3.0_deep_sleep_plus_freq_offset_plus_freedom_callback_02.zip SDK ver: 1.3.0 compiled @ Aug 19 2015 17:50:07)
 #define SDK_VERSION_TXT "1.4.1"
 
@@ -40,26 +36,20 @@
 //#endif
 
 /* USE_FIX_SDK_FLASH_SIZE - включена "песочница" для SDK в 512 килобайт flash. */
-//#define USE_FIX_SDK_FLASH_SIZE  
 
 /*  USE_FIX_QSPI_FLASH - использовать фиксированную частоту работы QPI
 	и 'песочницу' в 512 кбайт для SDK с flash
 	Опции:
 		80 - 80 MHz QSPI 
   		другое значение - 40 MHz QSPI */
-// #define USE_FIX_QSPI_FLASH 80 // назначается в MakeFile -DUSE_FIX_QSPI_FLASH=$(SPI_SPEED)
 
 #ifdef USE_FIX_QSPI_FLASH
-	#define USE_FIX_SDK_FLASH_SIZE  
+#define USE_FIX_SDK_FLASH_SIZE
 #endif
 
 //#define USE_READ_ALIGN_ISR // побайтный доступ к IRAM и cache Flash через EXCCAUSE_LOAD_STORE_ERROR
 
 //#define USE_OVERLAP_MODE // используются две и более flash
-
-#ifndef USE_US_TIMER
-	#define USE_US_TIMER
-#endif
 
 //#define USE_TIMER0 // использовать аппаратный таймер 0 (NMI или стандартное прерывание)
 //#define TIMER0_USE_NMI_VECTOR	// использовать NMI вектор для таймера 0 (перенаправление таблицы векторов CPU) (см main-vectors.c)
@@ -67,7 +57,7 @@
 //#define USE_ETS_RUN_NEW // использовать ets_run_new() вместо ets_run()
 
 #ifdef USE_ETS_RUN_NEW
-	#define ets_run ets_run_new
+#define ets_run ets_run_new
 #endif
 
 #endif // _sdk_config_h_
