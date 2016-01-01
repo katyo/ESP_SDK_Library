@@ -1,5 +1,9 @@
-include rules.mk
-include image.mk
+BASEPATH:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+SRCDIR:=$(BASEPATH)/src
+EXDIR:=$(BASEPATH)/example
+
+include $(BASEPATH)/rules.mk
+include $(BASEPATH)/image.mk
 -include config.mk
 
 CFLAGS += -std=gnu90 -Os
@@ -13,7 +17,7 @@ CFLAGS += -Wundef -Wpointer-arith -Werror
 CFLAGS += -Wl,-EL -fno-inline-functions -nostdlib
 CFLAGS += -mlongcalls -mtext-section-literals
 
-CDIRS += include
+CDIRS += $(BASEPATH)/include
 
 USE_LOADER ?= y
 
@@ -95,27 +99,27 @@ endif
 TARGET.LIBS += librapid_loader
 librapid_loader.CDEFS += __ets__
 librapid_loader.SRCS += \
-  src/loader/loader.c \
-  src/loader/loader_flash_boot.S
+  $(SRCDIR)/loader/loader.c \
+  $(SRCDIR)/loader/loader_flash_boot.S
 
 TARGET.IMGS += rapid_loader
 rapid_loader.ISLOADER = y
 rapid_loader.DEPLIBS += librapid_loader
 
 TARGET.LIBS += lwip/api/liblwipapi
-lwip/api/liblwipapi.SRCS = $(wildcard src/lwip/api/*.c)
+lwip/api/liblwipapi.SRCS = $(wildcard $(SRCDIR)/lwip/api/*.c)
 
 TARGET.LIBS += lwip/app/liblwipapp
-lwip/app/liblwipapp.SRCS = $(wildcard src/lwip/app/*.c)
+lwip/app/liblwipapp.SRCS = $(wildcard $(SRCDIR)/lwip/app/*.c)
 
 TARGET.LIBS += lwip/core/liblwipcore
-lwip/core/liblwipcore.SRCS = $(wildcard src/lwip/core/*.c)
+lwip/core/liblwipcore.SRCS = $(wildcard $(SRCDIR)/lwip/core/*.c)
 
 TARGET.LIBS += lwip/core/ipv4/liblwipipv4
-lwip/core/ipv4/liblwipipv4.SRCS = $(wildcard src/lwip/core/ipv4/*.c)
+lwip/core/ipv4/liblwipipv4.SRCS = $(wildcard $(SRCDIR)/lwip/core/ipv4/*.c)
 
 TARGET.LIBS += lwip/netif/liblwipnetif
-lwip/netif/liblwipnetif.SRCS = $(wildcard src/lwip/netif/*.c)
+lwip/netif/liblwipnetif.SRCS = $(wildcard $(SRCDIR)/lwip/netif/*.c)
 
 TARGET.LIBS += lwip/liblwip
 lwip/liblwip.DEPLIBS += \
@@ -126,16 +130,16 @@ lwip/liblwip.DEPLIBS += \
   lwip/netif/liblwipnetif
 
 TARGET.LIBS += phy/libaddmphy
-phy/libaddmphy.SRCS = $(wildcard src/phy/*.c)
+phy/libaddmphy.SRCS = $(wildcard $(SRCDIR)/phy/*.c)
 
 TARGET.LIBS += pp/libaddpp
-pp/libaddpp.SRCS = $(wildcard src/pp/*.c)
+pp/libaddpp.SRCS = $(wildcard $(SRCDIR)/pp/*.c)
 
 TARGET.LIBS += system/libaddmmain
-system/libaddmmain.SRCS = $(wildcard src/system/*.c)
+system/libaddmmain.SRCS = $(wildcard $(SRCDIR)/system/*.c)
 
 TARGET.LIBS += wpa/libaddwpa
-wpa/libaddwpa.SRCS = $(wildcard src/wpa/*.c)
+wpa/libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
 TARGET.LIBS += libsdk
 libsdk.SDKLIBS += \
@@ -153,35 +157,36 @@ libsdk.DEPLIBS += \
   $(addprefix esp/,$(libsdk.SDKLIBS))
 
 # Application
+LDDIRS += $(BASEPATH)/ld
 
 LOADER.LDSCRIPTS += \
-  ld/eagle.app.v6-loader.ld \
-  ld/eagle.rom.addr.v6-loader.ld
+  $(BASEPATH)/ld/eagle.app.v6-loader.ld \
+  $(BASEPATH)/ld/eagle.rom.addr.v6-loader.ld
 
 LOADER.LDFLAGS += \
-	-nostdlib \
-  -Tld/eagle.app.v6-loader.ld \
-	-Wl,--no-check-sections	\
+  -nostdlib \
+  -T$(firstword $(LOADER.LDSCRIPTS)) \
+  -Wl,--no-check-sections \
   -u call_user_start \
-	-u loader_flash_boot \
+  -u loader_flash_boot \
   -Wl,-static
 
 FIRMWARE.LDSCRIPTS += \
-  ld/eagle.app.v6.ld \
-  ld/eagle.rom.addr.v6.ld
+  $(BASEPATH)/ld/eagle.app.v6.ld \
+  $(BASEPATH)/ld/eagle.rom.addr.v6.ld
 
 FIRMWARE.LDFLAGS += \
   -nostartfiles \
-	-nodefaultlibs \
-	-nostdlib \
-  -Tld/eagle.app.v6.ld \
-	-Wl,--no-check-sections	\
+  -nodefaultlibs \
+  -nostdlib \
+  -T$(firstword $(FIRMWARE.LDSCRIPTS)) \
+  -Wl,--no-check-sections \
   -u call_user_start \
   -Wl,-static
 
 ifeq (y,$(WITH_EX_DUMMY_APP))
   TARGET.LIBS += libdummy_app
-  libdummy_app.SRCS += $(wildcard example/dummy_app/*.c)
+  libdummy_app.SRCS += $(wildcard $(EXDIR)/dummy_app/*.c)
 
   TARGET.IMGS += dummy_app
   dummy_app.DEPLIBS += libsdk libdummy_app
@@ -189,7 +194,7 @@ endif
 
 ifeq (y,$(WITH_EX_MEM_USAGE))
   TARGET.LIBS += libmem_usage
-  libmem_usage.SRCS += $(wildcard example/mem_usage/*.c)
+  libmem_usage.SRCS += $(wildcard $(EXDIR)/mem_usage/*.c)
 
   TARGET.IMGS += mem_usage
   mem_usage.DEPLIBS += libsdk libmem_usage
