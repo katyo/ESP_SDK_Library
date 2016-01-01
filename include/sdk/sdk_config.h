@@ -57,10 +57,6 @@
 
 //#define USE_OVERLAP_MODE // используются две и более flash
 
-//#ifndef USE_OPTIMIZE_PRINTF
-//	#define USE_OPTIMIZE_PRINTF
-//#endif
-
 #ifndef USE_US_TIMER
 	#define USE_US_TIMER
 #endif
@@ -89,5 +85,3 @@
 #endif
 
 #endif // _sdk_config_h_
-
-

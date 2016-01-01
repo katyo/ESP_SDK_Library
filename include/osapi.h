@@ -47,8 +47,6 @@ extern uint32 phy_get_rand(void);
 
 #define os_update_cpu_frequency ets_update_cpu_frequency
 
-//#define os_sprintf ets_sprintf
-
 #ifdef USE_OPTIMIZE_PRINTF
 #define os_printf(fmt, ...) do {	\
 	static const char flash_str[] ICACHE_RODATA_ATTR = fmt;	\
@@ -63,6 +61,8 @@ extern uint32 phy_get_rand(void);
 #define os_printf	os_printf_plus
 #endif
 #define os_sprintf  ets_sprintf
-#endif
+
 /*  __attribute__ ((format (printf, 1, 2)))*/
 extern int os_printf_plus(const char *format, ...);
+
+#endif
