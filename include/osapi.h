@@ -47,22 +47,21 @@ extern uint32 phy_get_rand(void);
 
 #define os_update_cpu_frequency ets_update_cpu_frequency
 
+//#define os_sprintf ets_sprintf
+
 #ifdef USE_OPTIMIZE_PRINTF
 #define os_printf(fmt, ...) do {	\
 	static const char flash_str[] ICACHE_RODATA_ATTR = fmt;	\
-	rom_printf(flash_str, ##__VA_ARGS__);	\
+	__wrap_os_printf_plus(flash_str, ##__VA_ARGS__);	\
 	} while(0)
 #define os_sprintf_fd(des, fmt, ...) do {	\
 	static const char flash_str[] ICACHE_RODATA_ATTR = fmt;	\
 	ets_sprintf(des, flash_str, ##__VA_ARGS__);	\
 	} while(0)
-#define os_printf_plus rom_printf
+#define os_printf_plus __wrap_os_printf_plus
 #else
-#define os_printf	os_printf_plus
+#define os_printf	__wrap_os_printf_plus
 #endif
-#define os_sprintf  ets_sprintf
-
-/*  __attribute__ ((format (printf, 1, 2)))*/
-extern int os_printf_plus(const char *format, ...);
 
 #endif
+
