@@ -76,7 +76,7 @@ void system_print_meminfo(void);
 uint32 system_get_free_heap_size(void);
 
 void system_set_os_print(uint8 onoff);
-uint8 system_get_os_print();
+bool system_get_os_print();
 
 uint64 system_mktime(uint32 year, uint32 mon, uint32 day, uint32 hour, uint32 min, uint32 sec);
 

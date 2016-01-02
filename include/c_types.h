@@ -5,46 +5,42 @@
 #ifndef _C_TYPES_H_
 #define _C_TYPES_H_
 
-typedef unsigned char       uint8_t;
-typedef signed char         sint8_t;
-typedef signed char         int8_t;
-typedef unsigned short      uint16_t;
-typedef signed short        sint16_t;
-typedef signed short        int16_t;
-typedef unsigned long       uint32_t;
-typedef signed long         sint32_t;
-typedef signed long         int32_t;
-typedef signed long long    sint64_t;
-typedef unsigned long long  uint64_t;
-typedef unsigned long long  u_int64_t;
-typedef float               real32_t;
-typedef double              real64_t;
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-typedef unsigned char       uint8;
-typedef unsigned char       u8;
-typedef signed char         sint8;
-typedef signed char         int8;
-typedef signed char         s8;
-typedef unsigned short      uint16;
-typedef unsigned short      u16;
-typedef signed short        sint16;
-typedef signed short        s16;
-typedef unsigned int        uint32;
-typedef unsigned int        u_int;
-typedef unsigned int        u32;
-typedef signed int          sint32;
-typedef signed int          s32;
-typedef int                 int32;
-typedef signed long long    sint64;
-typedef unsigned long long  uint64;
-typedef unsigned long long  u64;
-typedef float               real32;
-typedef double              real64;
+typedef int8_t   sint8_t;
+typedef int16_t  sint16_t;
+typedef int32_t  sint32_t;
+typedef int64_t  sint64_t;
+typedef uint64_t u_int64_t;
+typedef float    real32_t;
+typedef double   real64_t;
 
-#define __le16      u16
+typedef uint8_t  uint8;
+typedef uint8_t  u8;
+typedef int8_t   sint8;
+typedef int8_t   int8;
+typedef int8_t   s8;
+typedef uint16_t uint16;
+typedef uint16_t u16;
+typedef int16_t  sint16;
+typedef int16_t  s16;
+typedef uint32_t uint32;
+typedef uint32_t u_int;
+typedef uint32_t u32;
+typedef int32_t  sint32;
+typedef int32_t  s32;
+typedef int32_t  int32;
+typedef int64_t  sint64;
+typedef uint64_t uint64;
+typedef uint64_t u64;
+typedef real32_t real32;
+typedef real64_t real64;
 
-typedef unsigned int        size_t;
-typedef signed char 		err_t;
+#define __le16 u16
+
+typedef signed char  err_t;
 
 
 #define __packed        __attribute__((packed))
@@ -87,13 +83,10 @@ typedef enum {
 #define __forceinline __attribute__((always_inline)) inline
 
 #ifndef __cplusplus
-typedef unsigned char   bool;
-#define BOOL            bool
-#define true            (1)
-#define false           (0)
-#define TRUE            true
-#define FALSE           false
 
+#define BOOL  bool
+#define TRUE  true
+#define FALSE false
 
 #endif /* !__cplusplus */
 
