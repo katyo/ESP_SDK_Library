@@ -56,7 +56,7 @@ endef
 # Extracting library
 define LIBOBJ_RULES
 ifndef $(1).LIB
-$(1).LIB += $(BASEPATH)/$$(call LIB_P,$(1))
+$(1).LIB += $(BASEPATH)$$(call LIB_P,$(1))
 $(1).DIR := $$(patsubst %.o,%,$$(call OBJ_P,$(1)))
 $(1).OBJ := $$(addprefix $$($(1).DIR)/,$$(shell $(AR) t $$($(1).LIB)))
 $$($(1).OBJ): $$($(1).LIB)

@@ -1,9 +1,12 @@
-BASEPATH:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-SRCDIR:=$(BASEPATH)/src
-EXDIR:=$(BASEPATH)/example
+BASEPATH := $(subst $(dir $(abspath $(CURDIR)/xyz)),,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
-include $(BASEPATH)/rules.mk
-include $(BASEPATH)/image.mk
+INCDIR := $(BASEPATH)include
+SRCDIR := $(BASEPATH)src
+EXDIR := $(BASEPATH)example
+LDDIR := $(BASEPATH)ld
+
+include $(BASEPATH)rules.mk
+include $(BASEPATH)image.mk
 -include config.mk
 
 CFLAGS += -std=gnu90 -Os
@@ -17,7 +20,7 @@ CFLAGS += -Wundef -Wpointer-arith -Werror
 CFLAGS += -Wl,-EL -fno-inline-functions -nostdlib
 CFLAGS += -mlongcalls -mtext-section-literals
 
-CDIRS += $(BASEPATH)/include
+CDIRS += $(INCDIR)
 
 USE_LOADER ?= y
 
@@ -157,11 +160,11 @@ libsdk.DEPLIBS += \
   $(addprefix esp/,$(libsdk.SDKLIBS))
 
 # Application
-LDDIRS += $(BASEPATH)/ld
+LDDIRS += $(LDDIR)
 
 LOADER.LDSCRIPTS += \
-  $(BASEPATH)/ld/eagle.app.v6-loader.ld \
-  $(BASEPATH)/ld/eagle.rom.addr.v6-loader.ld
+  $(LDDIR)/eagle.app.v6-loader.ld \
+  $(LDDIR)/eagle.rom.addr.v6-loader.ld
 
 LOADER.LDFLAGS += \
   -nostdlib \
@@ -172,8 +175,8 @@ LOADER.LDFLAGS += \
   -Wl,-static
 
 FIRMWARE.LDSCRIPTS += \
-  $(BASEPATH)/ld/eagle.app.v6.ld \
-  $(BASEPATH)/ld/eagle.rom.addr.v6.ld
+  $(LDDIR)/eagle.app.v6.ld \
+  $(LDDIR)/eagle.rom.addr.v6.ld
 
 FIRMWARE.LDFLAGS += \
   -nostartfiles \
