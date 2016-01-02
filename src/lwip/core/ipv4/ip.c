@@ -821,6 +821,9 @@ ip_output(struct pbuf *p, ip_addr_t *src, ip_addr_t *dest,
 
 void ip_addr_debug_print(uint32 debug, void* ipaddr)
 {
+  (void)debug;
+  (void)ipaddr;
+  
   LWIP_DEBUGF(debug, ("%"U16_F".%"U16_F".%"U16_F".%"U16_F,
                       ipaddr != NULL ? ip4_addr1_16(ipaddr) : 0,
                       ipaddr != NULL ? ip4_addr2_16(ipaddr) : 0,

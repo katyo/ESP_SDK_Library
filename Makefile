@@ -10,7 +10,7 @@ include $(BASEPATH)image.mk
 -include config.mk
 
 CFLAGS += -std=gnu90 -Os
-CFLAGS += -Wall -Wno-pointer-sign
+CFLAGS += -Wall -Wextra -Wno-pointer-sign
 CFLAGS += -fno-tree-ccp -foptimize-register-move
 CFLAGS += -mno-target-align -mno-serialize-volatile
 

@@ -614,7 +614,7 @@ tcp_recved(struct tcp_pcb *pcb, u16_t len)
    * watermark is TCP_WND/4), then send an explicit update now.
    * Otherwise wait for a packet to be sent in the normal course of
    * events (or more window to be available later) */
-  if (wnd_inflation >= TCP_WND_UPDATE_THRESHOLD) {
+  if (wnd_inflation >= (int)TCP_WND_UPDATE_THRESHOLD) {
     tcp_ack_now(pcb);
     tcp_output(pcb);
   }

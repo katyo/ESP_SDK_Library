@@ -120,7 +120,7 @@ int ICACHE_RAM_ATTR copy_s1d4(void * pd, unsigned char * ps, unsigned int len)
 /* Чтение буфера в IRAM */
 bool ICACHE_RAM_ATTR eRamRead(uint32 addr, uint8 *pd, uint32 len)
 {
-	if (addr + len > eraminfo.size) return false;
+	if (addr + len > (uint32)eraminfo.size) return false;
 	copy_s4d1(pd, (void *)((uint32)eraminfo.base + addr), len);
 	return true;
 }
@@ -129,7 +129,7 @@ bool ICACHE_RAM_ATTR eRamRead(uint32 addr, uint8 *pd, uint32 len)
 /* Запись буфера в IRAM */
 bool ICACHE_RAM_ATTR eRamWrite(uint32 addr, uint8 *ps, uint32 len)
 {
-	if (addr + len > eraminfo.size) return false;
+	if (addr + len > (uint32)eraminfo.size) return false;
 	copy_s1d4((void *)((uint32)eraminfo.base + addr), ps, len);
 	return true;
 }

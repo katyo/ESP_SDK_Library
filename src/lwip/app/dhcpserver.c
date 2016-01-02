@@ -792,6 +792,11 @@ static void ICACHE_FLASH_ATTR handle_dhcp(void *arg,
 									struct ip_addr *addr, 
 									uint16_t port)
 {
+  (void)arg;
+  (void)pcb;
+  (void)addr;
+  (void)port;
+  
 		struct dhcps_msg *pmsg_dhcps = NULL;
 		sint16_t tlen = 0;
         u16_t i = 0;
@@ -897,7 +902,7 @@ static void ICACHE_FLASH_ATTR wifi_softap_init_dhcps_lease(uint32 ip)
 	}
 	if (dhcps_lease_flag == FALSE) { // dhcps_lease не задавалась -> автоматическая установка
 	    uint32 local_ip = ip & (255 << 24); // 0xFF000000;
-		if (local_ip >= (128 << 24))
+	        if (local_ip >= (uint32)(128 << 24))
 			local_ip -= (DHCPS_MAX_LEASE + 1) << 24;
 		else
 			local_ip += 1 << 24;
