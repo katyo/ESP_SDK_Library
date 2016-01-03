@@ -37,8 +37,10 @@ DEBUG_LEVEL ?= 2
 UART0_BAUD ?= 115200
 UART1_BAUD ?= 230400
 
-WITH_EX_DUMMY_APP ?= y
-WITH_EX_MEM_USAGE ?= y
+WITH_EXAMPLES ?= y
+WITH_EX_DUMMY_APP ?= $(WITH_EXAMPLES)
+WITH_EX_MEM_USAGE ?= $(WITH_EXAMPLES)
+WITH_EX_TCP_ECHO ?= $(WITH_EXAMPLES)
 
 ifneq (,$(DEBUG_UART))
   CDEFS += DEBUG_UART=$(DEBUG_UART)
@@ -201,6 +203,14 @@ ifeq (y,$(WITH_EX_MEM_USAGE))
 
   TARGET.IMGS += mem_usage
   mem_usage.DEPLIBS += libsdk libmem_usage
+endif
+
+ifeq (y,$(WITH_EX_TCP_ECHO))
+  TARGET.LIBS += libtcp_echo
+  libtcp_echo.SRCS += $(wildcard $(EXDIR)/tcp_echo/*.c)
+
+  TARGET.IMGS += tcp_echo
+  tcp_echo.DEPLIBS += libsdk libtcp_echo
 endif
 
 $(foreach lib,$(TARGET.LIBS),$(eval $(call LIB_RULES,$(lib))))
