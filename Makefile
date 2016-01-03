@@ -88,8 +88,8 @@ ifeq (y,$(USE_OPEN_LWIP))
   ifneq (,$(LWIP_DEBUG))
     CDEFS += \
       LWIP_DEBUG \
-      LWIP_DBG_TYPES_ON=LWIP_DBG_ON \
-      $(patsubst %,%_DEBUG='LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON',$(LWIP_DEBUG))
+      LWIP_DBG_TYPES_ON='(LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH)' \
+      $(patsubst %,%_DEBUG='(LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON)',$(LWIP_DEBUG))
   endif
 else
   libsdk.SDKLIBS += \
