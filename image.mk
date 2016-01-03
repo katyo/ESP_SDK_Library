@@ -1,11 +1,33 @@
 # Path patterns
 IMG_P = bin/$(1).bin
 
-# Programing setup
+# Serial port setup
+PORT ?= /dev/ttyUSB0
+BAUD ?= 256000
+
+# ESP tool
 ESPTOOL ?= esptool.py
-ESPPORT ?= /dev/ttyUSB0
-ESPBAUD ?= 256000
-ESPOPTION ?= $(if $(ESPPORT),-p $(ESPPORT)) $(if $(ESPBAUD),-b $(ESPBAUD))
+ESPPORT ?= $(PORT)
+ESPBAUD ?= $(BAUD)
+ESPOPTION ?= $(if $(ESPBAUD),-b $(ESPBAUD)) $(if $(ESPPORT),-p $(ESPPORT))
+
+# Serial terminal tool
+TTYTOOLS ?= minicom picocom miniterm miniterm.py
+TTYTOOL ?= $(firstword $(foreach tool,$(TTYTOOLS),$(if $(shell which $(tool)),$(tool),)))
+TTYPORT ?= $(PORT)
+TTYBAUD ?= $(BAUD)
+
+ifeq (minicom,$(notdir $(TTYTOOL)))
+  TTYOPTION ?= $(if $(TTYBAUD),-b $(TTYBAUD)) $(if $(TTYPORT),-D $(TTYPORT))
+endif
+
+ifeq (picocom,$(notdir $(TTYTOOL)))
+  TTYOPTION ?= $(if $(TTYBAUD),-b $(TTYBAUD)) $(TTYPORT)
+endif
+
+ifeq (miniterm,$(basename $(notdir $(TTYTOOL))))
+  TTYOPTION ?= $(if $(TTYBAUD),-b $(TTYBAUD)) $(if $(TTYPORT),-p $(TTYPORT))
+endif
 
 # Image
 DEFAULT_ADDR := 0x7C000
@@ -149,4 +171,10 @@ clean.img.$(1):
 flash.img.$(1): $$($(1).IMG)
 	@echo TARGET $(1) IMG FLASH
 	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $(IMG1_ADDR) $$($(1).IMG1) $(IMG2_ADDR) $$($(1).IMG2)
+ifneq (,$(OPENTTY))
+	$(Q)$(TTYTOOL) $(TTYOPTION)
+endif
+
+open.tty.$(1):
+	$(Q)$(TTYTOOL) $(TTYOPTION)
 endef
