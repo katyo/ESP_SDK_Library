@@ -77,7 +77,7 @@ const char tcp_state_str_rodata[][12] ICACHE_RODATA_ATTR = {
   "TIME_WAIT"   
 };
 
-char tcp_state_str[12];
+static char tcp_state_str[12];
 #endif
 
 /* Incremented every coarse grained timer shot (typically every 500 ms). */
@@ -1529,8 +1529,8 @@ tcp_eff_send_mss(u16_t sendmss, ip_addr_t *addr)
 const char*
 tcp_debug_state_str(enum tcp_state s)
 {
-  system_get_string_from_flash(tcp_state_str_rodata[s], tcp_state_str, 12);
 
+  os_memcpy(tcp_state_str, tcp_state_str_rodata[s], sizeof(tcp_state_str_rodata[s]));
   return tcp_state_str;
 }
 #endif
