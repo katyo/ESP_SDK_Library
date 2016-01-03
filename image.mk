@@ -10,6 +10,7 @@ ESPTOOL ?= esptool.py
 ESPPORT ?= $(PORT)
 ESPBAUD ?= $(BAUD)
 ESPOPTION ?= $(if $(ESPBAUD),-b $(ESPBAUD)) $(if $(ESPPORT),-p $(ESPPORT))
+ESPOPTION += $(ESPEXTRA)
 
 # Serial terminal tool
 TTYTOOLS ?= minicom picocom miniterm miniterm.py
@@ -28,6 +29,8 @@ endif
 ifeq (miniterm,$(basename $(notdir $(TTYTOOL))))
   TTYOPTION ?= $(if $(TTYBAUD),-b $(TTYBAUD)) $(if $(TTYPORT),-p $(TTYPORT))
 endif
+
+TTYOPTION += $(TTYEXTRA)
 
 # Image
 DEFAULT_ADDR := 0x7C000
