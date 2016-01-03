@@ -85,6 +85,12 @@ ifeq (y,$(USE_OPEN_LWIP))
     PBUF_RSV_FOR_WLAN \
     LWIP_OPEN_SRC \
     EBUF_LWIP
+  ifneq (,$(LWIP_DEBUG))
+    CDEFS += \
+      LWIP_DEBUG \
+      LWIP_DBG_TYPES_ON=LWIP_DBG_ON \
+      $(patsubst %,%_DEBUG='LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON',$(LWIP_DEBUG))
+  endif
 else
   libsdk.SDKLIBS += \
     liblwipif \
