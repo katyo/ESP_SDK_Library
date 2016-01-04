@@ -38,8 +38,6 @@ bool default_hostname; //  = true;
 
 ETSEvent *lwip_if_queues[2] LWIP_DATA_IRAM_ATTR;
 
-struct netif *eagle_lwip_getif(int n);
-
 static void ICACHE_FLASH_ATTR task_if0(struct ETSEventTag *e)
 {
     struct netif *myif = eagle_lwip_getif(0);
@@ -78,7 +76,7 @@ static err_t ICACHE_FLASH_ATTR init_fn(struct netif *myif)
     return 0;
 }
 
-struct netif * ICACHE_FLASH_ATTR eagle_lwip_getif(int index)
+struct netif * ICACHE_FLASH_ATTR eagle_lwip_getif(uint8 index)
 {
 	struct netif **ret;
     if (index == 0) {
@@ -92,7 +90,7 @@ struct netif * ICACHE_FLASH_ATTR eagle_lwip_getif(int index)
 	return NULL;
 }
 
-struct netif * ICACHE_FLASH_ATTR eagle_lwip_if_alloc(struct ieee80211_conn *conn, uint8 *macaddr, struct ip_info *ipinfo)
+struct netif * ICACHE_FLASH_ATTR eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8 *macaddr, struct ip_info *ipinfo)
 {
 	struct netif *myif = conn->myif;
     if (myif == NULL) {

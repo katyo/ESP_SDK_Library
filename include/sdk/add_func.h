@@ -119,7 +119,7 @@ int ram_get_fm_sar_dout(int) ICACHE_FLASH_ATTR;
 uint32 system_get_checksum(uint8 *ptr, uint32 len) ICACHE_FLASH_ATTR;
 void read_macaddr_from_otp(uint8 *mac);
 
-void wifi_station_set_default_hostname(uint8 * mac);
+void wifi_station_set_default_hostname(const uint8 * mac);
 
 void user_init(void);
 

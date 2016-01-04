@@ -26,8 +26,8 @@ enum {
 	SIG_LWIP_RX = 0, 
 };
 
-struct netif * eagle_lwip_if_alloc(struct ieee80211_conn *conn, uint8 *macaddr, struct ip_info *info) ICACHE_FLASH_ATTR;
-struct netif * eagle_lwip_getif(int index);
+struct netif * eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8 *macaddr, struct ip_info *info) ICACHE_FLASH_ATTR;
+struct netif * eagle_lwip_getif(uint8 index);
 
 #ifndef IOT_SIP_MODE
 err_t ieee80211_output_pbuf(struct netif *ifp, struct pbuf* pb);
