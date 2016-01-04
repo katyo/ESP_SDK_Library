@@ -347,6 +347,10 @@ PROVIDE ( xthal_spill_registers_into_stack_nw = 0x4000e320 );
 PROVIDE ( xthal_window_spill = 0x4000e324 );
 PROVIDE ( xthal_window_spill_nw = 0x4000e320 );
 
+PROVIDE ( Td0 = 0x3fffd100 );
+PROVIDE ( Td4s = 0x3fffd500);
+PROVIDE ( rcons = 0x3fffd0f0);
+
 PROVIDE ( Te0 = 0x3fffccf0 );
 PROVIDE ( UartDev = 0x3fffde10 );
 PROVIDE ( rtc_calib = 0x3fffc700 );
@@ -387,11 +391,12 @@ PROVIDE ( uart0_	= 0x60000000);
 PROVIDE ( spi1_		= 0x60000100);
 PROVIDE ( spi0_		= 0x60000200);
 PROVIDE ( gpio_		= 0x60000300);
+PROVIDE ( hdrf_		= 0x60000500);
 PROVIDE ( timer_	= 0x60000600);
 PROVIDE ( rtc_		= 0x60000700);
 PROVIDE ( iomux_	= 0x60000800);
 PROVIDE ( wdt_		= 0x60000900);
-PROVIDE ( wdt_		= 0x60000900);
+PROVIDE ( sdio_		= 0x60000A00);
 PROVIDE ( scl_		= 0x60000B00);
 PROVIDE ( sar_		= 0x60000D00);
 PROVIDE ( i2s_		= 0x60000E00);
