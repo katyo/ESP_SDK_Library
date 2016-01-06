@@ -79,7 +79,7 @@ ifeq (y,$(USE_OPTIMIZE_PRINTF))
 endif
 
 ifeq (y,$(USE_OPEN_LWIP))
-  libsdk.DEPLIBS += lwip/liblwip
+  libsdk.DEPLIBS += liblwip
   CDEFS += \
     USE_OPEN_LWIP \
     PBUF_RSV_FOR_WLAN \
@@ -117,40 +117,40 @@ TARGET.IMGS += rapid_loader
 rapid_loader.ISLOADER := y
 rapid_loader.DEPLIBS += librapid_loader
 
-TARGET.LIBS += lwip/api/liblwipapi
-lwip/api/liblwipapi.SRCS = $(wildcard $(SRCDIR)/lwip/api/*.c)
+TARGET.LIBS += liblwipapi
+liblwipapi.SRCS = $(wildcard $(SRCDIR)/lwip/api/*.c)
 
-TARGET.LIBS += lwip/app/liblwipapp
-lwip/app/liblwipapp.SRCS = $(wildcard $(SRCDIR)/lwip/app/*.c)
+TARGET.LIBS += liblwipapp
+liblwipapp.SRCS = $(wildcard $(SRCDIR)/lwip/app/*.c)
 
-TARGET.LIBS += lwip/core/liblwipcore
-lwip/core/liblwipcore.SRCS = $(wildcard $(SRCDIR)/lwip/core/*.c)
+TARGET.LIBS += liblwipcore
+liblwipcore.SRCS = $(wildcard $(SRCDIR)/lwip/core/*.c)
 
-TARGET.LIBS += lwip/core/ipv4/liblwipipv4
-lwip/core/ipv4/liblwipipv4.SRCS = $(wildcard $(SRCDIR)/lwip/core/ipv4/*.c)
+TARGET.LIBS += liblwipipv4
+liblwipipv4.SRCS = $(wildcard $(SRCDIR)/lwip/core/ipv4/*.c)
 
-TARGET.LIBS += lwip/netif/liblwipnetif
-lwip/netif/liblwipnetif.SRCS = $(wildcard $(SRCDIR)/lwip/netif/*.c)
+TARGET.LIBS += liblwipnetif
+liblwipnetif.SRCS = $(wildcard $(SRCDIR)/lwip/netif/*.c)
 
-TARGET.LIBS += lwip/liblwip
-lwip/liblwip.DEPLIBS += \
-  lwip/api/liblwipapi \
-  lwip/app/liblwipapp \
-  lwip/core/liblwipcore \
-  lwip/core/ipv4/liblwipipv4 \
-  lwip/netif/liblwipnetif
+TARGET.LIBS += liblwip
+liblwip.DEPLIBS += \
+  liblwipapi \
+  liblwipapp \
+  liblwipcore \
+  liblwipipv4 \
+  liblwipnetif
 
-TARGET.LIBS += phy/libaddmphy
-phy/libaddmphy.SRCS = $(wildcard $(SRCDIR)/phy/*.c)
+TARGET.LIBS += libaddmphy
+libaddmphy.SRCS = $(wildcard $(SRCDIR)/phy/*.c)
 
-TARGET.LIBS += pp/libaddpp
-pp/libaddpp.SRCS = $(wildcard $(SRCDIR)/pp/*.c)
+TARGET.LIBS += libaddpp
+libaddpp.SRCS = $(wildcard $(SRCDIR)/pp/*.c)
 
-TARGET.LIBS += system/libaddmmain
-system/libaddmmain.SRCS = $(wildcard $(SRCDIR)/system/*.c)
+TARGET.LIBS += libaddmmain
+libaddmmain.SRCS = $(wildcard $(SRCDIR)/system/*.c)
 
-TARGET.LIBS += wpa/libaddwpa
-wpa/libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
+TARGET.LIBS += libaddwpa
+libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
 TARGET.LIBS += libsdk
 libsdk.SDKLIBS += \
@@ -161,10 +161,10 @@ libsdk.SDKLIBS += \
   libmwpa \
   libnet80211
 libsdk.DEPLIBS += \
-  system/libaddmmain \
-  phy/libaddmphy \
-  pp/libaddpp \
-  wpa/libaddwpa \
+  libaddmmain \
+  libaddmphy \
+  libaddpp \
+  libaddwpa \
   $(addprefix esp/,$(libsdk.SDKLIBS))
 
 # Application
