@@ -114,7 +114,7 @@ librapid_loader.SRCS += \
   $(SRCDIR)/loader/loader_flash_boot.S
 
 TARGET.IMGS += rapid_loader
-rapid_loader.ISLOADER = y
+rapid_loader.ISLOADER := y
 rapid_loader.DEPLIBS += librapid_loader
 
 TARGET.LIBS += lwip/api/liblwipapi
@@ -219,5 +219,25 @@ ifeq (y,$(WITH_EX_TCP_ECHO))
   tcp_echo.DEPLIBS += libsdk libtcp_echo
 endif
 
+# Image
+IMG1.ADDR ?= 0x00000
+IMG2.ADDR ?= 0x07000
+
+TARGET.RDIS += esp_init_data_default
+clear.IMGS += esp_init_data_default
+esp_init_data_default.SRCS += $(SRCDIR)/bin/esp_init_data_default.c
+esp_init_data_default.ADDR ?= 0x7C000
+
+TARGET.RDIS += blank
+clear.IMGS += blank
+blank.SRCS += $(SRCDIR)/bin/blank.c
+blank.ADDR ?= 0x7E000
+
+TARGET.RDIS += clear_eep
+clear.IMGS += clear_eep
+clear_eep.SRCS += $(SRCDIR)/bin/clear_eep.c
+clear_eep.ADDR ?= 0x79000
+
 $(foreach lib,$(TARGET.LIBS),$(eval $(call LIB_RULES,$(lib))))
+$(foreach rdi,$(TARGET.RDIS),$(eval $(call RDI_RULES,$(rdi))))
 $(foreach img,$(TARGET.IMGS),$(eval $(call IMG_RULES,$(img))))

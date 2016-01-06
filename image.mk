@@ -32,16 +32,6 @@ endif
 
 TTYOPTION += $(TTYEXTRA)
 
-# Image
-DEFAULT_ADDR := 0x7C000
-DEFAULT_BIN := $(call BIN_P,esp_init_data_default)
-
-BLANK_ADDR := 0x7E000
-BLANK_BIN := $(call BIN_P,blank)
-
-CLEAR_EEP_ADDR := 0x79000
-CLEAR_EEP_BIN := $(call BIN_P,clear_eep)
-
 # 40 or 80 [MHz]
 FLASH_SPEED_MHZ ?= 80
 # QIO, DIO, QOUT, DOUT
@@ -118,66 +108,106 @@ CDEFS += USE_FIX_QSPI_FLASH=$(FLASH_SPEED_MHZ)
 
 IMG_OPTION ?= -ff $(FLASH_FREQ)m -fm $(FLASH_MODE_NAME) -fs $(FLASH_SIZE_MBITS)m
 
-IMG1_ADDR := 0x00000
-IMG2_ADDR := 0x07000
+# Raw-data image rules
+define RDI_RULES
+$(1).CFLAGS += $$(addprefix -D,$$($(1).CDEFS))
+$(1).CFLAGS += $$(addprefix -I,$$($(1).CDIRS))
+
+$$(eval $$(call CC_RULES,$(1),c))
+
+$(1).IMG := $$(call IMG_P,$(1))
+
+build: build.img.$(1)
+build.img.$(1): $$($(1).IMG)
+
+$$($(1).IMG): $$($(1).OBJ)
+	@echo TARGET $(1) RDI
+	$(Q)mkdir -p $$(dir $$@)
+	$(Q)$(OBJCOPY) -O binary -j .rodata $$^ $$@
+
+clean: clean.img.$(1)
+clean.img.$(1):
+	@echo TARGET $(1) RDI CLEAN
+	$(Q)rm -f $$($(1).IMG) $$($(1).OBJ) $$($(1).DEP)
+endef
 
 # Image rules
 define IMG_RULES
 $$(eval $$(call BIN_RULES,$(1)))
 
-$(1).IMG1 := $$(call IMG_P,$(1)-$(IMG1_ADDR))
-$(1).IMG2 := $$(call IMG_P,$(1)-$(IMG2_ADDR))
+$(1).IMGS += $(1).IMG1 $(1).IMG2
+$(1).IMG1.ADDR ?= $(IMG1.ADDR)
+$(1).IMG1.IMG := $$(call IMG_P,$(1)-$(IMG1.ADDR))
+$(1).IMG2.ADDR ?= $(IMG2.ADDR)
+$(1).IMG2.IMG := $$(call IMG_P,$(1)-$(IMG2.ADDR))
+
+$(1).IMG += $$(foreach img,$$($(1).IMGS),$$($$(img).IMG))
 
 ifneq (,$$($(1).ISLOADER))
-  $(1).IMG := $$(call IMG_P,$(1))
+  $(1).LDR := $$(call IMG_P,$(1))
 else
-  $(1).IMG := $$($(1).IMG1) $$($(1).IMG2)
-
   ifneq (,$$($(1).LOADER))
-    $(1).LDR := $$($$($(1).LOADER).IMG)
+    $(1).LDR.IMG := $$($$($(1).LOADER).LDR)
   else
     ifneq (,$$(LOADER))
-      $(1).LDR := $$($$(LOADER).IMG)
+      $(1).LDR.IMG := $$($$(LOADER).LDR)
     endif
   endif
 endif
 
 build: build.img.$(1)
-build.img.$(1): $$($(1).IMG)
 
-$$($(1).IMG): $$($(1).BIN) $$($(1).LDR)
+ifneq (y,$$($(1).ISLOADER))
+build.img.$(1): $$($(1).IMG)
+else
+build.img.$(1): $$($(1).LDR)
+$$($(1).LDR): $$($(1).IMG)
+	@echo TARGET $(1) MAKE LOADER
+	$(Q)$(OBJCOPY) -O binary -j .lit4 $$($(1).BIN) $$($(1).BIN)~addld
+	$(Q)cat $$($(1).IMG1.IMG) $$($(1).BIN)~addld >$$($(1).LDR)
+	$(Q)rm -f $$($(1).BIN)~addld
+endif
+
+$$($(1).IMG): $$($(1).BIN) $$($(1).LDR.IMG)
 	@echo TARGET $(1) IMAGE
 	$(Q)mkdir -p $$(dir $$@)
 	$(Q)$(ESPTOOL) elf2image -o $$(dir $$(firstword $$($(1).IMG)))$(1)- $(IMG_OPTION) $$($(1).BIN)
-	$(Q)$(ESPTOOL) image_info $$($(1).IMG1)
-ifneq (,$$($(1).ISLOADER))
-	@echo TARGET $(1) MAKE LOADER
-	$(Q)$(OBJCOPY) --only-section .lit4 -O binary $$< $$($(1).IMG)~addld
-	$(Q)cp -f $$($(1).IMG1) $$($(1).IMG)
-	$(Q)dd if=$$($(1).IMG)~addld >>$$($(1).IMG)
-	$(Q)rm -f $$($(1).IMG)~addld
-else
-  ifdef $(1).LDR
+ifneq (y,$$($(1).ISLOADER))
+  ifdef $(1).LDR.IMG
 	@echo TARGET $(1) ADD LOADER
-	$(Q)mv -f $$($(1).IMG1) $$($(1).IMG1)~orig
-	$(Q)dd if=$$($(1).LDR) >$$($(1).IMG1)
-	$(Q)dd if=$$($(1).IMG1)~orig >>$$($(1).IMG1)
-	$(Q)rm -f $$($(1).IMG1)~orig
+	$(Q)mv -f $$($(1).IMG1.IMG) $$($(1).IMG1.IMG)~orig
+	$(Q)cat $$($(1).LDR.IMG) $$($(1).IMG1.IMG)~orig >$$($(1).IMG1.IMG)
+	$(Q)rm -f $$($(1).IMG1.IMG)~orig
   endif
 endif
 
+info.img.$(1): $$($(1).IMG)
+	@echo TARGET $(1) IMAGE INFO
+	$(Q)$(ESPTOOL) image_info $$^
+
 clean: clean.img.$(1)
 clean.img.$(1):
-	@echo TARGET $(1) IMG CLEAN
-	$(Q)rm -f $$($(1).IMG) $$(call IMG_P,$(1)-addld) $$(call IMG_P,$(1)-$(IMG1_ADDR)) $$(call IMG_P,$(1)-$(IMG2_ADDR))
+	@echo TARGET $(1) CLEAN IMAGE
+	$(Q)rm -f $$($(1).IMG) $$(call IMG_P,$(1)-addld)
 
-flash.img.$(1): $$($(1).IMG)
-	@echo TARGET $(1) IMG FLASH
-	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $(IMG1_ADDR) $$($(1).IMG1) $(IMG2_ADDR) $$($(1).IMG2)
-ifneq (,$(OPENTTY))
-	$(Q)$(TTYTOOL) $(TTYOPTION)
+$(1).flash.IMGS += $$($(1).IMGS) # add images to flashing
+
+ifeq (y,$(CLEAR)) # add images to clearing settings
+$(1).flash.IMGS += $$(clear.IMGS)
 endif
 
-open.tty.$(1):
-	$(Q)$(TTYTOOL) $(TTYOPTION)
+ifneq (y,$$($(1).ISLOADER))
+flash.img.$(1): $$(foreach t,$$($(1).flash.IMGS),$$($$(t).IMG))
+	@echo TARGET $(1) FLASH IMG
+	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $$(foreach t,$$($(1).flash.IMGS),$$($$(t).ADDR) $$($$(t).IMG))
+endif
+
 endef
+
+open.tty:
+	@echo OPEN TTY
+	$(Q)$(TTYTOOL) $(TTYOPTION)
+
+flash.clear: $(foreach img,$(clear.IMGS),$($(img).IMG))
+	@echo FLASH CLEAR SETTINGS
+	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $(foreach img,$(clear.IMGS),$($(img).ADDR) $($(img).IMG))
