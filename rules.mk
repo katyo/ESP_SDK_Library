@@ -22,6 +22,7 @@ NM := $(COMPILER_PREFIX)nm
 CPP := $(COMPILER_PREFIX)cpp
 OBJDUMP := $(COMPILER_PREFIX)objdump
 OBJCOPY := $(COMPILER_PREFIX)objcopy
+GDB := $(COMPILER_PREFIX)gdb
 
 # Compiler flags
 CFLAGS += $(addprefix -D,$(CDEFS))
@@ -121,4 +122,16 @@ clean: clean.bin.$(1)
 clean.bin.$(1):
 	@echo TARGET $(1) BIN CLEAN
 	$(Q)rm -f $$($(1).BIN) $$($(1).MAP)
+
+debug.$(1):
+	@echo RUN GDB STUB
+	@$(GDB) -ix 'file $$($(1).BIN)' $$(GDBCMDS) -b $$(GDBBAUD)
 endef
+
+GDBBAUD ?= $(BAUD)
+GDBPORT ?= $(PORT)
+GDBCMDS += \
+  -ix 'set remote hardware-breakpoint-limit 1' \
+  -ix 'set remote hardware-watchpoint-limit 1' \
+  -ix 'set debug xtensa 4' \
+  -ix 'target remote $(GDBPORT)'
