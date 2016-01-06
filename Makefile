@@ -9,7 +9,7 @@ include $(BASEPATH)rules.mk
 include $(BASEPATH)image.mk
 -include config.mk
 
-CFLAGS += -std=gnu90 -Os
+CFLAGS += -std=gnu90
 CFLAGS += -Wall -Wextra -Wno-pointer-sign
 CFLAGS += -fno-tree-ccp -foptimize-register-move
 CFLAGS += -mno-target-align -mno-serialize-volatile
@@ -151,6 +151,16 @@ libaddmmain.SRCS = $(wildcard $(SRCDIR)/system/*.c)
 
 TARGET.LIBS += libaddwpa
 libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
+
+ifeq (y,$(DEBUG))
+  CFLAGS += -Og -ggdb
+  CDEFS += USE_DEBUG GDBSTUB_FREERTOS=0
+  libsdk.DEPLIBS += libgdbstub
+  TARGET.LIBS += libgdbstub
+  libgdbstub.SRCS += $(wildcard $(addprefix $(SRCDIR)/gdbstub/*.,c S))
+else
+  CFLAGS += -Os -g
+endif
 
 TARGET.LIBS += libsdk
 libsdk.SDKLIBS += \

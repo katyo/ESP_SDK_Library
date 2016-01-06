@@ -89,6 +89,7 @@ void ICACHE_FLASH_ATTR user_init(void) {
 	os_printf("Start 'heap' size: %d bytes\n", system_get_free_heap_size());
 	os_printf("Set CPU CLK: %u MHz\n", ets_get_cpu_frequency());
 	system_deep_sleep_set_option(0);
+    gdbstub_init();
 	wifi_set_event_handler_cb(wifi_handle_event_cb);
 	system_init_done_cb(init_done_cb);
 }

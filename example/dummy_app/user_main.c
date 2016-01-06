@@ -13,5 +13,6 @@
  * Returns      : none
  *******************************************************************************/
 void ICACHE_FLASH_ATTR user_init(void) {
-	/* nothing to do */
+  /* nothing to do */
+  gdbstub_init();
 }

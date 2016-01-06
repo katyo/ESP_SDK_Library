@@ -219,16 +219,16 @@ void ets_timer_init(void);
 void ets_timer_done(ETSTimer *ptimer);
 
 struct swdt_info{
-	int wdt_mode; // 0xFFFFFFFF
-	uint32 a; 	  // 0x06 // ~ равно периоду в WDT_REG1
-	uint32 b;	  // 0x0C // ~ равно периоду в WDT_REG2
+	uint32_t wdt_mode; // 0xFFFFFFFF
+	uint32_t a; 	  // 0x06 // ~ равно периоду в WDT_REG1
+	uint32_t b;	  // 0x0C // ~ равно периоду в WDT_REG2
 };
 // RAM_BIOS:3FFFC708
 extern struct swdt_info wdt_info;
 /* { return wdt_mode; }
  [0x3FFFC708] wdt_mode, [0x3FFFC70C] a, [3FFFC710] b */
 uint32_t ets_wdt_get_mode(void);
-void ets_wdt_enable(int mode, uint32_t a, uint32_t b);
+void ets_wdt_enable(uint32_t mode, uint32_t a, uint32_t b);
 /* return wdt_mode */
 int ets_wdt_disable(void);
 void ets_wdt_init(void);
