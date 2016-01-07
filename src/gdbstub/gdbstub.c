@@ -70,6 +70,11 @@ the xthal stack frame struct.
 #include "osapi.h"
 #include "user_interface.h"
 
+#define wdt_enable()
+//ets_wdt_enable(0xffffffff, 0x06, 0x0c);
+//ets_wdt_enable(0x3fffc708, 0x3fffc70c, 0x3fffc710);
+#define wdt_disable() ets_wdt_disable()
+
 #endif
 
 #define EXCEPTION_GDB_SP_OFFSET 0x100
@@ -567,7 +572,7 @@ static void ATTR_GDBFN emulLdSt() {
 //We just caught a debug exception and need to handle it. This is called from an assembly
 //routine in gdbstub-entry.S
 void ATTR_GDBFN gdbstub_handle_debug_exception() {
-	ets_wdt_disable();
+	wdt_disable();
 
 	if (singleStepPs!=-1) {
 		//We come here after single-stepping an instruction. Interrupts are disabled
@@ -600,19 +605,18 @@ void ATTR_GDBFN gdbstub_handle_debug_exception() {
 			gdbstub_savedRegs.pc+=3;
 		}
 	}
-	//ets_wdt_enable(0xffffffff, 0x06, 0x0c);
-	ets_wdt_enable(0x3fffc708, 0x3fffc70c, 0x3fffc710);
+	wdt_enable();
 }
 
 
 #if GDBSTUB_FREERTOS
 //Freetos exception. This routine is called by an assembly routine in gdbstub-entry.S
 void ATTR_GDBFN gdbstub_handle_user_exception() {
-	ets_wdt_disable();
+	wdt_disable();
 	gdbstub_savedRegs.reason|=0x80; //mark as an exception reason
 	sendReason();
 	while(gdbReadCommand()!=ST_CONT);
-	ets_wdt_enable(0x3fffc708, 0x3fffc70c, 0x3fffc710);
+	wdt_enable();
 }
 #else
 
@@ -628,11 +632,11 @@ static void ATTR_GDBFN gdb_exception_handler(struct XTensa_exception_frame_s *fr
 
 	gdbstub_savedRegs.reason|=0x80; //mark as an exception reason
 
-	ets_wdt_disable();
+	wdt_disable();
 	sendReason();
 	while(gdbReadCommand()!=ST_CONT);
-	ets_wdt_enable(0x3fffc708, 0x3fffc70c, 0x3fffc710);
-
+	wdt_enable();
+	
 	//Copy any changed registers back to the frame the Xtensa HAL uses.
 	os_memcpy(frame, &gdbstub_savedRegs, 19*4);
 }
@@ -709,10 +713,10 @@ static void ATTR_GDBFN uart_hdlr(void *arg, void *frame) {
 	
 		gdbstub_savedRegs.reason=0xff; //mark as user break reason
 	
-		ets_wdt_disable();
+		wdt_disable();
 		sendReason();
 		while(gdbReadCommand()!=ST_CONT);
-		ets_wdt_enable(0x3fffc708, 0x3fffc70c, 0x3fffc710);
+		wdt_enable();
 		//Copy any changed registers back to the frame the Xtensa HAL uses.
 		os_memcpy(frame, &gdbstub_savedRegs, 19*4);
 	}
@@ -749,10 +753,10 @@ void ATTR_GDBFN gdbstub_handle_uart_int(struct XTensa_rtos_int_frame_s *frame) {
 	
 		gdbstub_savedRegs.reason=0xff; //mark as user break reason
 	
-//		ets_wdt_disable();
+//	  wdt_disable();
 		sendReason();
 		while(gdbReadCommand()!=ST_CONT);
-//		ets_wdt_enable();
+//		wdt_enable();
 		//Copy any changed registers back to the frame the Xtensa HAL uses.
 		frame->pc=gdbstub_savedRegs.pc;
 		frame->ps=gdbstub_savedRegs.ps;

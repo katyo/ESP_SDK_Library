@@ -6,7 +6,7 @@ Enable this define if you're using the RTOS SDK. It will use a custom exception 
 and do some other magic to make everything work and compile under FreeRTOS.
 */
 #ifndef GDBSTUB_FREERTOS
-#define GDBSTUB_FREERTOS 1
+#define GDBSTUB_FREERTOS 0
 #endif
 
 /*
@@ -43,7 +43,7 @@ Enable this if you want the GDB stub to wait for you to attach GDB before runnin
 breaking in the init routine; use the gdb 'c' command (continue) to start the program.
 */
 #ifndef GDBSTUB_BREAK_ON_INIT
-#define GDBSTUB_BREAK_ON_INIT 1
+#define GDBSTUB_BREAK_ON_INIT 0
 #endif
 
 /*

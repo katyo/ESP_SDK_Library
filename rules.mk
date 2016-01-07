@@ -125,13 +125,13 @@ clean.bin.$(1):
 
 debug.$(1):
 	@echo RUN GDB STUB
-	@$(GDB) -ix 'file $$($(1).BIN)' $$(GDBCMDS) -b $$(GDBBAUD)
+	@$(GDB) -b $$(GDBBAUD) -ex 'file $$($(1).BIN)' $$(GDBCMDS)
 endef
 
 GDBBAUD ?= $(BAUD)
 GDBPORT ?= $(PORT)
 GDBCMDS += \
-  -ix 'set remote hardware-breakpoint-limit 1' \
-  -ix 'set remote hardware-watchpoint-limit 1' \
-  -ix 'set debug xtensa 4' \
-  -ix 'target remote $(GDBPORT)'
+  -ex 'set remote hardware-breakpoint-limit 1' \
+  -ex 'set remote hardware-watchpoint-limit 1' \
+  -ex 'set debug xtensa 4' \
+  -ex 'target remote $(GDBPORT)'

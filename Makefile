@@ -1,3 +1,8 @@
+# Serial port setup
+PORT ?= /dev/ttyUSB0
+BAUD ?= 230400
+
+# Base path to build root
 BASEPATH := $(subst $(dir $(abspath $(CURDIR)/xyz)),,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
 INCDIR := $(BASEPATH)include
@@ -34,7 +39,7 @@ USE_OPTIMIZE_PRINTF ?= y
 
 DEBUG_UART ?= 1
 DEBUG_LEVEL ?= 2
-UART0_BAUD ?= 115200
+UART0_BAUD ?= 230400
 UART1_BAUD ?= 230400
 
 WITH_EXAMPLES ?= y
@@ -154,7 +159,7 @@ libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
 ifeq (y,$(DEBUG))
   CFLAGS += -Og -ggdb
-  CDEFS += USE_DEBUG GDBSTUB_FREERTOS=0
+  CDEFS += USE_DEBUG GDBSTUB_BREAK_ON_INIT=1
   libsdk.DEPLIBS += libgdbstub
   TARGET.LIBS += libgdbstub
   libgdbstub.SRCS += $(wildcard $(addprefix $(SRCDIR)/gdbstub/*.,c S))

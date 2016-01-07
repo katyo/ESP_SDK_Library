@@ -1,10 +1,6 @@
 # Path patterns
 IMG_P = bin/$(1).bin
 
-# Serial port setup
-PORT ?= /dev/ttyUSB0
-BAUD ?= 256000
-
 # ESP tool
 ESPTOOL ?= esptool.py
 ESPPORT ?= $(PORT)
