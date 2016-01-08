@@ -119,7 +119,7 @@ build.img.$(1): $$($(1).IMG)
 $$($(1).IMG): $$($(1).OBJ)
 	@echo TARGET $(1) RDI
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(OBJCOPY) -O binary -j .rodata $$^ $$@
+	$(Q)$(OBJCOPY) -O binary -j .irom.text $$^ $$@
 
 clean: clean.img.$(1)
 clean.img.$(1):

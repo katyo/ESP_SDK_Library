@@ -1,6 +1,8 @@
-#include "esp_init_data.h"
+#include "sdk/sdk_config.h"
+#include "user_interface.h"
+#include "sdk/esp_init_data.h"
 
-const esp_init_data_t esp_init_data_default = {
+const esp_init_data_t esp_init_data_default ICACHE_RODATA_ATTR = {
   /* spur_freq = spur_freq_cfg / spur_freq_cfg_div
      22.5 = 225 / 10 */
   .spur_freq_cfg = 225,
@@ -174,5 +176,7 @@ const esp_init_data_t esp_init_data_default = {
   ._reserved75 = 0x93,
   ._reserved76 = 0x43,
 
-  ._reserved114 = 2, /* 0 */
+#if DEF_SDK_VERSION >= 1400
+  ._reserved114 = 2, /* 0 for SDK < 1.4.0 */
+#endif
 };

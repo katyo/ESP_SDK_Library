@@ -367,3 +367,5 @@ typedef struct {
   uint8_t _reserved126; /* 0 */
   uint8_t _reserved127; /* 0 */
 } esp_init_data_t;
+
+extern const esp_init_data_t esp_init_data_default;

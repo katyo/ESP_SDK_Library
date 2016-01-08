@@ -23,6 +23,7 @@
 #include "phy/phy.h"
 #include "sdk/sys_const.h"
 #include "sdk/rom2ram.h"
+#include "sdk/esp_init_data.h"
 //=============================================================================
 // Define
 //-----------------------------------------------------------------------------
@@ -54,35 +55,6 @@ uint16 lwip_timer_interval;
 #ifdef USE_OPEN_LWIP
 extern bool default_hostname; // in eagle_lwip_if.c
 #endif
-//=============================================================================
-// Init data (flash)
-//=============================================================================
-//  esp_init_data_default.bin
-//-----------------------------------------------------------------------------
-#if DEF_SDK_VERSION >= 1400
-const uint8 esp_init_data_default[128] ICACHE_RODATA_ATTR = {
-	    5,    0,    4,    2,    5,    5,    5,    2,    5,    0,    4,    5,    5,    4,    5,    5,
-	    4, 0xFE, 0xFD, 0xFF, 0xF0, 0xF0, 0xF0, 0xE0, 0xE0, 0xE0, 0xE1,  0xA, 0xFF, 0xFF, 0xF8,    0,
-	 0xF8, 0xF8, 0x52, 0x4E, 0x4A, 0x44, 0x40, 0x38,    0,    0,    1,    1,    2,    3,    4,    5,
-	    1,    0,    0,    0,    0,    0,    2,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-	 0xE1,  0xA,    0,    0,    0,    0,    0,    0,    0,    0,    1, 0x93, 0x43,    0,    0,    0,
-	    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-	    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-	    3,    0,    2,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0
-};
-#elif DEF_SDK_VERSION >= 1200
-const uint8 esp_init_data_default[128] ICACHE_RODATA_ATTR = {
-	    5,    0,    4,    2,    5,    5,    5,    2,    5,    0,    4,    5,    5,    4,    5,    5,
-	    4, 0xFE, 0xFD, 0xFF, 0xF0, 0xF0, 0xF0, 0xE0, 0xE0, 0xE0, 0xE1,  0xA, 0xFF, 0xFF, 0xF8,    0,
-	 0xF8, 0xF8, 0x52, 0x4E, 0x4A, 0x44, 0x40, 0x38,    0,    0,    1,    1,    2,    3,    4,    5,
-	    1,    0,    0,    0,    0,    0,    2,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-	 0xE1,  0xA,    0,    0,    0,    0,    0,    0,    0,    0,    1, 0x93, 0x43,    0,    0,    0,
-	    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-	    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-	    3,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0
-};
-#endif
-#define esp_init_data_default_size 128
 //=============================================================================
 // extern funcs
 //-----------------------------------------------------------------------------
@@ -515,17 +487,17 @@ void ICACHE_FLASH_ATTR startup(void)
 	//
 #elif DEF_SDK_VERSION >= 1300
 	uint8 *buf = (uint8 *)os_malloc(256); // esp_init_data_default.bin
-	spi_flash_read(esp_init_data_default_addr,(uint32 *)buf, esp_init_data_default_size); // esp_init_data_default.bin
+	spi_flash_read(esp_init_data_default_addr,(uint32 *)buf, sizeof(esp_init_data_t)); // esp_init_data_default.bin
 #else
-	uint8 *buf = (uint8 *)os_malloc(esp_init_data_default_size); // esp_init_data_default.bin
-	spi_flash_read(esp_init_data_default_addr,(uint32 *)buf, esp_init_data_default_size); // esp_init_data_default.bin
+	uint8 *buf = (uint8 *)os_malloc(sizeof(esp_init_data_t)); // esp_init_data_default.bin
+	spi_flash_read(esp_init_data_default_addr,(uint32 *)buf, sizeof(esp_init_data_t)); // esp_init_data_default.bin
 #endif
 	//
 	if(buf[0] != 5) { // первый байт esp_init_data_default.bin не равен 5 ? - бардак!
 #ifdef DEBUG_UART
 		os_printf("\nError esp_init_data! Set default.\n");
 #endif
-		ets_memcpy(buf, esp_init_data_default, esp_init_data_default_size);
+		ets_memcpy(buf, &esp_init_data_default, sizeof(esp_init_data_t));
 	}
 //	system_restoreclock(); // STARTUP_CPU_CLK
 	init_wifi(buf, info.st_mac); // инициализация оборудования WiFi

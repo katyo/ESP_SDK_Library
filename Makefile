@@ -152,7 +152,7 @@ TARGET.LIBS += libaddpp
 libaddpp.SRCS = $(wildcard $(SRCDIR)/pp/*.c)
 
 TARGET.LIBS += libaddmmain
-libaddmmain.SRCS = $(wildcard $(SRCDIR)/system/*.c)
+libaddmmain.SRCS = $(wildcard $(addprefix $(SRCDIR)/,system/*.c bin/esp_init_data_default.c))
 
 TARGET.LIBS += libaddwpa
 libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
