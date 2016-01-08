@@ -158,13 +158,20 @@ TARGET.LIBS += libaddwpa
 libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
 ifeq (y,$(DEBUG))
-  CFLAGS += -Og -ggdb
-  CDEFS += USE_DEBUG GDBSTUB_BREAK_ON_INIT=1
+  CFLAGS += -Og -ggdb3
+  CDEFS += USE_DEBUG
+  ifeq (y,$(DEBUG_BREAK))
+    CDEFS += GDBSTUB_BREAK_ON_INIT=1
+  endif
   libsdk.DEPLIBS += libgdbstub
   TARGET.LIBS += libgdbstub
   libgdbstub.SRCS += $(wildcard $(addprefix $(SRCDIR)/gdbstub/*.,c S))
 else
   CFLAGS += -Os -g
+endif
+
+ifeq (y,$(DEBUG_EXCEPT))
+  CDEFS += DEBUG_EXCEPTION
 endif
 
 TARGET.LIBS += libsdk
