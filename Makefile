@@ -194,7 +194,7 @@ LDDIRS += $(LDDIR)
 
 LOADER.LDSCRIPTS += \
   $(LDDIR)/eagle.app.v6-loader.ld \
-  $(LDDIR)/eagle.rom.addr.v6-loader.ld
+  $(LDDIR)/eagle.rom.addr.v6.ld
 
 LOADER.LDFLAGS += \
   -nostdlib \
