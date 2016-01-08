@@ -51,7 +51,7 @@ $$(call OBJ_P,$(1)/%.$(2)): $$(call SRC_P,%,$(2))
 	$(Q)mkdir -p $$(dir $$@)
 	$(Q)$(CC) -MD -MF $$(call DEP_P,$(1)/$$*.$(2)) -c $$(CFLAGS) $$($(1).CFLAGS) -o $$@ $$<
 
-include $$(wildcard $$(call DEP_P,$(1)/*))
+-include $$($(1).DEP.$(2))
 endef
 
 # Extracting library
