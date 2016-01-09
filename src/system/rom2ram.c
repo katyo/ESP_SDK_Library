@@ -17,18 +17,18 @@
 #  define ICACHE_FLASH_ATTR
 #endif
 
-extern uint32 _text_start[];	/* start addr IRAM */
-extern uint32 _lit4_start[];	/* addr data buf IRAM */
+extern uint32_t _text_start[];	/* start addr IRAM */
+extern uint32_t _lit4_start[];	/* addr data buf IRAM */
 
 /* Определение размера свободного буфера в IRAM и очистка BSS IRAM (сегмент DATA_IRAM_ATTR) */
 int ICACHE_FLASH_ATTR
 iram_buf_init(void) {
-  uint32 *end =
+  uint32_t *end =
     &_text_start[((((DPORT_BASE[9] >> 3) & 3) ==
 		   3) ? (0x08000 >> 2) : (0x0C000 >> 2))];
-  eraminfo.size = (int32) ((uint32) (end) - (uint32) eraminfo.base);
+  eraminfo.size = (int32_t) ((uint32_t) (end) - (uint32_t) eraminfo.base);
   if (eraminfo.size > 0) {
-    uint32 *ptr = _lit4_start;
+    uint32_t *ptr = _lit4_start;
 
     while (ptr < end)
       *ptr++ = 0;
@@ -126,23 +126,23 @@ copy_s1d4(void *pd, unsigned char *ps, unsigned int len) {
   return 0;
 }
 
-/* extern void copy_s4d1(uint8 * pd, void * ps, uint32 len);
+/* extern void copy_s4d1(uint8_t * pd, void * ps, uint32_t len);
    Чтение буфера в IRAM */
 bool ICACHE_RAM_ATTR
-eRamRead(uint32 addr, uint8 * pd, uint32 len) {
-  if (addr + len > (uint32) eraminfo.size)
+eRamRead(uint32_t addr, uint8_t * pd, uint32_t len) {
+  if (addr + len > (uint32_t) eraminfo.size)
     return false;
-  copy_s4d1(pd, (void *)((uint32) eraminfo.base + addr), len);
+  copy_s4d1(pd, (void *)((uint32_t) eraminfo.base + addr), len);
   return true;
 }
 
-/* extern void copy_s1d4(void * pd, uint8 * ps, uint32 len);
+/* extern void copy_s1d4(void * pd, uint8_t * ps, uint32_t len);
    Запись буфера в IRAM */
 bool ICACHE_RAM_ATTR
-eRamWrite(uint32 addr, uint8 * ps, uint32 len) {
-  if (addr + len > (uint32) eraminfo.size)
+eRamWrite(uint32_t addr, uint8_t * ps, uint32_t len) {
+  if (addr + len > (uint32_t) eraminfo.size)
     return false;
-  copy_s1d4((void *)((uint32) eraminfo.base + addr), ps, len);
+  copy_s1d4((void *)((uint32_t) eraminfo.base + addr), ps, len);
   return true;
 }
 

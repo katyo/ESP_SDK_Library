@@ -209,7 +209,7 @@ extern "C" {
 
 /* Originally macro, was causing warning/error for static allocated variables:
  * Fix warning/error: the comparison will always evaluate as 'true' for the address of 'allsystems' will never be NULL [-Werror=address] */
-  void ip_addr_debug_print(uint32 debug, void *ipaddr);
+  void ip_addr_debug_print(uint32_t debug, void *ipaddr);
 
 /* Get one byte from the 4-byte address */
 #  define ip4_addr1(ipaddr) (((u8_t*)(ipaddr))[0])

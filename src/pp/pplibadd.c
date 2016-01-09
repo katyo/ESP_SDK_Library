@@ -8,9 +8,9 @@
 
 #if DEF_SDK_VERSION >= 1300
 /* bit_popcount() используется из SDK libpp.a: if_hwctrl.o и trc.o */
-uint32 ICACHE_FLASH_ATTR
-bit_popcount(uint32 x) {
-  uint32 ret = 0;
+uint32_t ICACHE_FLASH_ATTR
+bit_popcount(uint32_t x) {
+  uint32_t ret = 0;
 
   while (x) {
     ret += x & 1;

@@ -13,39 +13,39 @@
 
 #ifdef USE_TIMER0
 
-typedef void (*nmi_func_t) (uint32 par);
+typedef void (*nmi_func_t) (uint32_t par);
 
 extern nmi_func_t timer0_cb;
-extern uint32 timer0_arg;
+extern uint32_t timer0_arg;
 
 #  ifdef TIMER0_USE_NMI_VECTOR
 
 /*
    struct nmi_store_regs_t
    {
-   uint32 a0;	// +0x00
-   uint32 a1;	// +0x04
-   uint32 a2;	// +0x08
-   uint32 a3;	// +0x0c
-   uint32 a4;	// +0x10
-   uint32 a5;	// +0x14
-   uint32 a6;	// +0x18
-   uint32 a7;	// +0x1c
-   uint32 a8;	// +0x20
-   uint32 a9;	// +0x24
-   uint32 a10;	// +0x28
-   uint32 a11;	// +0x2c
-   //	uint32 a12;	// +0x30
-   //	uint32 a13;	// +0x34
-   //	uint32 a14;	// +0x38
-   //	uint32 a15;	// +0x3c
-   //	uint32 sar;	// +0x40
-   //	uint32 epc1; // +0x44
-   //	uint32 exccause;	// +0x48
-   //	uint32 excvaddr;	// +0x4c
-   //	uint32 excsave1;	// +0x50
-   //	uint32 excsave2;	// +0x54
-   //	uint32 excsave3;	// +0x58
+   uint32_t a0;	// +0x00
+   uint32_t a1;	// +0x04
+   uint32_t a2;	// +0x08
+   uint32_t a3;	// +0x0c
+   uint32_t a4;	// +0x10
+   uint32_t a5;	// +0x14
+   uint32_t a6;	// +0x18
+   uint32_t a7;	// +0x1c
+   uint32_t a8;	// +0x20
+   uint32_t a9;	// +0x24
+   uint32_t a10;	// +0x28
+   uint32_t a11;	// +0x2c
+   //	uint32_t a12;	// +0x30
+   //	uint32_t a13;	// +0x34
+   //	uint32_t a14;	// +0x38
+   //	uint32_t a15;	// +0x3c
+   //	uint32_t sar;	// +0x40
+   //	uint32_t epc1; // +0x44
+   //	uint32_t exccause;	// +0x48
+   //	uint32_t excvaddr;	// +0x4c
+   //	uint32_t excsave1;	// +0x50
+   //	uint32_t excsave2;	// +0x54
+   //	uint32_t excsave3;	// +0x58
    };
 
    void NMI_Handler(void)
@@ -88,7 +88,7 @@ timer0_stop(void) {
 }
 
 void ICACHE_FLASH_ATTR
-timer0_start(uint32 us, bool repeat_flg) {
+timer0_start(uint32_t us, bool repeat_flg) {
   TIMER0_LOAD = 0xFFFFFFFF;
   if (repeat_flg) {
     TIMER0_CTRL = TM_DIVDED_BY_16
@@ -107,10 +107,10 @@ timer0_start(uint32 us, bool repeat_flg) {
 
 #  ifdef TIMER0_USE_NMI_VECTOR
 void
-timer0_init(void *func, uint32 par, bool nmi_flg)
+timer0_init(void *func, uint32_t par, bool nmi_flg)
 #  else
 void
-timer0_init(void *func, uint32 par)
+timer0_init(void *func, uint32_t par)
 #  endif
 {
 #  if DEBUGSOO > 3

@@ -29,11 +29,11 @@
 #    define DEFAULT_MTU 1500
 #  endif
 
-extern uint8 dhcps_flag;
+extern uint8_t dhcps_flag;
 extern void ppRecycleRxPkt(void *esf_buf);	/* struct pbuf -> eb */
 extern void wifi_station_dhcpc_event(void);
 
-uint8 *hostname LWIP_DATA_IRAM_ATTR;
+uint8_t *hostname LWIP_DATA_IRAM_ATTR;
 bool default_hostname;		/*  = true; */
 
 ETSEvent *lwip_if_queues[2] LWIP_DATA_IRAM_ATTR;
@@ -79,7 +79,7 @@ init_fn(struct netif *myif) {
 }
 
 struct netif *ICACHE_FLASH_ATTR
-eagle_lwip_getif(uint8 index) {
+eagle_lwip_getif(uint8_t index) {
   struct netif **ret;
 
   if (index == 0) {
@@ -94,7 +94,7 @@ eagle_lwip_getif(uint8 index) {
 }
 
 struct netif *ICACHE_FLASH_ATTR
-eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8 * macaddr,
+eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8_t * macaddr,
 		    struct ip_info *ipinfo) {
   struct netif *myif = conn->myif;
 

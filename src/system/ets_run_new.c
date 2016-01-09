@@ -16,13 +16,13 @@
 #  define MIN_DELAY_US    512	/* 512 us. Минимальное время для отработки task_delay_us(us), если меньше то вызывается ets_delay_us(us); */
 
 
-uint32 old_task_time DATA_IRAM_ATTR;	/* штамп времени поледнего запуска обработки задач SDK/WiFi */
-volatile uint32 ets_run_ret DATA_IRAM_ATTR;	/* флаг выхода из ets_run_new() */
+uint32_t old_task_time DATA_IRAM_ATTR;	/* штамп времени поледнего запуска обработки задач SDK/WiFi */
+volatile uint32_t ets_run_ret DATA_IRAM_ATTR;	/* флаг выхода из ets_run_new() */
 
 void ICACHE_IRAM_ATTR
 ets_run_new(void) {
-  uint8 bnum;
-  uint8 bctp = ets_bit_task_priority = 0;
+  uint8_t bnum;
+  uint8_t bctp = ets_bit_task_priority = 0;
 
   while (1) {
     while (1) {
@@ -68,7 +68,7 @@ delay_wait_cb(void *px) {
 }
 
 void ICACHE_FLASH_ATTR
-task_delay_us(uint32 us) {
+task_delay_us(uint32_t us) {
   if (us < MIN_DELAY_US)
     ets_delay_us(us);
   else {
@@ -83,7 +83,7 @@ task_delay_us(uint32 us) {
 
 void ICACHE_FLASH_ATTR
 run_sdk_tasks(void) {
-  uint32 t = phy_get_mactime();
+  uint32_t t = phy_get_mactime();
 
   if (t - old_task_time > SDK_TASKS_WAIT) {
     task_delay_us(SDK_TASKS_RUNT);

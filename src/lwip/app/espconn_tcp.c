@@ -122,8 +122,8 @@ espconn_kill_oldest(void) {
 void ICACHE_FLASH_ATTR
 espconn_kill_oldest_pcb(void) {
   struct tcp_pcb *cpcb = NULL;
-  uint8 i = 0;
-  uint8 num_tcp_fin = 0;
+  uint8_t i = 0;
+  uint8_t num_tcp_fin = 0;
 
   for (i = 2; i < 4; i++) {
     for (cpcb = *tcp_pcb_lists[i]; cpcb != NULL; cpcb = cpcb->next) {
@@ -159,7 +159,7 @@ espconn_kill_oldest_pcb(void) {
 void ICACHE_FLASH_ATTR
 espconn_kill_pcb(u16_t port) {
   struct tcp_pcb *cpcb = NULL;
-  uint8 i = 0;
+  uint8_t i = 0;
   struct tcp_pcb *inactive = NULL;
   struct tcp_pcb *prev = NULL;
 
@@ -197,20 +197,20 @@ espconn_kill_pcb(u16_t port) {
  *******************************************************************************/
 struct tcp_pcb *ICACHE_FLASH_ATTR
 espconn_find_current_pcb(espconn_msg * pcurrent_msg) {
-  uint16 local_port = pcurrent_msg->pcommon.local_port;
-  uint32 local_ip = pcurrent_msg->pcommon.local_ip;
-  uint16 remote_port = pcurrent_msg->pcommon.remote_port;
+  uint16_t local_port = pcurrent_msg->pcommon.local_port;
+  uint32_t local_ip = pcurrent_msg->pcommon.local_ip;
+  uint16_t remote_port = pcurrent_msg->pcommon.remote_port;
   uint8_t *remip = (pcurrent_msg->pcommon.remote_ip);
 
   /* convert uint8* to uint32* can lead to unaligned reading
-   * uint32 remote_ip = *((uint32*)&pcurrent_msg->pcommon.remote_ip); */
+   * uint32_t remote_ip = *((uint32*)&pcurrent_msg->pcommon.remote_ip); */
 
 #  if BYTE_ORDER == LITTLE_ENDIAN
-  uint32 remote_ip = (uint32_t) ip4_addr1(remip) |
+  uint32_t remote_ip = (uint32_t) ip4_addr1(remip) |
     (uint32_t) ip4_addr2(remip) << 8 |
     (uint32_t) ip4_addr3(remip) << 16 | (uint32_t) ip4_addr4(remip) << 24;
 #  else
-  uint32 remote_ip = (uint32_t) ip4_addr1(remip) << 24 |
+  uint32_t remote_ip = (uint32_t) ip4_addr1(remip) << 24 |
     (uint32_t) ip4_addr2(remip) << 16 |
     (uint32_t) ip4_addr3(remip) << 8 | (uint32_t) ip4_addr4(remip);
 #  endif
@@ -267,7 +267,7 @@ espconn_find_current_pcb(espconn_msg * pcurrent_msg) {
 static void ICACHE_FLASH_ATTR
 espconn_tcp_reconnect(void *arg) {
   espconn_msg *precon_cb = arg;
-  sint8 re_err = 0;
+  int8_t re_err = 0;
   espconn_buf *perr_buf = NULL;
   espconn_buf *perr_back = NULL;
 
@@ -334,7 +334,7 @@ espconn_tcp_reconnect(void *arg) {
 static void ICACHE_FLASH_ATTR
 espconn_tcp_disconnect_successful(void *arg) {
   espconn_msg *pdiscon_cb = arg;
-  sint8 dis_err = 0;
+  int8_t dis_err = 0;
   espconn_buf *pdis_buf = NULL;
   espconn_buf *pdis_back = NULL;
 
@@ -485,7 +485,7 @@ espconn_Task(os_event_t * events) {
  * Description  : sent data for client or server
  * Parameters   : void *arg -- client or server to send
  *                uint8* psent -- Data to send
- *                uint16 length -- Length of data to send
+ *                uint16_t length -- Length of data to send
  * Returns      : return espconn error code.
  * - ESPCONN_OK. Successful. No error occured.
  * - ESPCONN_MEM. Out of memory.
@@ -493,7 +493,7 @@ espconn_Task(os_event_t * events) {
  * - More errors could be returned by lower protocol layers.
  *******************************************************************************/
 err_t ICACHE_FLASH_ATTR
-espconn_tcp_sent(void *arg, uint8 * psent, uint16 length) {
+espconn_tcp_sent(void *arg, uint8_t * psent, uint16_t length) {
   espconn_msg *ptcp_sent = arg;
   struct tcp_pcb *pcb = NULL;
   err_t err = 0;
@@ -604,7 +604,7 @@ espconn_client_close(void *arg, struct tcp_pcb *pcb) {
 }
 
 /* ***********Code for WIFI_BLOCK from upper************** */
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_recv_hold(struct espconn *pespconn) {
   /* 1st, according to espconn code, have to find out the escpconn_msg by pespconn; */
   espconn_msg *pnode = NULL;
@@ -627,7 +627,7 @@ espconn_recv_hold(struct espconn *pespconn) {
   return ESPCONN_OK;
 }
 
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_recv_unhold(struct espconn * pespconn) {
   /* 1st, according to espconn code, have to find out the escpconn_msg by pespconn; */
   espconn_msg *pnode = NULL;
@@ -759,7 +759,7 @@ static void ICACHE_FLASH_ATTR
 espconn_tcp_finish(void *arg) {
   espconn_msg *pfinish = arg;
   espconn_buf *premove = NULL;
-  uint16 len = 0;
+  uint16_t len = 0;
 
   espconn_tcp_write(pfinish);
   while (pfinish->pcommon.pbuf != NULL) {
@@ -934,7 +934,7 @@ espconn_client_connect(void *arg, struct tcp_pcb *tpcb, err_t err) {
  * Parameters   : espconn -- the espconn used to build client
  * Returns      : none
  *******************************************************************************/
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_tcp_client(struct espconn * espconn) {
   struct tcp_pcb *pcb = NULL;
   struct ip_addr ipaddr;
@@ -1337,7 +1337,7 @@ espconn_tcp_accept(void *arg, struct tcp_pcb *pcb, err_t err) {
  * Parameters   : espconn -- the espconn used to build server
  * Returns      : none
  *******************************************************************************/
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_tcp_server(struct espconn * espconn) {
   struct tcp_pcb *pcb = NULL;
   espconn_msg *pserver = NULL;
@@ -1392,7 +1392,7 @@ espconn_tcp_server(struct espconn * espconn) {
  * Parameters   : pdeletecon -- the espconn used to delete a server
  * Returns      : none
  *******************************************************************************/
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_tcp_delete(struct espconn * pdeletecon) {
   err_t err = ERR_OK;
   remot_info *pinfo = NULL;

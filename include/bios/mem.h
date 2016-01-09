@@ -10,13 +10,13 @@
 
 #  include "c_types.h"
 /* WARNING !!! mem_xxx use size < 4096 !!! */
-extern void mem_init(void *start_addr);	/* uint8 * */
-extern void *mem_malloc(uint16 size);	/* size < 4096 */
-extern void *mem_calloc(uint16 n, uint16 count);	/* n*count < 4096 */
-extern void *mem_zalloc(uint16 size);	/* size < 4096, = mem_calloc(1, size); */
-extern void *mem_realloc(void *p, uint16 size);
-extern void *mem_trim(void *p, uint16 size);
-extern void mem_free(uint8 * x);
+extern void mem_init(void *start_addr);	/* uint8_t * */
+extern void *mem_malloc(uint16_t size);	/* size < 4096 */
+extern void *mem_calloc(uint16_t n, uint16_t count);	/* n*count < 4096 */
+extern void *mem_zalloc(uint16_t size);	/* size < 4096, = mem_calloc(1, size); */
+extern void *mem_realloc(void *p, uint16_t size);
+extern void *mem_trim(void *p, uint16_t size);
+extern void mem_free(uint8_t * x);
 
 /*
    PROVIDE ( mem_calloc = 0x40001c2c );

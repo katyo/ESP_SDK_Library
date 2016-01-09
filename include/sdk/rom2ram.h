@@ -29,10 +29,10 @@ unsigned int rom_xstrcpy(char *pd, const char *ps);
 int rom_xstrcmp(char *pd, const char *ps);
 
 /* Чтение буфера в IRAM */
-bool eRamRead(uint32 addr, uint8 * pd, uint32 len);
+bool eRamRead(uint32_t addr, uint8_t * pd, uint32_t len);
 
 /* Запись буфера в IRAM */
-bool eRamWrite(uint32 addr, uint8 * ps, uint32 len);
+bool eRamWrite(uint32_t addr, uint8_t * ps, uint32_t len);
 
 /* strchr() поиск символа в строках находящихся в сегментах flash и IRAM  */
 char *rom_strchr(const char *ps, char c);
@@ -46,8 +46,8 @@ void write_align4_chr(unsigned char *pd, unsigned char c);
    char * ets_strrchr(const char *string, int c); */
 
 typedef struct t_eraminfo {	/* описание свободной области в iram */
-  uint32 *base;			/* адрес начала буфера */
-  int32 size;			/* размер в байтах */
+  uint32_t *base;			/* адрес начала буфера */
+  int32_t size;			/* размер в байтах */
 } ERAMInfo;
 
 /* описание свободной области (буфера) в iram */

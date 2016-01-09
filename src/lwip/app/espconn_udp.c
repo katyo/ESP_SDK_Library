@@ -35,7 +35,7 @@ static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
 #  endif
 
 extern espconn_msg *plink_active;
-extern uint8 default_interface;
+extern uint8_t default_interface;
 
 enum send_opt {
   ESPCONN_SENDTO,
@@ -78,7 +78,7 @@ espconn_data_sent(void *arg, enum send_opt opt) {
  * Description  : sent data for client or server
  * Parameters   : void *arg -- client or server to send
  *          uint8* psent -- Data to send
- *                uint16 length -- Length of data to send
+ *                uint16_t length -- Length of data to send
  * Returns      : return espconn error code.
  * - ESPCONN_OK. Successful. No error occured.
  * - ESPCONN_MEM. Out of memory.
@@ -86,7 +86,7 @@ espconn_data_sent(void *arg, enum send_opt opt) {
  * - More errors could be returned by lower protocol layers.
  *******************************************************************************/
 err_t ICACHE_FLASH_ATTR
-espconn_udp_sent(void *arg, uint8 * psent, uint16 length) {
+espconn_udp_sent(void *arg, uint8_t * psent, uint16_t length) {
   espconn_msg *pudp_sent = arg;
   struct udp_pcb *upcb = pudp_sent->pcommon.pcb;
   struct pbuf *p, *q, *p_temp;
@@ -186,7 +186,7 @@ espconn_udp_sent(void *arg, uint8 * psent, uint16 length) {
  * Description  : sent data for UDP
  * Parameters   : void *arg -- UDP to send
  *          uint8* psent -- Data to send
- *                uint16 length -- Length of data to send
+ *                uint16_t length -- Length of data to send
  * Returns      : return espconn error code.
  * - ESPCONN_OK. Successful. No error occured.
  * - ESPCONN_MEM. Out of memory.
@@ -194,7 +194,7 @@ espconn_udp_sent(void *arg, uint8 * psent, uint16 length) {
  * - More errors could be returned by lower protocol layers.
  *******************************************************************************/
 err_t ICACHE_FLASH_ATTR
-espconn_udp_sendto(void *arg, uint8 * psent, uint16 length) {
+espconn_udp_sendto(void *arg, uint8_t * psent, uint16_t length) {
   espconn_msg *pudp_sent = arg;
   struct udp_pcb *upcb = pudp_sent->pcommon.pcb;
   struct espconn *pespconn = pudp_sent->pespconn;
@@ -325,7 +325,7 @@ espconn_udp_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
     wifi_get_ip_info(1, &ipconfig);
 
     struct ip_addr remoteIP;
-    uint8 *u8_remote_IP = precv->pespconn->proto.udp->remote_ip;
+    uint8_t *u8_remote_IP = precv->pespconn->proto.udp->remote_ip;
 
 #  if BYTE_ORDER == LITTLE_ENDIAN
     remoteIP.addr = (uint32_t) ip4_addr1(u8_remote_IP) |
@@ -398,7 +398,7 @@ espconn_udp_disconnect(espconn_msg * pdiscon) {
  * Parameters   : pespconn -- the espconn used to build server
  * Returns      : none
  *******************************************************************************/
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_udp_server(struct espconn *pespconn) {
   struct udp_pcb *upcb = NULL;
   espconn_msg *pserver = NULL;
@@ -431,7 +431,7 @@ espconn_udp_server(struct espconn *pespconn) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_igmp_leave(ip_addr_t * host_ip, ip_addr_t * multicast_ip) {
   if (igmp_leavegroup(host_ip, multicast_ip) != ERR_OK) {
     LWIP_DEBUGF(ESPCONN_UDP_DEBUG, ("udp_leave_multigrup failed!\n"));
@@ -448,7 +448,7 @@ espconn_igmp_leave(ip_addr_t * host_ip, ip_addr_t * multicast_ip) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-sint8 ICACHE_FLASH_ATTR
+int8_t ICACHE_FLASH_ATTR
 espconn_igmp_join(ip_addr_t * host_ip, ip_addr_t * multicast_ip) {
   if (igmp_joingroup(host_ip, multicast_ip) != ERR_OK) {
     LWIP_DEBUGF(ESPCONN_UDP_DEBUG, ("udp_join_multigrup failed!\n"));

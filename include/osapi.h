@@ -34,7 +34,7 @@
 #  define os_strncpy ets_strncpy
 #  define os_strstr ets_strstr
 #  define os_random phy_get_rand
-extern uint32 phy_get_rand(void);
+extern uint32_t phy_get_rand(void);
 
 #  ifdef USE_US_TIMER
 #    define os_timer_arm_us(a, b, c) ets_timer_arm_new(a, b, c, 0)

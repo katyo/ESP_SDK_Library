@@ -96,7 +96,7 @@
 
 extern char _heap_start;
 
-#  define configTOTAL_HEAP_SIZE     ( ( size_t ) ( 0x3fffc000 - (uint32)&_heap_start ) )
+#  define configTOTAL_HEAP_SIZE     ( ( size_t ) ( 0x3fffc000 - (uint32_t)&_heap_start ) )
 
 /* Block sizes must not get too small. */
 #  define heapMINIMUM_BLOCK_SIZE  ( ( size_t ) ( heapSTRUCT_SIZE * 2 ) )

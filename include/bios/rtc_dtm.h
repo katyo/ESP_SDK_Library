@@ -28,37 +28,37 @@
 
 struct sdtm_params {		/* RAM_BIOS:3FFFDD64 */
   ETSTimer timer;		/* +0x00..0x14 */
-  uint32 dtm_14;		/* +0x14 // a6 dtm_set_params */
-  uint32 rxbcn_mactime;		/* +0x18 */
-  uint32 tsf_us;		/* +0x1C */
-  uint32 sleep_time;		/* +0x20 time */
-  uint32 timer_us;		/* +0x24 */
-  uint32 time_ms;		/* +0x28 */
-  uint32 dtm_2C;		/* +0x2C // a4 dtm_set_params */
-  uint32 mode;			/* +0x30 */
-  uint32 cycles;		/* +0x34 timer cycles */
-  uint32 intr_mask;		/* +0x38 */
-  uint32 sleep_func;		/* +0x3C */
-  uint32 int_func;		/* +0x40 */
-  uint32 dtm_44;		/* +0x44 */
+  uint32_t dtm_14;		/* +0x14 // a6 dtm_set_params */
+  uint32_t rxbcn_mactime;		/* +0x18 */
+  uint32_t tsf_us;		/* +0x1C */
+  uint32_t sleep_time;		/* +0x20 time */
+  uint32_t timer_us;		/* +0x24 */
+  uint32_t time_ms;		/* +0x28 */
+  uint32_t dtm_2C;		/* +0x2C // a4 dtm_set_params */
+  uint32_t mode;			/* +0x30 */
+  uint32_t cycles;		/* +0x34 timer cycles */
+  uint32_t intr_mask;		/* +0x38 */
+  uint32_t sleep_func;		/* +0x3C */
+  uint32_t int_func;		/* +0x40 */
+  uint32_t dtm_44;		/* +0x44 */
 };
 
 /* RAM_BIOS:3FFFDD64 */
 extern struct sdtm_params dtm_params;	/* 64 bytes */
 
 /* RAM_BIOS:3FFFC700 */
-extern uint32 rtc_claib;	/* ~ = 0x7073 */
+extern uint32_t rtc_claib;	/* ~ = 0x7073 */
 
 /* software_reset: Not work for any mode! */
 void software_reset(void);
-void rtc_set_sleep_mode(uint32 a, uint32 t, uint32 m);
+void rtc_set_sleep_mode(uint32_t a, uint32_t t, uint32_t m);
 
 /*rtc_reset_reason: =1 - ch_pd,  =2 - reset, =4 - Wdt Reset ... > 7 unknown reset */
-uint32 rtc_get_reset_reason(void);
-void save_rxbcn_mactime(uint32 t);
-void save_tsf_us(uint32 us);
-void dtm_set_intr_mask(uint32 mask);
-uint32 dtm_get_intr_mask(void);
+uint32_t rtc_get_reset_reason(void);
+void save_rxbcn_mactime(uint32_t t);
+void save_tsf_us(uint32_t us);
+void dtm_set_intr_mask(uint32_t mask);
+uint32_t dtm_get_intr_mask(void);
 void dtm_params_init(void *sleep_func, void *int_func);
 void dtm_set_params(int mode, int time_ms_a3, int a4, int cycles, int a6);
 void rtc_intr_handler(void);

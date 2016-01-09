@@ -383,7 +383,7 @@ sys_untimeout(sys_timeout_handler handler, void *arg) {
 }
 
 #  if NO_SYS
-extern uint8 timer2_ms_flag;
+extern uint8_t timer2_ms_flag;
 
 /** Handle timeouts for NO_SYS==1 (i.e. without using
  * tcpip_thread/sys_timeouts_mbox_fetch(). Uses sys_now() to call timeout

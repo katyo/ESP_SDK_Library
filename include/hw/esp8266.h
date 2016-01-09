@@ -25,25 +25,25 @@
 #    define ICACHE_IRAM_ATTR __attribute__((section(".text")))
 #  endif
 
-extern volatile uint32 dport_[64];	/* 0x3ff00000 */
-extern volatile uint32 io2_regs_[1536];	/* 0x3ff20000 */
-extern volatile uint32 uart0_[64];	/* 0x60000000 */
-extern volatile uint32 spi1_[64];	/* 0x60000100 */
-extern volatile uint32 spi0_[64];	/* 0x60000200 */
-extern volatile uint32 gpio_[64];	/* 0x60000300 */
-extern volatile uint32 hdrf_[64];	/* 0x60000500 */
-extern volatile uint32 timer_[64];	/* 0x60000600 */
-extern volatile uint32 rtc_[64];	/* 0x60000700 */
-extern volatile uint32 iomux_[64];	/* 0x60000800 */
-extern volatile uint32 wdt_[64];	/* 0x60000900 */
-extern volatile uint32 sdio_[64];	/* 0x60000A00 */
-extern volatile uint32 scl_[64];	/* 0x60000B00 */
-extern volatile uint32 sar_[64];	/* 0x60000D00 */
-extern volatile uint32 i2s_[64];	/* 0x60000E00 */
-extern volatile uint32 uart1_[64];	/* 0x60000F00 */
-extern volatile uint32 rtc_ram_[64];	/* 0x60001000 */
-extern volatile uint32 rtc_mem_[192];	/* 0x60001100 */
-extern volatile uint32 io4_regs_[384];	/* 0x60009800 */
+extern volatile uint32_t dport_[64];	/* 0x3ff00000 */
+extern volatile uint32_t io2_regs_[1536];	/* 0x3ff20000 */
+extern volatile uint32_t uart0_[64];	/* 0x60000000 */
+extern volatile uint32_t spi1_[64];	/* 0x60000100 */
+extern volatile uint32_t spi0_[64];	/* 0x60000200 */
+extern volatile uint32_t gpio_[64];	/* 0x60000300 */
+extern volatile uint32_t hdrf_[64];	/* 0x60000500 */
+extern volatile uint32_t timer_[64];	/* 0x60000600 */
+extern volatile uint32_t rtc_[64];	/* 0x60000700 */
+extern volatile uint32_t iomux_[64];	/* 0x60000800 */
+extern volatile uint32_t wdt_[64];	/* 0x60000900 */
+extern volatile uint32_t sdio_[64];	/* 0x60000A00 */
+extern volatile uint32_t scl_[64];	/* 0x60000B00 */
+extern volatile uint32_t sar_[64];	/* 0x60000D00 */
+extern volatile uint32_t i2s_[64];	/* 0x60000E00 */
+extern volatile uint32_t uart1_[64];	/* 0x60000F00 */
+extern volatile uint32_t rtc_ram_[64];	/* 0x60001000 */
+extern volatile uint32_t rtc_mem_[192];	/* 0x60001100 */
+extern volatile uint32_t io4_regs_[384];	/* 0x60009800 */
 
 #  define MEMW() __asm__ __volatile__ ("memw" : : : "memory")	/* синхронизация и ожидание отработки fifo-write на шинах CPU */
 

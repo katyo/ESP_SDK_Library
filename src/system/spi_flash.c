@@ -18,7 +18,7 @@ int dual_flash_flag;
 void *flash_read DATA_IRAM_ATTR;
 #endif
 
-uint32 flash_size DATA_IRAM_ATTR;
+uint32_t flash_size DATA_IRAM_ATTR;
 
 /* =============================================================================
    define
@@ -57,7 +57,7 @@ Cache_Read_Enable_New(void) {
  *******************************************************************************/
 #define SPI_FBLK 32
 SpiFlashOpResult
-spi_flash_read(uint32 faddr, void *des, uint32 size) {
+spi_flash_read(uint32_t faddr, void *des, uint32_t size) {
 #if DEBUGSOO > 5
   ets_printf("fread:%p<-%p[%u]\n", des, faddr, size);
 #endif
@@ -73,7 +73,7 @@ spi_flash_read(uint32 faddr, void *des, uint32 size) {
       faddr >>= 8;		/* ограничение на 16 MBytes (1<<24) */
       Cache_Read_Disable();
       Wait_SPI_Idle(flashchip);
-      uint32 blksize = (uint32) des & 3;
+      uint32_t blksize = (uint32_t) des & 3;
 
       if (blksize) {
 	blksize = 4 - blksize;
@@ -87,11 +87,11 @@ spi_flash_read(uint32 faddr, void *des, uint32 size) {
 	size -= blksize;
 	faddr += blksize;
 	while (SPI0_CMD);
-	register uint32 data_buf = SPI0_W0;
+	register uint32_t data_buf = SPI0_W0;
 
 	do {
-	  *(uint8 *) des = data_buf;
-	  des = (uint8 *) des + 1;
+	  *(uint8_t *) des = data_buf;
+	  des = (uint8_t *) des + 1;
 	  data_buf >>= 8;
 	} while (--blksize);
       }
@@ -109,24 +109,24 @@ spi_flash_read(uint32 faddr, void *des, uint32 size) {
 	faddr += blksize;
 	while (SPI0_CMD);
 	/* __asm__ __volatile__("memw" : : : "memory");
-	 * volatile uint32 *srcdw = (volatile uint32 *)(SPI0_BASE+0x40); */
-	uint32 *srcdw = (uint32 *) (&SPI0_W0);
+	 * volatile uint32_t *srcdw = (volatile uint32_t *)(SPI0_BASE+0x40); */
+	uint32_t *srcdw = (uint32_t *) (&SPI0_W0);
 
-	/*                      uint32 *srcdw = (uint32 *)(SPI0_BASE+0x40); */
+	/*                      uint32_t *srcdw = (uint32_t *)(SPI0_BASE+0x40); */
 	while (blksize >> 2) {
-	  *((uint32 *) des) = *srcdw++;
-	  des = ((uint32 *) des) + 1;
+	  *((uint32_t *) des) = *srcdw++;
+	  des = ((uint32_t *) des) + 1;
 	  blksize -= 4;
 	}
 	if (blksize) {
 #if DEBUGSOO > 4
 	  ets_printf("fr3:%p<-%p[%u]\n", des, faddr, blksize);
 #endif
-	  uint32 data_buf = *srcdw;
+	  uint32_t data_buf = *srcdw;
 
 	  do {
-	    *(uint8 *) des = data_buf;
-	    des = (uint8 *) des + 1;
+	    *(uint8_t *) des = data_buf;
+	    des = (uint8_t *) des + 1;
 	    data_buf >>= 8;
 	  } while (--blksize);
 	  break;
@@ -143,7 +143,7 @@ spi_flash_read(uint32 faddr, void *des, uint32 size) {
  * FunctionName : spi_flash_get_id
  * Returns      : flash id
  *******************************************************************************/
-uint32
+uint32_t
 spi_flash_get_id(void) {
   Cache_Read_Disable();
   Wait_SPI_Idle(flashchip);
@@ -163,7 +163,7 @@ spi_flash_get_id(void) {
 SpiFlashOpResult
 spi_flash_read_status(uint32_t * sta) {
   Cache_Read_Disable();
-  uint32 ret = SPI_read_status(flashchip, sta);
+  uint32_t ret = SPI_read_status(flashchip, sta);
 
   Cache_Read_Enable_def();
   return ret;
@@ -187,7 +187,7 @@ spi_flash_write_status(uint32_t sta) {
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
 SpiFlashOpResult
-spi_flash_erase_sector(uint16 sec) {
+spi_flash_erase_sector(uint16_t sec) {
   Cache_Read_Disable();
   open_16m();
   SpiFlashOpResult ret = SPIEraseSector(sec);
@@ -202,7 +202,7 @@ spi_flash_erase_sector(uint16 sec) {
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
 SpiFlashOpResult
-spi_flash_write(uint32 des_addr, uint32 * src_addr, uint32 size) {
+spi_flash_write(uint32_t des_addr, uint32_t * src_addr, uint32_t size) {
   if (src_addr == NULL)
     return SPI_FLASH_RESULT_ERR;
   if (size & 3)
@@ -221,7 +221,7 @@ spi_flash_write(uint32 des_addr, uint32 * src_addr, uint32 size) {
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
 SpiFlashOpResult
-spi_flash_erase_block(uint32 blk) {
+spi_flash_erase_block(uint32_t blk) {
   Cache_Read_Disable();
   open_16m();
   SpiFlashOpResult ret = SPIEraseBlock(blk);
@@ -235,11 +235,11 @@ spi_flash_erase_block(uint32 blk) {
  * FunctionName : spi_flash_real_size
  * Returns      : real flash size (512k, 1M, 2M, 4M, 8M, 16M)
  *******************************************************************************/
-uint32 ICACHE_FLASH_ATTR
+uint32_t ICACHE_FLASH_ATTR
 spi_flash_real_size(void) {
   if (flash_size == 0) {
-    uint32 size = FLASH_MIN_SIZE;
-    uint32 x1[8], x2[8];
+    uint32_t size = FLASH_MIN_SIZE;
+    uint32_t x1[8], x2[8];
 
     if (spi_flash_read(0, x1, 8 * 4) == SPI_FLASH_RESULT_OK) {
       for (size = FLASH_MIN_SIZE; size < FLASH_MAX_SIZE; size <<= 1) {
@@ -260,7 +260,7 @@ spi_flash_real_size(void) {
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
 SpiFlashOpResult
-spi_flash_write_bytes_array(uint32 des_addr, uint8 * src_addr, uint32 size) {
+spi_flash_write_bytes_array(uint32_t des_addr, uint8_t * src_addr, uint32_t size) {
   SpiFlashOpResult ret = SPI_FLASH_RESULT_ERR;
 
   if (src_addr == NULL || size == 0)
@@ -268,12 +268,12 @@ spi_flash_write_bytes_array(uint32 des_addr, uint8 * src_addr, uint32 size) {
   Cache_Read_Disable();
   open_16m();
   union {
-    uint8 uc[32];
-    uint32 ui[8];
+    uint8_t uc[32];
+    uint32_t ui[8];
   } tmp;
-  uint8 *p = (uint8 *) src_addr;
-  uint32 xlen = des_addr & 3;
-  uint32 addr = des_addr & (~3);
+  uint8_t *p = (uint8_t *) src_addr;
+  uint32_t xlen = des_addr & 3;
+  uint32_t addr = des_addr & (~3);
 
   if (xlen) {
     if (SPIRead(addr, (uint32_t *) & tmp.ui[0], 4) != 0) {

@@ -57,9 +57,9 @@
 #  define SHA1_HASH_LEN 20
 
 typedef struct {
-  uint32 state[5];
-  uint32 count[2];
-  uint8 buffer[64];
+  uint32_t state[5];
+  uint32_t count[2];
+  uint8_t buffer[64];
 } SHA1_CTX;
 
 #  define SHA1HANDSOFF		/* Copies data before messing with it. */
@@ -67,13 +67,13 @@ typedef struct {
 void SHA1Init(SHA1_CTX * context);
 
 #  ifdef SHA1HANDSOFF
-void SHA1Update(SHA1_CTX * context, const uint8 * data, size_t len);
+void SHA1Update(SHA1_CTX * context, const uint8_t * data, size_t len);
 #  else
-void SHA1Update(SHA1_CTX * context, uint8 * data, size_t len);
+void SHA1Update(SHA1_CTX * context, uint8_t * data, size_t len);
 #  endif
-void SHA1Final(uint8 digest[SHA1_HASH_LEN], SHA1_CTX * context);
+void SHA1Final(uint8_t digest[SHA1_HASH_LEN], SHA1_CTX * context);
 
-void SHA1Transform(uint32 state[5], const uint8 buffer[64]);
+void SHA1Transform(uint32_t state[5], const uint8_t buffer[64]);
 
 /* eagle.rom.addr.v6.ld
    PROVIDE ( SHA1Final = 0x4000b648 );

@@ -31,10 +31,10 @@ __wrap_os_printf_plus(const char *format, ...)
     va_start(args, format);
     i =
       ets_vprintf(ets_write_char,
-		  ((uint32) format >> 30) ? rom_strcpy(print_mem_buf,
-						       (void *)format,
-						       sizeof(print_mem_buf) -
-						       1) : format, args);
+		  ((uint32_t) format >> 30) ? rom_strcpy(print_mem_buf,
+							 (void *)format,
+							 sizeof(print_mem_buf) -
+							 1) : format, args);
     va_end(args);
   }
   return i;
@@ -60,11 +60,11 @@ ets_sprintf(char *str, const char *format, ...) {
 
   va_start(args, format);
   int i = ets_vprintf(_sprintf_out,
-		      ((uint32) format >> 30) ? rom_strcpy(print_mem_buf,
-							   (void *)format,
-							   sizeof
-							   (print_mem_buf) -
-							   1) : format, args);
+		      ((uint32_t) format >> 30) ? rom_strcpy(print_mem_buf,
+							     (void *)format,
+							     sizeof
+							     (print_mem_buf) -
+							     1) : format, args);
   va_end(args);
   return i;
 }

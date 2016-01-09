@@ -37,19 +37,19 @@
    ----------------------------------------------------------------------------- */
 struct s_info info;		/* ip,mask,gw,mac AP, ST */
 ETSTimer check_timeouts_timer DATA_IRAM_ATTR;	/* timer_lwip */
-uint8 user_init_flag;
+uint8_t user_init_flag;
 
 #if DEF_SDK_VERSION >= 1400
 extern int chip_v6_set_chan_offset(int, int);
-extern uint8 phy_rx_gain_dc_flag;
-extern uint8 *phy_rx_gain_dc_table;
-extern sint16 TestStaFreqCalValInput;
+extern uint8_t phy_rx_gain_dc_flag;
+extern uint8_t *phy_rx_gain_dc_table;
+extern int16_t TestStaFreqCalValInput;
 extern struct rst_info rst_inf;
 #endif
 #if DEF_SDK_VERSION >= 1200
-uint8 SDK_VERSION[] = { SDK_VERSION_TXT };
+uint8_t SDK_VERSION[] = { SDK_VERSION_TXT };
 
-uint16 lwip_timer_interval;
+uint16_t lwip_timer_interval;
 #endif
 
 
@@ -109,13 +109,13 @@ void __attribute__ ((section(".entry.text"))) call_user_start1(void) {
   SPIRead(0, (uint32_t *) & fhead, sizeof(fhead));
   /* Установка размера Flash от 256Kbytes до 32Mbytes
    * High four bits fhead.hsz.flash_size: 0 = 512K, 1 = 256K, 2 = 1M, 3 = 2M, 4 = 4M, ... 7 = 32M */
-  uint32 fsize = fhead.hsz.flash_size & 7;
+  uint32_t fsize = fhead.hsz.flash_size & 7;
 
   if (fsize < 2)
     flashchip->chip_size = (8 >> fsize) << 16;
   else
     flashchip->chip_size = (4 << fsize) << 16;
-  uint32 fspeed = fhead.hsz.spi_freg;
+  uint32_t fspeed = fhead.hsz.spi_freg;
 
   /* Установка:
    * SPI Flash Interface (0 = QIO, 1 = QOUT, 2 = DIO, 0x3 = DOUT)
@@ -136,15 +136,15 @@ void __attribute__ ((section(".entry.text"))) call_user_start1(void) {
     0 = 40MHz, 1 = 26MHz, 2 = 20MHz, >2 = 80MHz
    ----------------------------------------------------------------------------- */
 void
-sflash_something(uint32 flash_speed) {
+sflash_something(uint32_t flash_speed) {
   /*      Flash QIO80:
    * SPI_CTRL = 0x16ab000 : QIO_MODE | TWO_BYTE_STATUS_EN | WP_REG | SHARE_BUS | ENABLE_AHB | RESANDRES | FASTRD_MODE | BIT12
    * IOMUX_BASE = 0x305
    * Flash QIO40:
    * SPI_CTRL = 0x16aa101
    * IOMUX_BASE = 0x205 */
-  uint32 xreg = (SPI0_CTRL >> 12) << 12;	/*  & 0xFFFFF000 */
-  uint32 value;
+  uint32_t xreg = (SPI0_CTRL >> 12) << 12;	/*  & 0xFFFFF000 */
+  uint32_t value;
 
   if (flash_speed > 2) {	/* 80 MHz */
     value = BIT(12);		/* 0x60000208 |= 0x1000 */
@@ -299,7 +299,7 @@ read_align_exception_handler(struct exception_frame *ef, uint32_t cause) {
    Чтение MAC из OTP
    ----------------------------------------------------------------------------- */
 void ICACHE_FLASH_ATTR
-read_macaddr_from_otp(uint8 * mac) {
+read_macaddr_from_otp(uint8_t * mac) {
   mac[0] = 0x18;
   mac[1] = 0xfe;
   mac[2] = 0x34;
@@ -319,7 +319,7 @@ read_macaddr_from_otp(uint8 * mac) {
    ----------------------------------------------------------------------------- */
 /*void ICACHE_FLASH_ATTR mem_clr_bss(void)
    {
-   uint8 * ptr = &_bss_start;
+   uint8_t * ptr = &_bss_start;
    while(ptr < &_bss_end) *ptr++ = 0;
    }*/
 /* -----------------------------------------------------------------------------
@@ -372,15 +372,15 @@ void ICACHE_FLASH_ATTR
 read_wifi_config(void) {
   struct ets_store_wifi_hdr hbuf;
 
-  spi_flash_read(flashchip->chip_size - 0x1000, (uint32 *) (&hbuf),
+  spi_flash_read(flashchip->chip_size - 0x1000, (uint32_t *) (&hbuf),
 		 sizeof(hbuf));
-  uint32 store_cfg_addr =
+  uint32_t store_cfg_addr =
     flashchip->chip_size - 0x3000 + ((hbuf.bank) ? 0x1000 : 0);
   struct s_wifi_store *wifi_config = &g_ic.g.wifi_store;
 
-  spi_flash_read(store_cfg_addr, (uint32 *) wifi_config, wifi_config_size);
+  spi_flash_read(store_cfg_addr, (uint32_t *) wifi_config, wifi_config_size);
   if (hbuf.flag != 0x55AA55AA
-      || system_get_checksum((uint8 *) wifi_config,
+      || system_get_checksum((uint8_t *) wifi_config,
 			     hbuf.xx[(hbuf.bank) ? 1 : 0]) !=
       hbuf.chk[(hbuf.bank) ? 1 : 0]) {
 #ifdef DEBUG_UART
@@ -434,7 +434,7 @@ startup(void) {
   os_printf("\n\nmeSDK %s\n", SDK_VERSION);
 #endif
   /* Очистка сегмента bss //       mem_clr_bss(); */
-  uint8 *ptr = &_bss_start;
+  uint8_t *ptr = &_bss_start;
 
   while (ptr < &_bss_end)
     *ptr++ = 0;
@@ -508,9 +508,9 @@ startup(void) {
 #endif
   /*  */
 #if DEF_SDK_VERSION >= 1400
-  uint8 *buf = os_malloc(SIZE_SAVE_SYS_CONST);
+  uint8_t *buf = os_malloc(SIZE_SAVE_SYS_CONST);
 
-  spi_flash_read(esp_init_data_default_addr, (uint32 *) buf, SIZE_SAVE_SYS_CONST);	/* esp_init_data_default.bin + ??? */
+  spi_flash_read(esp_init_data_default_addr, (uint32_t *) buf, SIZE_SAVE_SYS_CONST);	/* esp_init_data_default.bin + ??? */
 #  if DEF_SDK_VERSION == 1410
   if (buf[112] == 3)
     g_ic.c[471] = 1;
@@ -526,13 +526,13 @@ startup(void) {
    * system_phy_set_rfoption(0);
    */
 #elif DEF_SDK_VERSION >= 1300
-  uint8 *buf = (uint8 *) os_malloc(256);	/* esp_init_data_default.bin */
+  uint8_t *buf = (uint8_t *) os_malloc(256);	/* esp_init_data_default.bin */
 
-  spi_flash_read(esp_init_data_default_addr, (uint32 *) buf, sizeof(esp_init_data_t));	/* esp_init_data_default.bin */
+  spi_flash_read(esp_init_data_default_addr, (uint32_t *) buf, sizeof(esp_init_data_t));	/* esp_init_data_default.bin */
 #else
-  uint8 *buf = (uint8 *) os_malloc(sizeof(esp_init_data_t));	/* esp_init_data_default.bin */
+  uint8_t *buf = (uint8_t *) os_malloc(sizeof(esp_init_data_t));	/* esp_init_data_default.bin */
 
-  spi_flash_read(esp_init_data_default_addr, (uint32 *) buf, sizeof(esp_init_data_t));	/* esp_init_data_default.bin */
+  spi_flash_read(esp_init_data_default_addr, (uint32_t *) buf, sizeof(esp_init_data_t));	/* esp_init_data_default.bin */
 #endif
   /*  */
   if (buf[0] != 5) {		/* первый байт esp_init_data_default.bin не равен 5 ? - бардак! */
@@ -561,11 +561,11 @@ startup(void) {
   /*      os_printf("RTC_MEM(0) = %u\n", rst_if.reason); */
   if (rst_if.reason >= REASON_EXCEPTION_RST && rst_if.reason < REASON_DEEP_SLEEP_AWAKE) {	/* >= 2 < 5 */
     /* 2,3,4 REASON_EXCEPTION_RST, REASON_SOFT_WDT_RST, REASON_SOFT_RESTART */
-    TestStaFreqCalValInput = RTC_RAM_BASE[0x78 >> 2] >> 16;	/* *((volatile uint32 *)0x60001078) >> 16 */
+    TestStaFreqCalValInput = RTC_RAM_BASE[0x78 >> 2] >> 16;	/* *((volatile uint32_t *)0x60001078) >> 16 */
     chip_v6_set_chan_offset(1, TestStaFreqCalValInput);
   } else {
     TestStaFreqCalValInput = 0;
-    RTC_RAM_BASE[0x78 >> 2] &= 0xFFFF;	/* *((volatile uint32 *)0x60001078) &= &0xFFFF; */
+    RTC_RAM_BASE[0x78 >> 2] &= 0xFFFF;	/* *((volatile uint32_t *)0x60001078) &= &0xFFFF; */
     if (rst_if.reason > REASON_EXT_SYS_RST)
       rst_if.reason = REASON_DEFAULT_RST;
     if (rst_if.reason != REASON_DEEP_SLEEP_AWAKE
@@ -644,7 +644,7 @@ startup(void) {
 /* ----------------------------------------------------------------------------- */
 #ifdef DEBUG_UART
 void ICACHE_FLASH_ATTR
-puts_buf(uint8 ch) {
+puts_buf(uint8_t ch) {
   if (UartDev.trx_buff.TrxBuffSize < (TX_BUFF_SIZE - 1)) {
     UartDev.trx_buff.pTrxBuff[UartDev.trx_buff.TrxBuffSize++] = ch;
     UartDev.trx_buff.pTrxBuff[UartDev.trx_buff.TrxBuffSize] = 0;
@@ -656,7 +656,7 @@ puts_buf(uint8 ch) {
    ----------------------------------------------------------------------------- */
 const char aFATAL_ERR_R6PHY[] ICACHE_RODATA_ATTR = "register_chipv6_phy";
 void ICACHE_FLASH_ATTR
-init_wifi(uint8 * init_data, uint8 * mac) {
+init_wifi(uint8_t * init_data, uint8_t * mac) {
 #ifdef DEBUG_UART
   uart_wait_tx_fifo_empty();
   UartDev.trx_buff.TrxBuffSize = 0;
@@ -700,7 +700,7 @@ uart_wait_tx_fifo_empty(void) {
    Use SDK Espressif
    ----------------------------------------------------------------------------- */
 void
-user_uart_wait_tx_fifo_empty(uint32 uart_num, uint32 x) {
+user_uart_wait_tx_fifo_empty(uint32_t uart_num, uint32_t x) {
   if (uart_num)
     while ((UART1_STATUS >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT);
   else

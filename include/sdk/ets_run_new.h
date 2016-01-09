@@ -12,7 +12,7 @@
 #  ifdef USE_ETS_RUN_NEW
 
 void ets_run_new(void);
-void task_delay_us(uint32 us);
+void task_delay_us(uint32_t us);
 void run_sdk_tasks(void);
 
 #  endif

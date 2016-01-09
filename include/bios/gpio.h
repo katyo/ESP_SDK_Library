@@ -32,7 +32,7 @@ typedef enum {
 #  define GPIO_INPUT_GET(gpio_no)     ((gpio_input_get()>>gpio_no)&BIT0)
 
 /* GPIO interrupt handler, registered through gpio_intr_handler_register */
-typedef void (*gpio_intr_handler_fn_t) (uint32 intr_mask, void *arg);
+typedef void (*gpio_intr_handler_fn_t) (uint32_t intr_mask, void *arg);
 
 
 /*
@@ -52,14 +52,14 @@ void gpio_init(void);
  * writes is significant, calling code should divide a single call
  * into multiple calls.
  */
-void gpio_output_set(uint32 set_mask,
-		     uint32 clear_mask,
-		     uint32 enable_mask, uint32 disable_mask);
+void gpio_output_set(uint32_t set_mask,
+		     uint32_t clear_mask,
+		     uint32_t enable_mask, uint32_t disable_mask);
 
 /*
  * Sample the value of GPIO input pins and returns a bitmask.
  */
-uint32 gpio_input_get(void);
+uint32_t gpio_input_get(void);
 
 /*
  * Set the specified GPIO register to the specified value.
@@ -67,10 +67,10 @@ uint32 gpio_input_get(void);
  * expected to be used during normal operation.  It is intended
  * mainly for debug, or for unusual requirements.
  */
-void gpio_register_set(uint32 reg_id, uint32 value);
+void gpio_register_set(uint32_t reg_id, uint32_t value);
 
 /* Get the current value of the specified GPIO register. */
-uint32 gpio_register_get(uint32 reg_id);
+uint32_t gpio_register_get(uint32_t reg_id);
 
 /*
  * Register an application-specific interrupt handler for GPIO pin
@@ -86,19 +86,19 @@ uint32 gpio_register_get(uint32 reg_id);
 void gpio_intr_handler_register(gpio_intr_handler_fn_t fn, void *arg);
 
 /* Determine which GPIO interrupts are pending. */
-uint32 gpio_intr_pending(void);	/* return *((void *)(0x3FFFDFD0)); */
+uint32_t gpio_intr_pending(void);	/* return *((void *)(0x3FFFDFD0)); */
 
 /*
  * Acknowledge GPIO interrupts.
  * Intended to be called from the gpio_intr_handler_fn.
  */
-void gpio_intr_ack(uint32 ack_mask);
+void gpio_intr_ack(uint32_t ack_mask);
 
-void gpio_pin_wakeup_enable(uint32 i, GPIO_INT_TYPE intr_state);
+void gpio_pin_wakeup_enable(uint32_t i, GPIO_INT_TYPE intr_state);
 
 void gpio_pin_wakeup_disable();
 
-void gpio_pin_intr_state_set(uint32 i, GPIO_INT_TYPE intr_state);
+void gpio_pin_intr_state_set(uint32_t i, GPIO_INT_TYPE intr_state);
 
 /*
    PROVIDE ( gpio_init = 0x40004c50 );
@@ -115,7 +115,7 @@ void gpio_pin_intr_state_set(uint32 i, GPIO_INT_TYPE intr_state);
    PROVIDE ( gpio_register_set = 0x40004d04 );
  */
 
-void gpio_intr_test(uint32 ack_mask);	/* {
+void gpio_intr_test(uint32_t ack_mask);	/* {
 					 * if(gpio_input_get() & 1<<3) gpio_output_set(2, 0x7C, 3, 0);
 					 * else gpio_output_set(0, 0x7E, 2, 0)
 					 * gpio_intr_ack(ack_mask); } */

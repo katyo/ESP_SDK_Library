@@ -110,7 +110,7 @@
 
 #  define get_sys_const(a)  ((*((unsigned int *)((unsigned int)((a) + FLASH_BASE + FLASH_SYSCONST_ADR) & (~3))))>>(((unsigned int)a & 3) << 3))
 
-extern uint8 chip6_phy_init_ctrl[128];	/*  */
-extern uint8 phy_in_most_power;	/* system_phy_set_max_tpw() */
+extern uint8_t chip6_phy_init_ctrl[128];	/*  */
+extern uint8_t phy_in_most_power;	/* system_phy_set_max_tpw() */
 
 #endif /* _INCLUDE_SYS_CONST_H_ */

@@ -125,8 +125,8 @@ extern void *ets_idle_arg;
 void ets_set_idle_cb(void *routine, void *arg);
 
 typedef struct _sargc_tsk {
-  uint32 x1;
-  uint32 x2;
+  uint32_t x1;
+  uint32_t x2;
 } sargc_tsk;
 
 typedef void (tfunc_tsk) (void *);
@@ -134,31 +134,31 @@ typedef void (tfunc_tsk) (void *);
 typedef struct _ss_task {
   tfunc_tsk *func;		/* +0 */
   sargc_tsk *argc;		/* +4 */
-  uint8 size;			/* +8 */
-  uint8 ch_09;			/* +9 */
-  uint8 cnts;			/* +10 */
-  uint8 cnte;			/* +11 */
-  uint32 bitn;			/* +12 */
+  uint8_t size;			/* +8 */
+  uint8_t ch_09;			/* +9 */
+  uint8_t cnts;			/* +10 */
+  uint8_t cnte;			/* +11 */
+  uint32_t bitn;			/* +12 */
 } ss_task;
 
 /* RAM_BIOS:3FFFC6FC */
-extern uint8 ets_bit_task_priority;
+extern uint8_t ets_bit_task_priority;
 
 /* RAM_BIOS:3FFFDAB0
    extern tfunc_tsk ets_idle_cb;
    RAM_BIOS:3FFFDAB4
    extern void * ets_idle_arg;
    RAM_BIOS:3FFFDAB8 */
-extern uint32 ets_bit_count_task;
+extern uint32_t ets_bit_count_task;
 
 /* RAM_BIOS:3FFFDAC0 */
 extern ss_task ets_tab_task[32];	/* 512 bytes, 32x16 */
 void ets_run(void);
 
-/*{	uint32 x = xthal_get_ccount();
-   uint32 y = cpu_clk_mhz * us;
+/*{	uint32_t x = xthal_get_ccount();
+   uint32_t y = cpu_clk_mhz * us;
    while(x - xthal_get_ccount() > y); }*/
-void ets_delay_us(uint32 us);
+void ets_delay_us(uint32_t us);
 
 /* typedef char * va_list; */
 /* Print formatted data from variable argument list to stdout
@@ -193,7 +193,7 @@ extern char *printf_buf_len;
 /* if (printf_buf_len !=0 ) { *printf_pbuf++ = с; printf_buf_len--; } */
 void _putc2_def(char c);
 
-/* struct x {uint16 size; uint8 * ptr; }; */
+/* struct x {uint16_t size; uint8_t * ptr; }; */
 void eprintf_init_buf(void *x);
 
 /* Print formatted data to eprintf_buf */
@@ -207,7 +207,7 @@ void ets_rtc_int_register(void);	/*  */
 int ets_char2xdigit(char asci);
 
 /* Inpyt: char *str_mac [' ' or '\t']xx:xx:xx:xx:xx:xx, Outpyt: mac[6], return != 0 - Ok   */
-int ets_str2macaddr(uint8 mac, char *str_mac);	/*  */
+int ets_str2macaddr(uint8_t mac, char *str_mac);	/*  */
 
 #  ifndef _ETS_SYS_H
 typedef uint32_t ETSSignal;
@@ -226,7 +226,7 @@ typedef void (*ETSTask) (ETSEvent * e);
 typedef uint8_t ETSPriority;
 
 bool ets_post(uint32_t prio, ETSSignal sig, ETSParam par);
-void ets_task(ETSTask task, uint32_t prio, ETSEvent * queue, uint8 qlen);
+void ets_task(ETSTask task, uint32_t prio, ETSEvent * queue, uint8_t qlen);
 
 void ets_isr_attach(uint32_t, void *, void *);
 void ets_isr_mask(uint32_t);
@@ -251,7 +251,7 @@ typedef struct _ETSTIMER_ {
 
 void ets_timer_handler_isr(void);
 void ets_timer_arm(ETSTimer * ptimer, uint32_t us_ms, bool repeat_flag);
-void timer_insert(uint32 tim_count, ETSTimer * ptimer);
+void timer_insert(uint32_t tim_count, ETSTimer * ptimer);
 void ets_timer_disarm(ETSTimer * ptimer);
 void ets_timer_setfn(ETSTimer * ptimer, ETSTimerFunc * pfunction, void *parg);
 void ets_timer_init(void);
@@ -282,6 +282,6 @@ void ets_wdt_restore(int mode);
 void software_reset(void);
 
 /* RAM_BIOS: 0x3fffc704 */
-extern uint8 cpu_clk_mhz;
+extern uint8_t cpu_clk_mhz;
 
 #endif /* _INCLUDE_BIOS_ETS_SYS_H_ */

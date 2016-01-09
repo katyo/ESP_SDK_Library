@@ -28,39 +28,39 @@ wdt_init(void)
 
 #  ifdef DEBUG_EXCEPTION
      struct exception_frame {
-       uint32 epc;
-       uint32 ps;
-       uint32 sar;
-       uint32 unused;
+       uint32_t epc;
+       uint32_t ps;
+       uint32_t sar;
+       uint32_t unused;
        union {
 	 struct {
-	   uint32 a0;
+	   uint32_t a0;
 	   /* note: no a1 here! */
-	   uint32 a2;
-	   uint32 a3;
-	   uint32 a4;
-	   uint32 a5;
-	   uint32 a6;
-	   uint32 a7;
-	   uint32 a8;
-	   uint32 a9;
-	   uint32 a10;
-	   uint32 a11;
-	   uint32 a12;
-	   uint32 a13;
-	   uint32 a14;
-	   uint32 a15;
+	   uint32_t a2;
+	   uint32_t a3;
+	   uint32_t a4;
+	   uint32_t a5;
+	   uint32_t a6;
+	   uint32_t a7;
+	   uint32_t a8;
+	   uint32_t a9;
+	   uint32_t a10;
+	   uint32_t a11;
+	   uint32_t a12;
+	   uint32_t a13;
+	   uint32_t a14;
+	   uint32_t a15;
 	 };
-	 uint32 a_reg[15];
+	 uint32_t a_reg[15];
        };
-       uint32 cause;
+       uint32_t cause;
      };
-     void default_exception_handler(struct exception_frame *ef, uint32 cause);
+     void default_exception_handler(struct exception_frame *ef, uint32_t cause);
 #  else
      void default_exception_handler(void);
 #  endif
 
-     void store_exception_error(uint32 errn);
+     void store_exception_error(uint32_t errn);
 
      void os_print_reset_error(void) ICACHE_FLASH_ATTR;
 

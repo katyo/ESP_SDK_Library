@@ -14,29 +14,27 @@
 
 #  define SPI_FLASH_SEC_SIZE      4096
 
-uint32 spi_flash_get_id(void);
+uint32_t spi_flash_get_id(void);
 SpiFlashOpResult spi_flash_read_status(uint32_t * sta);
 SpiFlashOpResult spi_flash_write_status(uint32_t sta);
-SpiFlashOpResult spi_flash_erase_sector(uint16 sec);
-SpiFlashOpResult spi_flash_write(uint32 faddr, uint32 * src_addr,
-				 uint32 size);
-SpiFlashOpResult spi_flash_read(uint32 faddr, void *des, uint32 size);
-SpiFlashOpResult spi_flash_erase_block(uint32 blk);
+SpiFlashOpResult spi_flash_erase_sector(uint16_t sec);
+SpiFlashOpResult spi_flash_write(uint32_t faddr, uint32_t * src_addr,
+				 uint32_t size);
+SpiFlashOpResult spi_flash_read(uint32_t faddr, void *des, uint32_t size);
+SpiFlashOpResult spi_flash_erase_block(uint32_t blk);
 
-uint32
-spi_flash_real_size(void)
-  ICACHE_FLASH_ATTR;
+uint32_t spi_flash_real_size(void) ICACHE_FLASH_ATTR;
 
 #  ifdef USE_OVERLAP_MODE
 
-     typedef SpiFlashOpResult(*user_spi_flash_read) (SpiFlashChip * spi,
-						     uint32 src_addr,
-						     uint32 * des_addr,
-						     uint32 size);
+typedef SpiFlashOpResult(*user_spi_flash_read) (SpiFlashChip * spi,
+						uint32_t src_addr,
+						uint32_t * des_addr,
+						uint32_t size);
 
-     extern user_spi_flash_read flash_read;
+extern user_spi_flash_read flash_read;
 
-     void spi_flash_set_read_func(user_spi_flash_read read);
+void spi_flash_set_read_func(user_spi_flash_read read);
 
 #  endif
 

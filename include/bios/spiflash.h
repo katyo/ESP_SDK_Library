@@ -12,25 +12,25 @@
 #  include "c_types.h"
 
 struct SPIFlashHsz {
-  uint8 spi_freg:4;		/* Low four bits: 0 = 40MHz, 1= 26MHz, 2 = 20MHz, 0x3 = 80MHz */
-  uint8 flash_size:4;		/* High four bits: 0 = 512K, 1 = 256K, 2 = 1M, 3 = 2M, 4 = 4M, */
+  uint8_t spi_freg:4;		/* Low four bits: 0 = 40MHz, 1= 26MHz, 2 = 20MHz, 0x3 = 80MHz */
+  uint8_t flash_size:4;		/* High four bits: 0 = 512K, 1 = 256K, 2 = 1M, 3 = 2M, 4 = 4M, */
 } __attribute__ ((packed));
 
 struct SPIFlashHead {		/* заголовок flash (использует загрузчик BIOS) */
-  uint8 id;			/* = 0xE9 */
-  uint8 number_segs;		/* Number of segments */
-  uint8 spi_interface;		/* SPI Flash Interface (0 = QIO, 1 = QOUT, 2 = DIO, 0x3 = DOUT) */
+  uint8_t id;			/* = 0xE9 */
+  uint8_t number_segs;		/* Number of segments */
+  uint8_t spi_interface;		/* SPI Flash Interface (0 = QIO, 1 = QOUT, 2 = DIO, 0x3 = DOUT) */
   struct SPIFlashHsz hsz;	/* options */
 } __attribute__ ((packed));
 
 struct SPIFlashHeadSegment {
-  uint32 memory_offset;		/* Memory offset */
-  uint32 segment_size;		/* Segment size */
+  uint32_t memory_offset;		/* Memory offset */
+  uint32_t segment_size;		/* Segment size */
 };
 
 struct SPIFlashHeader {		/* полный заголовок flash (использует загрузчик BIOS) */
   struct SPIFlashHead head;
-  uint32 entry_point;		/* Entry point */
+  uint32_t entry_point;		/* Entry point */
   struct SPIFlashHeadSegment seg;	/* Segment */
 } __attribute__ ((packed));
 

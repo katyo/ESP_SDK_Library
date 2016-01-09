@@ -40,7 +40,7 @@ static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
    static const uint8_t xid[4] = {0xad, 0xde, 0x12, 0x23};
    static const uint8_t magic_cookie[4] = {99, 130, 83, 99};
    static u8_t old_xid[4] = {0}; */
-static const uint32 magic_cookie ICACHE_RODATA_ATTR = 0x63538263;
+static const uint32_t magic_cookie ICACHE_RODATA_ATTR = 0x63538263;
 static struct udp_pcb *pcb_dhcps LWIP_DATA_IRAM_ATTR;	/* = NULL; */
 static struct ip_addr broadcast_dhcps;
 static struct ip_addr server_address;
@@ -49,13 +49,13 @@ static struct ip_addr client_address_plus;
 
 /* static */
 struct dhcps_lease dhcps_lease;
-uint32 dhcps_lease_flag LWIP_DATA_IRAM_ATTR;	/* = FALSE; */
+uint32_t dhcps_lease_flag LWIP_DATA_IRAM_ATTR;	/* = FALSE; */
 static list_node *plist LWIP_DATA_IRAM_ATTR;	/* = NULL; */
-static uint8 offer = 0xFF;
-static uint32 renew LWIP_DATA_IRAM_ATTR;	/* = false; */
+static uint8_t offer = 0xFF;
+static uint32_t renew LWIP_DATA_IRAM_ATTR;	/* = false; */
 
 #  define DHCPS_LEASE_TIME_DEF  (120)
-uint32 dhcps_lease_time LWIP_DATA_IRAM_ATTR;	/* = DHCPS_LEASE_TIME_DEF;  //minute -> init in dhcps_start() */
+uint32_t dhcps_lease_time LWIP_DATA_IRAM_ATTR;	/* = DHCPS_LEASE_TIME_DEF;  //minute -> init in dhcps_start() */
 
 /******************************************************************************
  * FunctionName : node_insert_to_list
@@ -538,7 +538,7 @@ send_ack(struct dhcps_msg *m) {
  */
 /* ///////////////////////////////////////////////////////////////////////////////// */
 static uint8_t ICACHE_FLASH_ATTR
-parse_options(uint8_t * optptr, sint16_t len) {
+parse_options(uint8_t * optptr, int16_t len) {
   struct ip_addr client;
   bool is_dhcp_parse_end = false;
   struct dhcps_state s;
@@ -552,9 +552,9 @@ parse_options(uint8_t * optptr, sint16_t len) {
 
   while (optptr < end) {
 #  if DHCPS_DEBUG
-    os_printf("dhcps: (sint16_t)*optptr = %d\n", (sint16_t) * optptr);
+    os_printf("dhcps: (int16_t)*optptr = %d\n", (int16_t) * optptr);
 #  endif
-    switch ((sint16_t) * optptr) {
+    switch ((int16_t) * optptr) {
 
     case DHCP_OPTION_MSG_TYPE:	/* 53 */
       type = *(optptr + 2);
@@ -631,7 +631,7 @@ parse_options(uint8_t * optptr, sint16_t len) {
 
 /* /////////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////// */
-static sint16_t ICACHE_FLASH_ATTR
+static int16_t ICACHE_FLASH_ATTR
 parse_msg(struct dhcps_msg *m, u16_t len) {
 /*	if(os_memcmp((char *)m->options,
           &magic_cookie,
@@ -763,7 +763,7 @@ parse_msg(struct dhcps_msg *m, u16_t len) {
       return 4;
     }
 
-    sint16_t ret = parse_options(&m->options[4], len);;
+    int16_t ret = parse_options(&m->options[4], len);;
 
     if (ret == DHCPS_STATE_RELEASE) {
       if (pnode != NULL) {
@@ -819,7 +819,7 @@ handle_dhcp(void *arg,
   (void)port;
 
   struct dhcps_msg *pmsg_dhcps = NULL;
-  sint16_t tlen = 0;
+  int16_t tlen = 0;
   u16_t i = 0;
   u16_t dhcps_msg_cnt = 0;
   u8_t *p_dhcps_msg = NULL;
@@ -915,8 +915,8 @@ handle_dhcp(void *arg,
 
 /* ///////////////////////////////////////////////////////////////////////////////// */
 static void ICACHE_FLASH_ATTR
-wifi_softap_init_dhcps_lease(uint32 ip) {
-  uint32 softap_ip = ip & ((1 << 24) - 1);	/* 0x00FFFFFF; */
+wifi_softap_init_dhcps_lease(uint32_t ip) {
+  uint32_t softap_ip = ip & ((1 << 24) - 1);	/* 0x00FFFFFF; */
 
   if (dhcps_lease_flag == TRUE) {	/* проверка */
     if (softap_ip != (dhcps_lease.start_ip.addr & ((1 << 24) - 1))
@@ -927,9 +927,9 @@ wifi_softap_init_dhcps_lease(uint32 ip) {
       dhcps_lease_flag = FALSE;
   }
   if (dhcps_lease_flag == FALSE) {	/* dhcps_lease не задавалась -> автоматическая установка */
-    uint32 local_ip = ip & (255 << 24);	/* 0xFF000000; */
+    uint32_t local_ip = ip & (255 << 24);	/* 0xFF000000; */
 
-    if (local_ip >= (uint32) (128 << 24))
+    if (local_ip >= (uint32_t) (128 << 24))
       local_ip -= (DHCPS_MAX_LEASE + 1) << 24;
     else
       local_ip += 1 << 24;
@@ -1066,7 +1066,7 @@ kill_oldest_dhcps_pool(void) {
 
 void ICACHE_FLASH_ATTR
 dhcps_coarse_tmr(void) {
-  uint8 num_dhcps_pool = 0;
+  uint8_t num_dhcps_pool = 0;
   list_node *pback_node = NULL;
   list_node *pnode = NULL;
   struct dhcps_pool *pdhcps_pool = NULL;
@@ -1094,10 +1094,10 @@ dhcps_coarse_tmr(void) {
 }
 
 bool ICACHE_FLASH_ATTR
-wifi_softap_set_dhcps_offer_option(uint8 level, void *optarg) {
+wifi_softap_set_dhcps_offer_option(uint8_t level, void *optarg) {
   bool offer_flag = true;
 
-/*	uint8 option = 0; */
+/*	uint8_t option = 0; */
   if (optarg == NULL && wifi_softap_dhcps_status() == false)
     return false;
 
@@ -1106,7 +1106,7 @@ wifi_softap_set_dhcps_offer_option(uint8 level, void *optarg) {
 
   switch (level) {
   case OFFER_ROUTER:
-    offer = (*(uint8 *) optarg) & 0x01;
+    offer = (*(uint8_t *) optarg) & 0x01;
     offer_flag = true;
     break;
   default:
@@ -1117,8 +1117,8 @@ wifi_softap_set_dhcps_offer_option(uint8 level, void *optarg) {
 }
 
 bool ICACHE_FLASH_ATTR
-wifi_softap_set_dhcps_lease_time(uint32 minute) {
-/*    uint8 opmode = wifi_get_opmode();
+wifi_softap_set_dhcps_lease_time(uint32_t minute) {
+/*    uint8_t opmode = wifi_get_opmode();
 
     if (opmode == STATION_MODE || opmode == NULL_MODE) {
         return false;
@@ -1137,7 +1137,7 @@ wifi_softap_set_dhcps_lease_time(uint32 minute) {
 
 bool ICACHE_FLASH_ATTR
 wifi_softap_reset_dhcps_lease_time(void) {
-/*    uint8 opmode = wifi_get_opmode();
+/*    uint8_t opmode = wifi_get_opmode();
 
     if (opmode == STATION_MODE || opmode == NULL_MODE) {
         return false;
@@ -1150,7 +1150,7 @@ wifi_softap_reset_dhcps_lease_time(void) {
   return true;
 }
 
-uint32 ICACHE_FLASH_ATTR
+uint32_t ICACHE_FLASH_ATTR
 wifi_softap_get_dhcps_lease_time(void) {	/* minute */
   return dhcps_lease_time;
 }

@@ -56,8 +56,8 @@ overlap_hspi_deinit(void) {
    ----------------------------------------------------------------------------- */
 #  define SPI_FBLK 32
 int
-overlap_hspi_read_data(SpiFlashChip * fchip, uint32 faddr, void *des,
-		       uint32 size) {
+overlap_hspi_read_data(SpiFlashChip * fchip, uint32_t faddr, void *des,
+		       uint32_t size) {
   SPI1_PIN = (SPI1_PIN & 0x7E) | (SPI_CS2_DIS | SPI_CS1_DIS);
   if (fchip->chip_size < faddr + size)
     return SPI_FLASH_RESULT_OK;
@@ -65,7 +65,7 @@ overlap_hspi_read_data(SpiFlashChip * fchip, uint32 faddr, void *des,
     return SPI_FLASH_RESULT_ERR;
   if (size < 1)
     return SPI_FLASH_RESULT_ERR;
-  uint32 blksize = (uint32) des & 3;
+  uint32_t blksize = (uint32) des & 3;
 
   if (blksize) {
     blksize = 4 - blksize;
@@ -76,11 +76,11 @@ overlap_hspi_read_data(SpiFlashChip * fchip, uint32 faddr, void *des,
     size -= blksize;
     faddr += blksize;
     while (SPI1_CMD);
-    register uint32 data_buf = SPI1_W0;
+    register uint32_t data_buf = SPI1_W0;
 
     do {
-      *(uint8 *) des = data_buf;
-      des = (uint8 *) des + 1;
+      *(uint8_t *) des = data_buf;
+      des = (uint8_t *) des + 1;
       data_buf >>= 8;
     } while (--blksize);
   }
@@ -94,21 +94,21 @@ overlap_hspi_read_data(SpiFlashChip * fchip, uint32 faddr, void *des,
     size -= blksize;
     faddr += blksize;
     while (SPI1_CMD);
-    /* volatile uint32 *srcdw = (volatile uint32 *)(SPI0_BASE+0x40); */
-    uint32 *srcdw = (uint32 *) (&SPI1_W0);
+    /* volatile uint32_t *srcdw = (volatile uint32_t *)(SPI0_BASE+0x40); */
+    uint32_t *srcdw = (uint32_t *) (&SPI1_W0);
 
-/*			uint32 *srcdw = (uint32 *)(SPI0_BASE+0x40); */
+/*			uint32_t *srcdw = (uint32_t *)(SPI0_BASE+0x40); */
     while (blksize >> 2) {
-      *((uint32 *) des) = *srcdw++;
-      des = ((uint32 *) des) + 1;
+      *((uint32_t *) des) = *srcdw++;
+      des = ((uint32_t *) des) + 1;
       blksize -= 4;
     }
     if (blksize) {
-      uint32 data_buf = *srcdw;
+      uint32_t data_buf = *srcdw;
 
       do {
-	*(uint8 *) des = data_buf;
-	des = (uint8 *) des + 1;
+	*(uint8_t *) des = data_buf;
+	des = (uint8_t *) des + 1;
 	data_buf >>= 8;
       } while (--blksize);
       break;

@@ -26,22 +26,19 @@ struct phy_funcs {
 
 extern struct phy_func_tab *g_phyFuns;
 
-/* extern uint8 chip6_phy_init_ctrl[128]; // in sys_const.h */
+/* extern uint8_t chip6_phy_init_ctrl[128]; // in sys_const.h */
 
 void register_phy_ops(struct phy_funcs *phy_base);
 void register_get_phy_addr(struct phy_funcs *prt);
 int phy_change_channel(int chfr);
-uint32 phy_get_mactime(void);
-int
-chip_v6_set_chanfreq(uint32 chfr)
-  ICACHE_FLASH_ATTR;
-     void phy_init(int8 ch, int n) ICACHE_FLASH_ATTR;
-     void RFChannelSel(int8 ch) ICACHE_FLASH_ATTR;
-     void phy_delete_channel(void) ICACHE_FLASH_ATTR;
-     void phy_enable_agc(void) ICACHE_FLASH_ATTR;
-     void phy_disable_agc(void) ICACHE_FLASH_ATTR;
-     void phy_initialize_bb(int n) ICACHE_FLASH_ATTR;
-     void phy_set_sense(void) ICACHE_FLASH_ATTR;
-
+uint32_t phy_get_mactime(void);
+int chip_v6_set_chanfreq(uint32_t chfr) ICACHE_FLASH_ATTR;
+void phy_init(int8_t ch, int n) ICACHE_FLASH_ATTR;
+void RFChannelSel(int8_t ch) ICACHE_FLASH_ATTR;
+void phy_delete_channel(void) ICACHE_FLASH_ATTR;
+void phy_enable_agc(void) ICACHE_FLASH_ATTR;
+void phy_disable_agc(void) ICACHE_FLASH_ATTR;
+void phy_initialize_bb(int n) ICACHE_FLASH_ATTR;
+void phy_set_sense(void) ICACHE_FLASH_ATTR;
 
 #endif /* _LIBS_PHY_H_ */

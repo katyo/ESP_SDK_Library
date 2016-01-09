@@ -96,7 +96,7 @@
 struct mdns_info {
   char *host_name;
   char *server_name;
-  uint16 server_port;
+  uint16_t server_port;
   unsigned long ipAddr;
   char *txt_data[10];
 };

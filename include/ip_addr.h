@@ -4,7 +4,7 @@
 #  include "c_types.h"
 
 struct ip_addr {
-  uint32 addr;
+  uint32_t addr;
 };
 
 typedef struct ip_addr ip_addr_t;
@@ -51,7 +51,7 @@ struct ip_info {
 #  define IPADDR_NONE         ((uint32)0xffffffffUL)
 /** 0.0.0.0 */
 #  define IPADDR_ANY          ((uint32)0x00000000UL)
-  uint32 ipaddr_addr(const char *cp);
+  uint32_t ipaddr_addr(const char *cp);
 
 #  define IP2STR(ipaddr) ip4_addr1_16(ipaddr),  \
     ip4_addr2_16(ipaddr),                       \

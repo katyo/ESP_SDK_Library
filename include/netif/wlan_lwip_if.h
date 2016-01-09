@@ -27,10 +27,10 @@ enum {
 };
 
 struct netif *
-eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8 * macaddr,
+eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8_t * macaddr,
 		    struct ip_info *info)
   ICACHE_FLASH_ATTR;
-     struct netif *eagle_lwip_getif(uint8 index);
+     struct netif *eagle_lwip_getif(uint8_t index);
 
 #  ifndef IOT_SIP_MODE
      err_t ieee80211_output_pbuf(struct netif *ifp, struct pbuf *pb);
@@ -38,7 +38,7 @@ eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8 * macaddr,
      err_t ieee80211_output_pbuf(struct ieee80211_conn *conn, esf_buf * eb);
 #  endif
 
-     extern uint8 *hostname;
+     extern uint8_t *hostname;
      extern bool default_hostname;	/*  = true; */
 
 #endif /*  _WLAN_LWIP_IF_H_ */

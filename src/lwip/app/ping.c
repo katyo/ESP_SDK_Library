@@ -155,7 +155,7 @@ ping_recv(void *arg, struct raw_pcb *pcb, struct pbuf *p, ip_addr_t * addr) {
 	  sys_untimeout(ping_timeout, pingmsg);
 	  os_bzero(&source_ip, sizeof(ip_addr_t));
 	  os_bzero(ipaddrstr, sizeof(ipaddrstr));
-	  uint32 delay = system_relative_time(pingmsg->ping_sent);
+	  uint32_t delay = system_relative_time(pingmsg->ping_sent);
 
 	  delay /= PING_COARSE;
 	  iphdr = (struct ip_hdr *)((u8 *) iecho - PBUF_IP_HLEN);
@@ -245,7 +245,7 @@ ping_coarse_tmr(void *arg) {
     sys_timeout(PING_TIMEOUT_MS, ping_timeout, pingmsg);
     sys_timeout(pingmsg->coarse_time, ping_coarse_tmr, pingmsg);
   } else {
-    uint32 delay = system_relative_time(pingmsg->ping_start);
+    uint32_t delay = system_relative_time(pingmsg->ping_start);
 
     delay /= PING_COARSE;
 /*		ping_seq_num = 0; */
@@ -267,7 +267,7 @@ ping_coarse_tmr(void *arg) {
     raw_remove(pingmsg->ping_pcb);
     os_free(pingmsg);
     if (ping_opt->sent_function != NULL)
-      ping_opt->sent_function(ping_opt, (uint8 *) & pingresp);
+      ping_opt->sent_function(ping_opt, (uint8_t *) & pingresp);
   }
 }
 

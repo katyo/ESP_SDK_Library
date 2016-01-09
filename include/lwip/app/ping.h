@@ -48,9 +48,9 @@ typedef void (*ping_recv_function) (void *arg, void *pdata);
 typedef void (*ping_sent_function) (void *arg, void *pdata);
 
 struct ping_option {
-  uint32 count;
-  uint32 ip;
-  uint32 coarse_time;
+  uint32_t count;
+  uint32_t ip;
+  uint32_t coarse_time;
   ping_recv_function recv_function;
   ping_sent_function sent_function;
   void *reverse;
@@ -59,23 +59,23 @@ struct ping_option {
 struct ping_msg {
   struct ping_option *ping_opt;
   struct raw_pcb *ping_pcb;
-  uint32 ping_start;
-  uint32 ping_sent;
-  uint32 timeout_count;
-  uint32 max_count;
-  uint32 sent_count;
-  uint32 coarse_time;
+  uint32_t ping_start;
+  uint32_t ping_sent;
+  uint32_t timeout_count;
+  uint32_t max_count;
+  uint32_t sent_count;
+  uint32_t coarse_time;
 };
 
 struct ping_resp {
-  uint32 total_count;
-  uint32 resp_time;
-  uint32 seqno;
-  uint32 timeout_count;
-  uint32 bytes;
-  uint32 total_bytes;
-  uint32 total_time;
-  sint8 ping_err;
+  uint32_t total_count;
+  uint32_t resp_time;
+  uint32_t seqno;
+  uint32_t timeout_count;
+  uint32_t bytes;
+  uint32_t total_bytes;
+  uint32_t total_time;
+  int8_t ping_err;
 };
 
 bool ping_start(struct ping_option *ping_opt);

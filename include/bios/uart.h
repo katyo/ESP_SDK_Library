@@ -70,17 +70,17 @@ typedef enum {
 } RcvMsgBuffState;
 
 typedef struct {
-  uint32 RcvBuffSize;		/* +0   //+18 = 0x100 = 256 (dec) */
-  uint8 *pRcvMsgBuff;		/* +4   //+1C = 0x3fffde60 */
-  uint8 *pWritePos;		/* +8   //+20 = 0x3fffde60 */
-  uint8 *pReadPos;		/* +C   //+24 = 0x3fffde60 */
-  uint8 TrigLvl;		/* +10  //+28 */
+  uint32_t RcvBuffSize;		/* +0   //+18 = 0x100 = 256 (dec) */
+  uint8_t *pRcvMsgBuff;		/* +4   //+1C = 0x3fffde60 */
+  uint8_t *pWritePos;		/* +8   //+20 = 0x3fffde60 */
+  uint8_t *pReadPos;		/* +C   //+24 = 0x3fffde60 */
+  uint8_t TrigLvl;		/* +10  //+28 */
   RcvMsgBuffState BuffState;	/* +14  //+2C */
 } RcvMsgBuff;
 
 typedef struct {
-  uint32 TrxBuffSize;		/* +30 0x64 = 100 (dec) */
-  uint8 *pTrxBuff;		/* +34 0x3fffdf60 */
+  uint32_t TrxBuffSize;		/* +30 0x64 = 100 (dec) */
+  uint8_t *pTrxBuff;		/* +34 0x3fffdf60 */
 } TrxMsgBuff;
 
 typedef enum {
@@ -140,18 +140,18 @@ extern UartDevice UartDev;	/* UartDev is defined and initialized in rom code. */
 UartDevice *GetUartDevice(void);
 void uartAttach(void);
 void uart_rx_intr_handler(void *par);
-int uart_rx_one_char(uint8 * ch);
-uint8 uart_rx_one_char_block(void);
-int uart_rx_readbuff(RcvMsgBuff * rcvmsg, uint8 * dst);
-int uart_tx_one_char(uint8 ch);
-void uart_div_modify(uint32 uart_num, uint32 div_baud);
-uint32 uart_baudrate_detect(uint32 uart_num, uint32 flg);
-void uart_buff_switch(uint32 uart_num);
+int uart_rx_one_char(uint8_t * ch);
+uint8_t uart_rx_one_char_block(void);
+int uart_rx_readbuff(RcvMsgBuff * rcvmsg, uint8_t * dst);
+int uart_tx_one_char(uint8_t ch);
+void uart_div_modify(uint32_t uart_num, uint32_t div_baud);
+uint32_t uart_baudrate_detect(uint32_t uart_num, uint32_t flg);
+void uart_buff_switch(uint32_t uart_num);
 
-int UartGetCmdLn(uint8 * buf);
-int SendMsg(uint8 * msg, uint8 size);
-int send_packet(uint8 * packet, uint8 size);
+int UartGetCmdLn(uint8_t * buf);
+int SendMsg(uint8_t * msg, uint8_t size);
+int send_packet(uint8_t * packet, uint8_t size);
 
-void _putc1(uint8 ch);
+void _putc1(uint8_t ch);
 
 #endif /* _INCLUDE_BIOS_UARTDEV_H_ */

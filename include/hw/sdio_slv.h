@@ -5,29 +5,29 @@
 
 #  include "user_interface.h"
 struct sdio_queue {
-  uint32 blocksize:12;
-  uint32 datalen:12;
-  uint32 unused:5;
-  uint32 sub_sof:1;
-  uint32 eof:1;
-  uint32 owner:1;
+  uint32_t blocksize:12;
+  uint32_t datalen:12;
+  uint32_t unused:5;
+  uint32_t sub_sof:1;
+  uint32_t eof:1;
+  uint32_t owner:1;
 
-  uint32 buf_ptr;
-  uint32 next_link_ptr;
+  uint32_t buf_ptr;
+  uint32_t next_link_ptr;
 };
 
 struct sdio_slave_status_element {
-  uint32 wr_busy:1;
-  uint32 rd_empty:1;
-  uint32 comm_cnt:3;
-  uint32 intr_no:3;
-  uint32 rx_length:16;
-  uint32 res:8;
+  uint32_t wr_busy:1;
+  uint32_t rd_empty:1;
+  uint32_t comm_cnt:3;
+  uint32_t intr_no:3;
+  uint32_t rx_length:16;
+  uint32_t res:8;
 };
 
 union sdio_slave_status {
   struct sdio_slave_status_element elm_value;
-  uint32 word_value;
+  uint32_t word_value;
 };
 
 #  define RX_AVAILIBLE 2
@@ -48,7 +48,7 @@ union sdio_slave_status {
    void sdio_slave_isr(void *para);
    void sdio_task_init(void);
    void sdio_err_task(os_event_t *e);
-   void rx_buff_load_done(uint16 rx_len);
+   void rx_buff_load_done(uint16_t rx_len);
    void tx_buff_handle_done(void);
    void rx_buff_read_done(void);
    void tx_buff_write_done(void);

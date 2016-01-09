@@ -5,3 +5,14 @@
     (indent-region (point-min) (point-max))
     (save-buffer)
     (kill-buffer nil)))
+
+(defun stdint-marked-files ()
+  (interactive)
+  (dolist (file (dired-get-marked-files))
+    (find-file file)
+    (replace-regexp "sint\\(8\\|16\\|32\\|64\\)\\([[:space:]]\\)" "int\\1_t\\2")
+    (replace-regexp "sint\\(8\\|16\\|32\\|64\\)_t" "int\\1_t")
+    (replace-regexp "uint\\(8\\|16\\|32\\|64\\)\\([[:space:]]\\)" "uint\\1_t\\2")
+    (save-buffer)
+    (kill-buffer nil)))
+

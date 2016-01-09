@@ -883,7 +883,7 @@ ip_output(struct pbuf * p, ip_addr_t * src, ip_addr_t * dest,
 }
 
 void
-ip_addr_debug_print(uint32 debug, void *ipaddr) {
+ip_addr_debug_print(uint32_t debug, void *ipaddr) {
   (void)debug;
   (void)ipaddr;
 

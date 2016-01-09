@@ -12,7 +12,7 @@
    {
    char * pret = (0);
    if(s != (0)) {
-    uint32 len = ets_strlen(s) + 1;
+    uint32_t len = ets_strlen(s) + 1;
     pret = (char *)os_malloc(len);
     if(pret != (0)) ets_memcpy(pret, s, len);
    }
@@ -20,19 +20,19 @@
    }
  */
 
-uint32 ICACHE_FLASH_ATTR
+uint32_t ICACHE_FLASH_ATTR
 os_get_time(void) {
   return 0;
 }
 
-extern uint32 phy_get_rand(void);	/* return *((uint32 *)(&g_phyFuns+0x290)) ^ *((uint32 *)0x3FF20E44); */
+extern uint32_t phy_get_rand(void);	/* return *((uint32_t *)(&g_phyFuns+0x290)) ^ *((uint32_t *)0x3FF20E44); */
 
-uint32 ICACHE_FLASH_ATTR
+uint32_t ICACHE_FLASH_ATTR
 r_rand(void) {
   return phy_get_rand();
 }
 
-uint32 ICACHE_FLASH_ATTR
+uint32_t ICACHE_FLASH_ATTR
 os_random(void) {
   return phy_get_rand();
 }
@@ -45,7 +45,7 @@ int ICACHE_FLASH_ATTR
 os_get_random(unsigned char *buf, size_t len) {
   if (buf != NULL) {
     while (len) {
-      uint32 z = phy_get_rand();
+      uint32_t z = phy_get_rand();
 
       do {
 	*buf++ = (char)z;

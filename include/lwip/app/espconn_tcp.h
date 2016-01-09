@@ -31,7 +31,7 @@ err_t ICACHE_FLASH_ATTR espconn_tcp_write(void *arg);
  * Parameters   : pdeletecon -- the espconn used to delete a server
  * Returns      : none
  *******************************************************************************/
-sint8 ICACHE_FLASH_ATTR espconn_tcp_delete(struct espconn *pdeletecon);
+int8_t ICACHE_FLASH_ATTR espconn_tcp_delete(struct espconn *pdeletecon);
 
 /******************************************************************************
  * FunctionName : espconn_kill_oldest_pcb
@@ -59,7 +59,7 @@ extern void espconn_tcp_disconnect(espconn_msg * pdiscon);
  * Returns      : none
  *******************************************************************************/
 
-extern sint8 espconn_tcp_client(struct espconn *espconn);
+extern int8_t espconn_tcp_client(struct espconn *espconn);
 
 /******************************************************************************
  * FunctionName : espconn_tcp_server
@@ -69,7 +69,7 @@ extern sint8 espconn_tcp_client(struct espconn *espconn);
  * Returns      : none
  *******************************************************************************/
 
-extern sint8 espconn_tcp_server(struct espconn *espconn);
+extern int8_t espconn_tcp_server(struct espconn *espconn);
 
 #  endif
        /* USE_ESPCONN */
