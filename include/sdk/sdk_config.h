@@ -24,6 +24,24 @@
 #    define DEBUG_UART1_BAUD 230400
 #  endif
 
+#  define IP4_UINT(a, b, c, d) \
+  (((a) & 0xff) |              \
+   (((b) & 0xff) << 8) |       \
+   (((c) & 0xff) << 16) |      \
+   (((d) & 0xff) << 24))
+
+#  ifndef SOFTAP_GATEWAY
+#    define SOFTAP_GATEWAY IP4_UINT(192, 168, 4, 1)
+#  endif
+
+#  ifndef SOFTAP_IP_ADDR
+#    define SOFTAP_IP_ADDR SOFTAP_GATEWAY
+#  endif
+
+#  ifndef SOFTAP_NETMASK
+#    define SOFTAP_NETMASK IP4_UINT(255, 255, 255, 0)
+#  endif
+
 #  define STARTUP_CPU_CLK 160
 
 #  ifndef ICACHE_FLASH		/* (назначается в MakeFile -DICACHE_FLASH) */

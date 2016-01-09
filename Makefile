@@ -108,6 +108,18 @@ else
   libsdk.SDKLIBS += libdhcps
 endif
 
+ifneq (,$(SOFTAP_GATEWAY))
+  CDEFS += SOFTAP_GATEWAY=$(SOFTAP_GATEWAY)
+endif
+
+ifneq (,$(SOFTAP_IP_ADDR))
+  CDEFS += SOFTAP_IP_ADDR=$(SOFTAP_IP_ADDR)
+endif
+
+ifneq (,$(SOFTAP_NETMASK))
+  CDEFS += SOFTAP_NETMASK=$(SOFTAP_NETMASK)
+endif
+
 ifeq (y,$(NO_ESP_CONFIG))
   CDEFS += NO_ESP_CONFIG
 endif
