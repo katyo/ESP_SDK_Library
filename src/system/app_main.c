@@ -47,7 +47,12 @@ extern int16_t TestStaFreqCalValInput;
 extern struct rst_info rst_inf;
 #endif
 #if DEF_SDK_VERSION >= 1200
-uint8_t SDK_VERSION[] = { SDK_VERSION_TXT };
+const uint8_t SDK_VERSION[] ICACHE_RODATA_ATTR = {
+  (DEF_SDK_VERSION / 1000) % 10,
+  (DEF_SDK_VERSION / 100) % 10,
+  (DEF_SDK_VERSION / 10) % 10,
+  DEF_SDK_VERSION % 10,
+};
 
 uint16_t lwip_timer_interval;
 #endif
@@ -431,7 +436,7 @@ startup(void) {
 #endif
 #ifdef DEBUG_UART
   startup_uart_init();
-  os_printf("\n\nmeSDK %s\n", SDK_VERSION);
+  os_printf("\n\n" SDK_NAME_STR " " SDK_VERSION_STR "\n");
 #endif
   /* Очистка сегмента bss //       mem_clr_bss(); */
   uint8_t *ptr = &_bss_start;
