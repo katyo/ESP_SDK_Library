@@ -375,15 +375,18 @@ tst_cfg_wifi(void) {
    ----------------------------------------------------------------------------- */
 void ICACHE_FLASH_ATTR
 read_wifi_config(void) {
+  struct s_wifi_store *wifi_config = &g_ic.g.wifi_store;
+  
+#ifndef NO_ESP_CONFIG
   struct ets_store_wifi_hdr hbuf;
 
   spi_flash_read(flashchip->chip_size - 0x1000, (uint32_t *) (&hbuf),
 		 sizeof(hbuf));
   uint32_t store_cfg_addr =
     flashchip->chip_size - 0x3000 + ((hbuf.bank) ? 0x1000 : 0);
-  struct s_wifi_store *wifi_config = &g_ic.g.wifi_store;
 
   spi_flash_read(store_cfg_addr, (uint32_t *) wifi_config, wifi_config_size);
+
   if (hbuf.flag != 0x55AA55AA
       || system_get_checksum((uint8_t *) wifi_config,
 			     hbuf.xx[(hbuf.bank) ? 1 : 0]) !=
@@ -392,7 +395,10 @@ read_wifi_config(void) {
     os_printf("\nError wifi_config! Clear.\n");
 #endif
     ets_memset(wifi_config, 0xff, wifi_config_size);
-  };
+  }
+#else
+  ets_memset(wifi_config, 0xff, wifi_config_size);
+#endif
 }
 
 #ifdef DEBUG_UART

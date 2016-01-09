@@ -108,6 +108,10 @@ else
   libsdk.SDKLIBS += libdhcps
 endif
 
+ifeq (y,$(NO_ESP_CONFIG))
+  CDEFS += NO_ESP_CONFIG
+endif
+
 ifeq (y,$(USE_LOADER))
   LOADER ?= rapid_loader
 endif
