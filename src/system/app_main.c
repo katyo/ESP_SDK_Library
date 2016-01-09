@@ -611,10 +611,10 @@ startup(void) {
   int wfmode = g_ic.g.wifi_store.wfmode[0];	/* g_ic.c[0x214] (+532) SDK 1.2.0 // SDK 1.3.0 g_ic.c[472] */
 
   wifi_mode_set(wfmode);
-  if (wfmode & 1)
+  if (wfmode & STATION_MODE)
     wifi_station_start();
 #if DEF_SDK_VERSION >= 1200
-  if (wfmode == 2) {
+  if (wfmode == SOFTAP_MODE) {
 #  if DEF_SDK_VERSION >= 1400
     if (g_ic.c[470] != 2)
       wifi_softap_start(0);
@@ -624,22 +624,22 @@ startup(void) {
 #  endif
     else
       wifi_softap_start(1);
-  } else if (wfmode == 3) {
+  } else if (wfmode == STATIONAP_MODE) {
     wifi_softap_start(0);
   }
 #else
-  if (wfmode & 2)
+  if (wfmode & SOFTAP_MODE)
     wifi_softap_start();
 #endif
 
 #if DEF_SDK_VERSION >= 1110
-  if (wfmode == 1)
+  if (wfmode == STATION_MODE)
     netif_set_default(*g_ic.g.netif1);	/* struct netif * */
 #else
   if (wfmode) {
     struct netif **p;
 
-    if (wfmode == 1)
+    if (wfmode == STATION_MODE)
       p = g_ic.g.netif1;	/* g_ic+0x10; */
     else
       p = g_ic.g.netif2;	/* g_ic+0x14; */
