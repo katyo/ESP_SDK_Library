@@ -4,31 +4,31 @@
  */
 
 #ifndef _GPIO_H_
-#define _GPIO_H_
+#  define _GPIO_H_
 
-#define GPIO_PIN_ADDR(i) (GPIO_PIN0_ADDRESS + i*4)
+#  define GPIO_PIN_ADDR(i) (GPIO_PIN0_ADDRESS + i*4)
 
-#define GPIO_ID_IS_PIN_REGISTER(reg_id) \
-    ((reg_id >= GPIO_ID_PIN0) && (reg_id <= GPIO_ID_PIN(GPIO_PIN_COUNT-1)))
+#  define GPIO_ID_IS_PIN_REGISTER(reg_id)                               \
+  ((reg_id >= GPIO_ID_PIN0) && (reg_id <= GPIO_ID_PIN(GPIO_PIN_COUNT-1)))
 
-#define GPIO_REGID_TO_PINIDX(reg_id) ((reg_id) - GPIO_ID_PIN0)
+#  define GPIO_REGID_TO_PINIDX(reg_id) ((reg_id) - GPIO_ID_PIN0)
 
 typedef enum {
-    GPIO_PIN_INTR_DISABLE = 0,
-    GPIO_PIN_INTR_POSEDGE = 1,
-    GPIO_PIN_INTR_NEGEDGE = 2,
-    GPIO_PIN_INTR_ANYEDGE = 3,
-    GPIO_PIN_INTR_LOLEVEL = 4,
-    GPIO_PIN_INTR_HILEVEL = 5
+  GPIO_PIN_INTR_DISABLE = 0,
+  GPIO_PIN_INTR_POSEDGE = 1,
+  GPIO_PIN_INTR_NEGEDGE = 2,
+  GPIO_PIN_INTR_ANYEDGE = 3,
+  GPIO_PIN_INTR_LOLEVEL = 4,
+  GPIO_PIN_INTR_HILEVEL = 5
 } GPIO_INT_TYPE;
 
-#define GPIO_OUTPUT_SET(gpio_no, bit_value) \
-    gpio_output_set((bit_value)<<gpio_no, ((~(bit_value))&0x01)<<gpio_no, 1<<gpio_no,0)
-#define GPIO_DIS_OUTPUT(gpio_no) 	gpio_output_set(0,0,0, 1<<gpio_no)
-#define GPIO_INPUT_GET(gpio_no)     ((gpio_input_get()>>gpio_no)&BIT0)
+#  define GPIO_OUTPUT_SET(gpio_no, bit_value)                           \
+  gpio_output_set((bit_value)<<gpio_no, ((~(bit_value))&0x01)<<gpio_no, 1<<gpio_no,0)
+#  define GPIO_DIS_OUTPUT(gpio_no)  gpio_output_set(0,0,0, 1<<gpio_no)
+#  define GPIO_INPUT_GET(gpio_no)     ((gpio_input_get()>>gpio_no)&BIT0)
 
 /* GPIO interrupt handler, registered through gpio_intr_handler_register */
-typedef void (* gpio_intr_handler_fn_t)(uint32 intr_mask, void *arg);
+typedef void (*gpio_intr_handler_fn_t) (uint32 intr_mask, void *arg);
 
 
 /*
@@ -50,8 +50,7 @@ void gpio_init(void);
  */
 void gpio_output_set(uint32 set_mask,
                      uint32 clear_mask,
-                     uint32 enable_mask,
-                     uint32 disable_mask);
+                     uint32 enable_mask, uint32 disable_mask);
 
 /*
  * Sample the value of GPIO input pins and returns a bitmask.
@@ -97,4 +96,4 @@ void gpio_pin_wakeup_disable();
 
 void gpio_pin_intr_state_set(uint32 i, GPIO_INT_TYPE intr_state);
 
-#endif // _GPIO_H_
+#endif /* _GPIO_H_ */

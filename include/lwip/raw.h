@@ -30,22 +30,22 @@
  *
  */
 #ifndef __LWIP_RAW_H__
-#define __LWIP_RAW_H__
+#  define __LWIP_RAW_H__
 
-#include "lwip/opt.h"
+#  include "lwip/opt.h"
 
-#if LWIP_RAW /* don't build if not configured for use in lwipopts.h */
+#  if LWIP_RAW			/* don't build if not configured for use in lwipopts.h */
 
-#include "lwip/pbuf.h"
-#include "lwip/def.h"
-#include "lwip/ip.h"
-#include "lwip/ip_addr.h"
+#    include "lwip/pbuf.h"
+#    include "lwip/def.h"
+#    include "lwip/ip.h"
+#    include "lwip/ip_addr.h"
 
-#ifdef __cplusplus
+#    ifdef __cplusplus
 extern "C" {
-#endif
+#    endif
 
-struct raw_pcb;
+  struct raw_pcb;
 
 /** Function prototype for raw pcb receive callback functions.
  * @param arg user supplied argument (raw_pcb.recv_arg)
@@ -57,42 +57,43 @@ struct raw_pcb;
  * If returning 1, the callback is responsible for freeing the pbuf
  * if it's not used any more.
  */
-typedef u8_t (*raw_recv_fn)(void *arg, struct raw_pcb *pcb, struct pbuf *p,
-    ip_addr_t *addr);
+  typedef u8_t(*raw_recv_fn) (void *arg, struct raw_pcb * pcb,
+			      struct pbuf * p, ip_addr_t * addr);
 
-struct raw_pcb {
-  /* Common members of all PCB types */
-  IP_PCB;
+  struct raw_pcb {
+    /* Common members of all PCB types */
+    IP_PCB;
 
-  struct raw_pcb *next;
+    struct raw_pcb *next;
 
-  u8_t protocol;
+    u8_t protocol;
 
   /** receive callback function */
-  raw_recv_fn recv;
-  /* user-supplied argument for the recv callback */
-  void *recv_arg;
-};
+    raw_recv_fn recv;
+    /* user-supplied argument for the recv callback */
+    void *recv_arg;
+  };
 
 /* The following functions is the application layer interface to the
    RAW code. */
-struct raw_pcb * raw_new        (u8_t proto)ICACHE_FLASH_ATTR;
-void             raw_remove     (struct raw_pcb *pcb)ICACHE_FLASH_ATTR;
-err_t            raw_bind       (struct raw_pcb *pcb, ip_addr_t *ipaddr)ICACHE_FLASH_ATTR;
-err_t            raw_connect    (struct raw_pcb *pcb, ip_addr_t *ipaddr)ICACHE_FLASH_ATTR;
+  struct raw_pcb *raw_new(u8_t proto) ICACHE_FLASH_ATTR;
+  void raw_remove(struct raw_pcb *pcb) ICACHE_FLASH_ATTR;
+  err_t raw_bind(struct raw_pcb *pcb, ip_addr_t * ipaddr) ICACHE_FLASH_ATTR;
+  err_t raw_connect(struct raw_pcb *pcb,
+		    ip_addr_t * ipaddr) ICACHE_FLASH_ATTR;
 
-void             raw_recv       (struct raw_pcb *pcb, raw_recv_fn recv, void *recv_arg)ICACHE_FLASH_ATTR;
-err_t            raw_sendto     (struct raw_pcb *pcb, struct pbuf *p, ip_addr_t *ipaddr)ICACHE_FLASH_ATTR;
-err_t            raw_send       (struct raw_pcb *pcb, struct pbuf *p);
+  void raw_recv(struct raw_pcb *pcb, raw_recv_fn recv,
+		void *recv_arg) ICACHE_FLASH_ATTR;
+  err_t raw_sendto(struct raw_pcb *pcb, struct pbuf *p,
+		   ip_addr_t * ipaddr) ICACHE_FLASH_ATTR;
+  err_t raw_send(struct raw_pcb *pcb, struct pbuf *p);
 
 /* The following functions are the lower layer interface to RAW. */
-u8_t             raw_input      (struct pbuf *p, struct netif *inp)ICACHE_FLASH_ATTR;
-#define raw_init() /* Compatibility define, not init needed. */
+  u8_t raw_input(struct pbuf *p, struct netif *inp) ICACHE_FLASH_ATTR;
+#    define raw_init()		/* Compatibility define, not init needed. */
 
-#ifdef __cplusplus
+#    ifdef __cplusplus
 }
-#endif
-
-#endif /* LWIP_RAW */
-
-#endif /* __LWIP_RAW_H__ */
+#    endif
+#  endif			/* LWIP_RAW */
+#endif				/* __LWIP_RAW_H__ */

@@ -1,0 +1,20 @@
+--blank-lines-after-declarations
+--blank-lines-after-procedures
+--start-left-side-of-comments
+--braces-on-if-line
+--cuddle-else
+--cuddle-do-while
+--case-indentation 0
+--no-space-after-function-call-names
+--no-space-after-casts
+--space-after-for
+--space-after-if
+--space-after-while
+--no-blank-lines-after-commas
+--braces-on-struct-decl-line
+--braces-on-func-def-line
+--indent-level 2
+--continue-at-parentheses
+--preprocessor-indentation 2
+--indent-label 1
+--break-after-boolean-operator

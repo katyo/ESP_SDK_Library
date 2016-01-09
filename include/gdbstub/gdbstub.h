@@ -1,14 +1,13 @@
 #ifndef GDBSTUB_H
-#define GDBSTUB_H
+#  define GDBSTUB_H
 
-#ifdef __cplusplus
+#  ifdef __cplusplus
 extern "C" {
-#endif
+#  endif
 
-void gdbstub_init();
+  void gdbstub_init();
 
-#ifdef __cplusplus
+#  ifdef __cplusplus
 }
-#endif
-
+#  endif
 #endif

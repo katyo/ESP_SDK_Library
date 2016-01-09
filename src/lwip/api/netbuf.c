@@ -3,12 +3,12 @@
  * Network buffer management
  *
  */
- 
+
 /*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved. 
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
@@ -17,44 +17,44 @@
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission. 
+ *    derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
- * 
+ *
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
 
 #include "lwip/opt.h"
 
-#if LWIP_NETCONN /* don't build if not configured for use in lwipopts.h */
+#if LWIP_NETCONN		/* don't build if not configured for use in lwipopts.h */
 
-#include "lwip/netbuf.h"
-#include "lwip/memp.h"
+#  include "lwip/netbuf.h"
+#  include "lwip/memp.h"
 
-#include <string.h>
+#  include <string.h>
 
 /**
  * Create (allocate) and initialize a new netbuf.
  * The netbuf doesn't yet contain a packet buffer!
- * ����һ���µ�netbuf�ռ䣬���������κ����ݿռ�
+ * ÉêÇëÒ»¸öÐÂµÄnetbuf¿Õ¼ä£¬µ«²»·ÖÅäÈÎºÎÊý¾Ý¿Õ¼ä
  * @return a pointer to a new netbuf
  *         NULL on lack of memory
  */
 struct
-netbuf *netbuf_new(void)
-{
+netbuf *
+netbuf_new(void) {
   struct netbuf *buf;
 
   buf = (struct netbuf *)memp_malloc(MEMP_NETBUF);
@@ -63,15 +63,18 @@ netbuf *netbuf_new(void)
     buf->ptr = NULL;
     ip_addr_set_any(&buf->addr);
     buf->port = 0;
-#if LWIP_NETBUF_RECVINFO || LWIP_CHECKSUM_ON_COPY
-#if LWIP_CHECKSUM_ON_COPY
+#  if LWIP_NETBUF_RECVINFO || LWIP_CHECKSUM_ON_COPY
+#    if LWIP_CHECKSUM_ON_COPY
     buf->flags = 0;
-#endif /* LWIP_CHECKSUM_ON_COPY */
+#    endif
+    /* LWIP_CHECKSUM_ON_COPY */
     buf->toport_chksum = 0;
-#if LWIP_NETBUF_RECVINFO
+#    if LWIP_NETBUF_RECVINFO
     ip_addr_set_any(&buf->toaddr);
-#endif /* LWIP_NETBUF_RECVINFO */
-#endif /* LWIP_NETBUF_RECVINFO || LWIP_CHECKSUM_ON_COPY */
+#    endif
+    /* LWIP_NETBUF_RECVINFO */
+#  endif
+    /* LWIP_NETBUF_RECVINFO || LWIP_CHECKSUM_ON_COPY */
     return buf;
   } else {
     return NULL;
@@ -80,12 +83,11 @@ netbuf *netbuf_new(void)
 
 /**
  * Deallocate a netbuf allocated by netbuf_new().
- * �ͷ�һ��netbuf�ռ�
+ * ÊÍ·ÅÒ»¸önetbuf¿Õ¼ä
  * @param buf pointer to a netbuf allocated by netbuf_new()
  */
 void
-netbuf_delete(struct netbuf *buf)
-{
+netbuf_delete(struct netbuf *buf) {
   if (buf != NULL) {
     if (buf->p != NULL) {
       pbuf_free(buf->p);
@@ -97,15 +99,14 @@ netbuf_delete(struct netbuf *buf)
 
 /**
  * Allocate memory for a packet buffer for a given netbuf.
- *Ϊnetbuf�ṹ����size��С�����ݿռ�
+ *****Îªnetbuf½á¹¹·ÖÅäsize´óÐ¡µÄÊý¾Ý¿Õ¼ä
  * @param buf the netbuf for which to allocate a packet buffer
  * @param size the size of the packet buffer to allocate
  * @return pointer to the allocated memory
  *         NULL if no memory could be allocated
  */
 void *
-netbuf_alloc(struct netbuf *buf, u16_t size)
-{
+netbuf_alloc(struct netbuf *buf, u16_t size) {
   LWIP_ERROR("netbuf_alloc: invalid buf", (buf != NULL), return NULL;);
 
   /* Deallocate any previously allocated memory. */
@@ -114,22 +115,20 @@ netbuf_alloc(struct netbuf *buf, u16_t size)
   }
   buf->p = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
   if (buf->p == NULL) {
-     return NULL;
+    return NULL;
   }
-  LWIP_ASSERT("check that first pbuf can hold size",
-             (buf->p->len >= size));
+  LWIP_ASSERT("check that first pbuf can hold size", (buf->p->len >= size));
   buf->ptr = buf->p;
   return buf->p->payload;
 }
 
 /**
  * Free the packet buffer included in a netbuf
- *�ͷ�netbuf�ṹָ�������pbuf
+ *****ÊÍ·Ånetbuf½á¹¹Ö¸ÏòµÄÊý¾Ýpbuf
  * @param buf pointer to the netbuf which contains the packet buffer to free
  */
 void
-netbuf_free(struct netbuf *buf)
-{
+netbuf_free(struct netbuf *buf) {
   LWIP_ERROR("netbuf_free: invalid buf", (buf != NULL), return;);
   if (buf->p != NULL) {
     pbuf_free(buf->p);
@@ -147,8 +146,7 @@ netbuf_free(struct netbuf *buf)
  *         ERR_MEM if data couldn't be referenced due to lack of memory
  */
 err_t
-netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size)
-{
+netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size) {
   LWIP_ERROR("netbuf_ref: invalid buf", (buf != NULL), return ERR_ARG;);
   if (buf->p != NULL) {
     pbuf_free(buf->p);
@@ -158,7 +156,7 @@ netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size)
     buf->ptr = NULL;
     return ERR_MEM;
   }
-  buf->p->payload = (void*)dataptr;
+  buf->p->payload = (void *)dataptr;
   buf->p->len = buf->p->tot_len = size;
   buf->ptr = buf->p;
   return ERR_OK;
@@ -171,8 +169,7 @@ netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size)
  * @param tail netbuf to chain after head, freed by this function, may not be reference after returning
  */
 void
-netbuf_chain(struct netbuf *head, struct netbuf *tail)
-{
+netbuf_chain(struct netbuf *head, struct netbuf *tail) {
   LWIP_ERROR("netbuf_ref: invalid head", (head != NULL), return;);
   LWIP_ERROR("netbuf_chain: invalid tail", (tail != NULL), return;);
   pbuf_cat(head->p, tail->p);
@@ -190,10 +187,10 @@ netbuf_chain(struct netbuf *head, struct netbuf *tail)
  *         ERR_BUF on error.
  */
 err_t
-netbuf_data(struct netbuf *buf, void **dataptr, u16_t *len)
-{
+netbuf_data(struct netbuf * buf, void **dataptr, u16_t * len) {
   LWIP_ERROR("netbuf_data: invalid buf", (buf != NULL), return ERR_ARG;);
-  LWIP_ERROR("netbuf_data: invalid dataptr", (dataptr != NULL), return ERR_ARG;);
+  LWIP_ERROR("netbuf_data: invalid dataptr", (dataptr != NULL),
+	     return ERR_ARG;);
   LWIP_ERROR("netbuf_data: invalid len", (len != NULL), return ERR_ARG;);
 
   if (buf->ptr == NULL) {
@@ -215,8 +212,7 @@ netbuf_data(struct netbuf *buf, void **dataptr, u16_t *len)
  *         0  if moved to the next part and there are still more parts
  */
 s8_t
-netbuf_next(struct netbuf *buf)
-{
+netbuf_next(struct netbuf * buf) {
   LWIP_ERROR("netbuf_free: invalid buf", (buf != NULL), return -1;);
   if (buf->ptr->next == NULL) {
     return -1;
@@ -236,8 +232,7 @@ netbuf_next(struct netbuf *buf)
  * @param buf the netbuf to modify
  */
 void
-netbuf_first(struct netbuf *buf)
-{
+netbuf_first(struct netbuf *buf) {
   LWIP_ERROR("netbuf_free: invalid buf", (buf != NULL), return;);
   buf->ptr = buf->p;
 }
