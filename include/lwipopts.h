@@ -48,6 +48,9 @@
 
 #  define LWIP_SNTP 0
 
+#  include "sdk/sdk_config.h"
+#  define LWIP_IRAM_ATTR ICACHE_IRAM_ATTR
+
 /*
 	-----------------------------------------------
 	---------- Platform specific locking ----------

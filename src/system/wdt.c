@@ -45,7 +45,7 @@ bool wdt_flg;
 ETSEvent wdt_eventq;
 
 /* каждые 1680403 us */
-void
+void ICACHE_IRAM_ATTR
 wdt_feed(void) {
   if (RTC_MEM(0) < RST_EVENT_WDT) {
     store_exception_error(RST_EVENT_WDT);
@@ -54,7 +54,7 @@ wdt_feed(void) {
   }
 }
 
-void
+void ICACHE_IRAM_ATTR
 wdt_task(ETSEvent * e) {
   ets_intr_lock();
   if (wdt_flg) {
@@ -77,7 +77,7 @@ wdt_init(void) {
 
 #endif
 
-void
+void ICACHE_IRAM_ATTR
 store_exception_error(uint32_t errn) {
   uint32_t *ptr = (uint32_t *) (RTC_MEM_BASE);
 
@@ -93,7 +93,7 @@ store_exception_error(uint32_t errn) {
   }
 }
 
-void
+void ICACHE_IRAM_ATTR
 fatal_error(uint32_t errn, void *addr, void *txt) {
   uint32_t *ptr = (uint32_t *) (RTC_MEM_BASE);
 
@@ -114,17 +114,17 @@ void ICACHE_FLASH_ATTR
 os_print_reset_error(void) {
   struct rst_info *rst_inf = (struct rst_info *)&RTC_MEM(0);
 
-/* system_rtc_mem_read(0, &rst_inf, sizeof(struct rst_info));
-   if(rst_inf->reason >= RST_EVENT_WDT
-    && rst_inf->reason <= RST_EVENT_MAX
-    && (!(rst_inf->reason == RST_EVENT_WDT && rst_inf->epc1 == 0x40000f68))) { */
+  /* system_rtc_mem_read(0, &rst_inf, sizeof(struct rst_info));
+     if(rst_inf->reason >= RST_EVENT_WDT
+     && rst_inf->reason <= RST_EVENT_MAX
+     && (!(rst_inf->reason == RST_EVENT_WDT && rst_inf->epc1 == 0x40000f68))) { */
   if (rst_inf->reason > RST_EVENT_WDT && rst_inf->reason <= RST_EVENT_MAX) {
     os_printf("Old reset: ");
     switch (rst_inf->reason) {
-/*		case RST_EVENT_WDT:
-      os_printf("WDT (%d):\n", rst_inf->exccause);
-      os_printf_plus((const char *)aEpc10x08xEpc20, rst_inf->epc1, rst_inf->epc2, rst_inf->epc3, rst_inf->excvaddr, rst_inf->depc);
-      break; */
+      /* case RST_EVENT_WDT:
+         os_printf("WDT (%d):\n", rst_inf->exccause);
+         os_printf_plus((const char *)aEpc10x08xEpc20, rst_inf->epc1, rst_inf->epc2, rst_inf->epc3, rst_inf->excvaddr, rst_inf->depc);
+         break; */
     case RST_EVENT_EXP:
       os_printf_plus((const char *)aFatalException, rst_inf->exccause);
       os_printf_plus((const char *)aEpc10x08xEpc20, rst_inf->epc1,
@@ -144,15 +144,15 @@ os_print_reset_error(void) {
       os_printf("ExtReset\n");
       break;
     default:{
-	char *txt = (char *)rst_inf->epc1;
-
-	if (txt == NULL)
-	  txt = aNull;
-	os_printf("Error (%u): addr=0x%08x,", rst_inf->reason,
-		  rst_inf->exccause);
-	os_printf_plus(txt);
-	os_printf("\n");
-      }
+      char *txt = (char *)rst_inf->epc1;
+      
+      if (txt == NULL)
+        txt = aNull;
+      os_printf("Error (%u): addr=0x%08x,", rst_inf->reason,
+                rst_inf->exccause);
+      os_printf_plus(txt);
+      os_printf("\n");
+    }
     }
     uart_wait_tx_fifo_empty();
   }
@@ -161,7 +161,7 @@ os_print_reset_error(void) {
 
 #ifdef DEBUG_EXCEPTION
 
-void
+void ICACHE_IRAM_ATTR
 default_exception_handler(struct exception_frame *ef, uint32_t cause) {
   (void)cause;
   uint32_t *a1;
@@ -201,12 +201,11 @@ default_exception_handler(struct exception_frame *ef, uint32_t cause) {
   _ResetVector();
 }
 #else
-void
+void ICACHE_IRAM_ATTR
 default_exception_handler(void) {
   store_exception_error(RST_EVENT_EXP);
 }
 #endif
-
 
 /* SDK 1.1.0 + libmain_patch_01.a */
 /* struct rst_info *system_get_rst_info(void){

@@ -44,10 +44,24 @@
 
 #  define STARTUP_CPU_CLK 160
 
-#  ifndef ICACHE_FLASH		/* (назначается в MakeFile -DICACHE_FLASH) */
-#    define ICACHE_FLASH
-/* #define ICACHE_FLASH_ATTR __attribute__((section(".irom0.text")))
- #define ICACHE_RODATA_ATTR __attribute__((aligned(4), section(".irom.text"))) */
+#  ifndef DATA_IRAM_ATTR
+#    define DATA_IRAM_ATTR __attribute__((aligned(4), section(".iram.data")))
+#  endif
+
+#  ifndef ENTRY_POINT_ATTR
+#    define ENTRY_POINT_ATTR __attribute__ ((section(".entry.text")))
+#  endif
+
+#  ifndef ICACHE_FLASH_ATTR
+#    define ICACHE_FLASH_ATTR
+#  endif
+
+#  ifndef ICACHE_RODATA_ATTR
+#    define ICACHE_RODATA_ATTR  __attribute__((aligned(4)))
+#  endif
+
+#  ifndef ICACHE_IRAM_ATTR
+#    define ICACHE_IRAM_ATTR __attribute__((section(".iram0.text")))
 #  endif
 
 /* #define USE_OPEN_LWIP 140 // использовать OpenLwIP 1.4.0 (назначается в app/MakeFile #USE_OPEN_LWIP = 140)

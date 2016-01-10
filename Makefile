@@ -19,8 +19,6 @@ CFLAGS += -Wall -Wextra -Wno-pointer-sign
 CFLAGS += -fno-tree-ccp -foptimize-register-move
 CFLAGS += -mno-target-align -mno-serialize-volatile
 
-CDEFS += ICACHE_FLASH
-
 CFLAGS += -Wundef -Wpointer-arith -Werror
 CFLAGS += -Wl,-EL -fno-inline-functions -nostdlib
 CFLAGS += -mlongcalls -mtext-section-literals

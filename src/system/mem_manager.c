@@ -75,6 +75,7 @@
 #  include <string.h>
 
 #  include "bios.h"
+#  include "sdk/sdk_config.h"
 #  include "sdk/mem_manager.h"
 
 /* Architecture specifics. */
@@ -160,7 +161,7 @@ static size_t xBlockAllocatedBit DATA_IRAM_ATTR;	/* = 0; */
 
 /*-----------------------------------------------------------*/
 
-void *
+void * ICACHE_IRAM_ATTR
 pvPortMalloc(size_t xWantedSize) {
   xBlockLink *pxBlock, *pxPreviousBlock, *pxNewBlockLink;
   void *pvReturn = NULL;
@@ -268,7 +269,7 @@ pvPortMalloc(size_t xWantedSize) {
 
 /*-----------------------------------------------------------*/
 
-void
+void ICACHE_IRAM_ATTR
 vPortFree(void *pv) {
   unsigned char *puc = (unsigned char *)pv;
   xBlockLink *pxLink;
@@ -311,7 +312,7 @@ vPortFree(void *pv) {
 
 /*-----------------------------------------------------------*/
 
-void *
+void * ICACHE_IRAM_ATTR
 pvPortCalloc(size_t count, size_t size) {
   void *p;
 
@@ -328,7 +329,7 @@ pvPortCalloc(size_t count, size_t size) {
 
 /*-----------------------------------------------------------*/
 
-void *
+void * ICACHE_IRAM_ATTR
 pvPortZalloc(size_t size) {
   return pvPortCalloc(1, size);
 }
@@ -337,7 +338,7 @@ pvPortZalloc(size_t size) {
 
 /*-----------------------------------------------------------*/
 
-void *
+void * ICACHE_IRAM_ATTR
 pvPortRealloc(void *mem, size_t newsize) {
   void *p;
 
@@ -354,14 +355,14 @@ pvPortRealloc(void *mem, size_t newsize) {
 
 /*-----------------------------------------------------------*/
 
-size_t
+size_t ICACHE_IRAM_ATTR
 xPortGetFreeHeapSize(void) {
   return xFreeBytesRemaining;
 }
 
 /*-----------------------------------------------------------*/
 
-void
+void ICACHE_IRAM_ATTR
 vPortInitialiseBlocks(void) {
   /* This just exists to keep the linker quiet. */
 }
@@ -413,7 +414,7 @@ prvHeapInit(void) {
 
 /*-----------------------------------------------------------*/
 
-static void
+static void ICACHE_IRAM_ATTR
 prvInsertBlockIntoFreeList(xBlockLink * pxBlockToInsert) {
   xBlockLink *pxIterator;
   unsigned char *puc;
@@ -459,7 +460,7 @@ prvInsertBlockIntoFreeList(xBlockLink * pxBlockToInsert) {
 }
 
 /* use os_printf_plus() SDK 1.1.2 */
-size_t
+size_t ICACHE_IRAM_ATTR
 xPortWantedSizeAlign(size_t xSize) {
   xSize += heapSTRUCT_SIZE;	/* + 0x10 SDK 1.1.2 */
   if ((xSize & 7) != 0) {

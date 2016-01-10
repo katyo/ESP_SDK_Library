@@ -9,9 +9,7 @@ void *pvPortZalloc(size_t size);
 void *pvPortCalloc(unsigned int n, unsigned int count);
 void *pvPortRealloc(void *p, size_t size);
 size_t xPortGetFreeHeapSize(void);
-void
-prvHeapInit(void)
-  ICACHE_FLASH_ATTR;
+void prvHeapInit(void);
 
 #  define os_malloc   pvPortMalloc
 #  define os_free     vPortFree

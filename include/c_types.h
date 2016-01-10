@@ -48,19 +48,7 @@ typedef enum {
 #  define DMEM_ATTR __attribute__((section(".bss")))
 #  define SHMEM_ATTR
 
-#  ifdef ICACHE_FLASH
-#    define ICACHE_FLASH_ATTR __attribute__((section(".irom0.text")))
-#    define ICACHE_RODATA_ATTR __attribute__((aligned(4),section(".irom.text")))
-#  else
-#    define ICACHE_FLASH_ATTR
-#    define ICACHE_RODATA_ATTR
-#  endif
-
-#  ifndef DATA_IRAM_ATTR
-#    define DATA_IRAM_ATTR __attribute__((aligned(4), section(".iram.data")))
-#  endif
-
-#  define __forceinline __attribute__((always_inline)) inline
+#  define ALWAYS_INLINE_ATTR __attribute__((always_inline)) inline
 
 #  ifndef __cplusplus
 

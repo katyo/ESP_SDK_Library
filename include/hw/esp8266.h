@@ -12,19 +12,6 @@
 
 #  define Q_CLK_FREQ  26000000ul/* unit: Hz, 40000000 Hz */
 
-#  ifndef ICACHE_FLASH_ATTR
-#    define ICACHE_FLASH_ATTR __attribute__((section(".irom0.text")))
-#  endif
-#  ifndef ICACHE_RODATA_ATTR
-#    define ICACHE_RODATA_ATTR  __attribute__((aligned(4), section(".irom.text")))
-#  endif
-#  ifndef DATA_IRAM_ATTR
-#    define DATA_IRAM_ATTR __attribute__((aligned(4), section(".iram.data")))
-#  endif
-#  ifndef ICACHE_IRAM_ATTR
-#    define ICACHE_IRAM_ATTR __attribute__((section(".text")))
-#  endif
-
 extern volatile uint32_t dport_[64];	/* 0x3ff00000 */
 extern volatile uint32_t io2_regs_[1536];	/* 0x3ff20000 */
 extern volatile uint32_t uart0_[64];	/* 0x60000000 */

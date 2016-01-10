@@ -4,6 +4,7 @@
 * (c) PV` 2015
 ******************************************************************************/
 #include "bios.h"
+#include "sdk/sdk_config.h"
 #include "hw/eagle_soc.h"
 #include "hw/esp8266.h"
 
@@ -24,7 +25,7 @@ extern bool timer2_ms_flag;
    (((t) >> 2) * ((APB_CLK_FREQ >> prescaler)/(period>>2)) + ((t) & 0x3) * ((APB_CLK_FREQ >> prescaler)/period))  :  \
    (((t) * (APB_CLK_FREQ >> prescaler)) / period))
 
-void
+void ICACHE_IRAM_ATTR
 ets_timer_arm_new(ETSTimer * ptimer, uint32_t us_ms, int repeat_flag,
 		  int isMstimer) {
   ets_intr_lock();

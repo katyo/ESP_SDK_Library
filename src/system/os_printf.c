@@ -5,6 +5,7 @@
  *******************************************************************************/
 #include "bios.h"
 #include <stdarg.h>
+#include "sdk/sdk_config.h"
 #include "sdk/rom2ram.h"
 #include "sdk/os_printf.h"
 

@@ -882,7 +882,7 @@ ip_output(struct pbuf * p, ip_addr_t * src, ip_addr_t * dest,
   return ip_output_if(p, src, dest, ttl, tos, proto, netif);
 }
 
-void
+void LWIP_IRAM_ATTR
 ip_addr_debug_print(uint32_t debug, void *ipaddr) {
   (void)debug;
   (void)ipaddr;

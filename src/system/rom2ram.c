@@ -6,16 +6,10 @@
 #include "user_config.h"
 #include "bios.h"
 #include "hw/esp8266.h"
+#include "sdk/sdk_config.h"
 #include "sdk/rom2ram.h"
 #include "osapi.h"
 #include "sdk/add_func.h"
-
-#ifndef ICACHE_RAM_ATTR
-#  define ICACHE_RAM_ATTR
-#endif
-#ifndef ICACHE_FLASH_ATTR
-#  define ICACHE_FLASH_ATTR
-#endif
 
 extern uint32_t _text_start[];	/* start addr IRAM */
 extern uint32_t _lit4_start[];	/* addr data buf IRAM */
@@ -42,7 +36,7 @@ iram_buf_init(void) {
 }
 
 /* Копирует данные из области align(4) (flash, iram, registers) в область align(1) (ram) */
-int ICACHE_RAM_ATTR
+int ICACHE_IRAM_ATTR
 copy_s4d1(unsigned char *pd, void *ps, unsigned int len) {
   union {
     unsigned char uc[4];
@@ -84,7 +78,7 @@ copy_s4d1(unsigned char *pd, void *ps, unsigned int len) {
 }
 
 /* Копирует данные из области align(1) (ram) в область align(4) (flash, iram, registers) */
-int ICACHE_RAM_ATTR
+int ICACHE_IRAM_ATTR
 copy_s1d4(void *pd, unsigned char *ps, unsigned int len) {
   union {
     unsigned char uc[4];
@@ -128,7 +122,7 @@ copy_s1d4(void *pd, unsigned char *ps, unsigned int len) {
 
 /* extern void copy_s4d1(uint8_t * pd, void * ps, uint32_t len);
    Чтение буфера в IRAM */
-bool ICACHE_RAM_ATTR
+bool ICACHE_IRAM_ATTR
 eRamRead(uint32_t addr, uint8_t * pd, uint32_t len) {
   if (addr + len > (uint32_t) eraminfo.size)
     return false;
@@ -138,7 +132,7 @@ eRamRead(uint32_t addr, uint8_t * pd, uint32_t len) {
 
 /* extern void copy_s1d4(void * pd, uint8_t * ps, uint32_t len);
    Запись буфера в IRAM */
-bool ICACHE_RAM_ATTR
+bool ICACHE_IRAM_ATTR
 eRamWrite(uint32_t addr, uint8_t * ps, uint32_t len) {
   if (addr + len > (uint32_t) eraminfo.size)
     return false;
@@ -147,7 +141,7 @@ eRamWrite(uint32_t addr, uint8_t * ps, uint32_t len) {
 }
 
 /* strlen() для данных в сегментах flash и IRAM */
-unsigned int ICACHE_RAM_ATTR
+unsigned int ICACHE_IRAM_ATTR
 rom_strlen(const char *ps) {
   union {
     unsigned char uc[4];
@@ -172,7 +166,7 @@ rom_strlen(const char *ps) {
 }
 
 /* strcpy() из сегментов flash и IRAM */
-char *ICACHE_RAM_ATTR
+char *ICACHE_IRAM_ATTR
 rom_strcpy(char *pd_, void *ps, unsigned int maxlen) {
   if (pd_ == (0) || ps == (0) || maxlen == 0)
     return (0);
@@ -248,7 +242,7 @@ rom_strcpy(char *pd_, void *ps, unsigned int maxlen) {
 
 /* xstrcpy() из сегментов flash и IRAM с возвратом размера строки:
    на выходе размер строки, без учета терминатора '\0' */
-unsigned int ICACHE_RAM_ATTR
+unsigned int ICACHE_IRAM_ATTR
 rom_xstrcpy(char *pd, const char *ps) {
   union {
     unsigned char uc[4];
@@ -275,7 +269,7 @@ rom_xstrcpy(char *pd, const char *ps) {
 
 /* сравнение строки в ram со строкой в сегменте flash и IRAM
    = 1 если шаблон совпадает */
-int ICACHE_RAM_ATTR
+int ICACHE_IRAM_ATTR
 rom_xstrcmp(char *pd, const char *ps) {
   union {
     unsigned char uc[4];
@@ -317,7 +311,7 @@ rom_xstrcmp(char *pd, const char *ps) {
    The terminating null character is considered to be part of the string, so you can use this function get a pointer to
    the end of a string by specifying a null character as the value of the c argument. It would be better (but less
    portable) to use strchrnul in this case, though. */
-char *ICACHE_RAM_ATTR
+char *ICACHE_IRAM_ATTR
 rom_strchr(const char *ps, char c) {
   union {
     unsigned char uc[4];
@@ -343,7 +337,7 @@ rom_strchr(const char *ps, char c) {
   }
 }
 
-char ICACHE_RAM_ATTR
+char ICACHE_IRAM_ATTR
 get_align4_chr(const char *ps) {
   return (*((unsigned int *)((unsigned int)ps & (~3)))) >>
     (((unsigned int)ps & 3) << 3);
@@ -360,7 +354,7 @@ get_align4_chr(const char *ps) {
    ); */
 }
 
-void ICACHE_RAM_ATTR
+void ICACHE_IRAM_ATTR
 write_align4_chr(unsigned char *pd, unsigned char c) {
   union {
     unsigned char uc[4];
@@ -377,7 +371,7 @@ write_align4_chr(unsigned char *pd, unsigned char c) {
 #if 0
 
 
-int ICACHE_RAM_ATTR
+int ICACHE_IRAM_ATTR
 rom_memcmp(void *ps, const char *pd_, unsigned int len) {
   union {
     unsigned char uc[4];
@@ -438,7 +432,7 @@ rom_memcmp(void *ps, const char *pd_, unsigned int len) {
    For example,
          strrchr ("hello, world", 'l')
               "ld"	*/
-char *ICACHE_RAM_ATTR
+char *ICACHE_IRAM_ATTR
 ets_strrchr(const char *string, int c) {
   union {
     unsigned char uc[4];

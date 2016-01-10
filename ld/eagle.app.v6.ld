@@ -1,22 +1,19 @@
 /* This linker script generated from xt-genldscripts.tpp for LSP . */
 /* Linker Script for ld -N */
-MEMORY
-{
+MEMORY {
   dport0_0_seg :	org = 0x3FF00000, len = 0x00100
   dram0_0_seg :		org = 0x3FFE8000, len = 0x14000
   iram1_0_seg :		org = 0x40100000, len = 0x0C000
   irom0_0_seg :		org = 0x40207000, len = 0x72000
 }
 
-PHDRS
-{
+PHDRS {
   dport0_0_phdr PT_LOAD;
   dram0_0_phdr PT_LOAD;
   dram0_0_bss_phdr PT_LOAD;
   iram1_0_phdr PT_LOAD;
   irom0_0_phdr PT_LOAD;
 }
-
 
 /*  Default entry point:  */
 ENTRY(call_user_start)
@@ -39,35 +36,29 @@ _memmap_cacheattr_wt_allvalid = 0x22222112;
 _memmap_cacheattr_bp_allvalid = 0x22222222;
 PROVIDE(_memmap_cacheattr_reset = _memmap_cacheattr_wb_trapnull);
 
-SECTIONS
-{
-
-  .dport0.rodata : ALIGN(4)
-  {
+SECTIONS {
+  .dport0.rodata : ALIGN(4) {
     _dport0_rodata_start = ABSOLUTE(.);
     *(.dport0.rodata)
     *(.dport.rodata)
     _dport0_rodata_end = ABSOLUTE(.);
   } >dport0_0_seg :dport0_0_phdr
 
-  .dport0.literal : ALIGN(4)
-  {
+  .dport0.literal : ALIGN(4) {
     _dport0_literal_start = ABSOLUTE(.);
     *(.dport0.literal)
     *(.dport.literal)
     _dport0_literal_end = ABSOLUTE(.);
   } >dport0_0_seg :dport0_0_phdr
 
-  .dport0.data : ALIGN(4)
-  {
+  .dport0.data : ALIGN(4) {
     _dport0_data_start = ABSOLUTE(.);
     *(.dport0.data)
     *(.dport.data)
     _dport0_data_end = ABSOLUTE(.);
   } >dport0_0_seg :dport0_0_phdr
-
-  .data : ALIGN(4)
-  {
+  
+  .data : ALIGN(4) {
     _data_start = ABSOLUTE(.);
     *(.data)
     *(.data.*)
@@ -83,8 +74,7 @@ SECTIONS
     _data_end = ABSOLUTE(.);
   } >dram0_0_seg :dram0_0_phdr
 
-  .rodata : ALIGN(4)
-  {
+  .rodata : ALIGN(4) {
     _rodata_start = ABSOLUTE(.);
     *(.rodata)
     *(.rodata.*)
@@ -100,8 +90,7 @@ SECTIONS
     _rodata_end = ABSOLUTE(.);
   } >dram0_0_seg :dram0_0_phdr
 
-  .bss ALIGN(8) (NOLOAD) : ALIGN(4)
-  {
+  .bss ALIGN(8) (NOLOAD) : ALIGN(4) {
     . = ALIGN (8);
     _bss_start = ABSOLUTE(.);
     *(.dynsbss)
@@ -122,15 +111,15 @@ SECTIONS
     _heap_start = ABSOLUTE(.);
   } >dram0_0_seg :dram0_0_bss_phdr
 
-  .text : ALIGN(4)
-  {
+  .text : ALIGN(4) {
     _stext = .;
     _text_start = ABSOLUTE(.);
     *(.vectors.text)
     *(.entry.text)
     *(.init.literal)
     *(.init)
-    *(.literal .text .literal.* .text.* .stub .gnu.warning .gnu.linkonce.literal.* .gnu.linkonce.t.*.literal .gnu.linkonce.t.*)
+    *(.iram0.literal .iram0.literal.* .iram0.text .iram0.text.*)
+    *(.stub .gnu.warning .gnu.linkonce.literal.* .gnu.linkonce.t.*.literal .gnu.linkonce.t.*)
     *(.fini.literal)
     *(.fini)
     *(.gnu.version)
@@ -142,8 +131,7 @@ SECTIONS
     _etext = .;
   } >iram1_0_seg :iram1_0_phdr
 
-  .lit4 : ALIGN(4)
-  {
+  .lit4 : ALIGN(4) {
     _lit4_start = ABSOLUTE(.);
     *(.iram.data)
     *(*.lit4)
@@ -152,11 +140,13 @@ SECTIONS
     _lit4_end = ABSOLUTE(.);
   } >iram1_0_seg :iram1_0_phdr
 
-
-  .irom0.text : ALIGN(4)
-  {
+  .irom0.text : ALIGN(4) {
     _irom0_text_start = ABSOLUTE(.);
-    *(.irom0.literal .irom.literal .irom.text.literal .irom0.text .irom.text)
+    *(.irom0.literal .irom0.literal.*)
+    *(.literal .literal.*)
+    *(.irom.text .irom.text.*)
+    *(.text .text.*)
+    
     _irom0_text_end = ABSOLUTE(.);
   } >irom0_0_seg :irom0_0_phdr
 

@@ -99,7 +99,7 @@ tcpip_tcp_timer(void *arg) {
  * the reason is to have the TCP timer only running when
  * there are active (or time-wait) PCBs.
  */
-void
+void ICACHE_FLASH_ATTR
 tcp_timer_needed(void) {
   /* timer is off but needed again? */
   if (!tcpip_tcp_timer_active && (tcp_active_pcbs || tcp_tw_pcbs)) {
@@ -125,7 +125,7 @@ tcp_timer_needed(void) {
    }
  */
 #  endif
-       /* LWIP_TCP */
+/* LWIP_TCP */
 
 #  if IP_REASSEMBLY
 /**
@@ -141,7 +141,7 @@ ip_reass_timer(void *arg) {
   sys_timeout(IP_TMR_INTERVAL, ip_reass_timer, NULL);
 }
 #  endif
-       /* IP_REASSEMBLY */
+/* IP_REASSEMBLY */
 
 #  if LWIP_ARP
 /**
@@ -166,7 +166,7 @@ arp_timer(void *arg) {
  * @param arg unused argument
  */
 extern void dhcps_coarse_tmr(void);
-static void
+static void ICACHE_IRAM_ATTR
 dhcp_timer_coarse(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: dhcp_coarse_tmr()\n"));
@@ -180,7 +180,7 @@ dhcp_timer_coarse(void *arg) {
  *
  * @param arg unused argument
  */
-static void
+static void ICACHE_IRAM_ATTR
 dhcp_timer_fine(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: dhcp_fine_tmr()\n"));
@@ -196,7 +196,7 @@ dhcp_timer_fine(void *arg) {
  *
  * @param arg unused argument
  */
-static void
+static void ICACHE_FLASH_ATTR
 autoip_timer(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: autoip_tmr()\n"));
@@ -212,7 +212,7 @@ autoip_timer(void *arg) {
  *
  * @param arg unused argument
  */
-static void
+static void ICACHE_IRAM_ATTR
 igmp_timer(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: igmp_tmr()\n"));
@@ -228,7 +228,7 @@ igmp_timer(void *arg) {
  *
  * @param arg unused argument
  */
-static void
+static void ICACHE_IRAM_ATTR
 dns_timer(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: dns_tmr()\n"));
@@ -239,7 +239,7 @@ dns_timer(void *arg) {
        /* LWIP_DNS */
 
 /** Initialize this module */
-void
+void ICACHE_FLASH_ATTR
 sys_timeouts_init(void) {
 #  if IP_REASSEMBLY
   sys_timeout(IP_TMR_INTERVAL, ip_reass_timer, NULL);
@@ -290,12 +290,12 @@ sys_timeouts_init(void) {
  * @param arg argument to pass to the callback function
  */
 #  if LWIP_DEBUG_TIMERNAMES
-void
+void ICACHE_FLASH_ATTR
 sys_timeout_debug(u32_t msecs, sys_timeout_handler handler, void *arg,
 		  const char *handler_name)
 #  else
       /* LWIP_DEBUG_TIMERNAMES */
-void
+void ICACHE_FLASH_ATTR
 sys_timeout(u32_t msecs, sys_timeout_handler handler, void *arg)
 #  endif			/* LWIP_DEBUG_TIMERNAMES */
 {
@@ -354,7 +354,7 @@ sys_timeout(u32_t msecs, sys_timeout_handler handler, void *arg)
  * @param handler callback function that would be called by the timeout
  * @param arg callback argument that would be passed to handler
  */
-void
+void ICACHE_FLASH_ATTR
 sys_untimeout(sys_timeout_handler handler, void *arg) {
   struct sys_timeo *prev_t, *t;
 
@@ -391,7 +391,7 @@ extern uint8_t timer2_ms_flag;
  *
  * Must be called periodically from your main loop.
  */
-void
+void ICACHE_FLASH_ATTR
 sys_check_timeouts(void) {
   struct sys_timeo *tmptimeout;
   u32_t diff;
@@ -443,7 +443,7 @@ sys_check_timeouts(void) {
  * time (e.g. while saving energy) to prevent all timer functions of that
  * period being called.
  */
-void
+void ICACHE_FLASH_ATTR
 sys_restart_timeouts(void) {
   timeouts_last_time = NOW();
 }
@@ -458,7 +458,7 @@ sys_restart_timeouts(void) {
  * @param mbox the mbox to fetch the message from
  * @param msg the place to store the message
  */
-void
+void ICACHE_FLASH_ATTR
 sys_timeouts_mbox_fetch(sys_mbox_t * mbox, void **msg) {
   u32_t time_needed;
   struct sys_timeo *tmptimeout;
@@ -516,11 +516,11 @@ sys_timeouts_mbox_fetch(sys_mbox_t * mbox, void **msg) {
 }
 
 #  endif
-       /* NO_SYS */
+/* NO_SYS */
 
 #else /* LWIP_TIMERS */
 /* Satisfy the TCP code which calls this function */
-void
+void ICACHE_FLASH_ATTR
 tcp_timer_needed(void) {
 }
 #endif /* LWIP_TIMERS */

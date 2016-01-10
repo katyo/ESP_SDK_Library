@@ -32,7 +32,7 @@ uint32_t flash_size DATA_IRAM_ATTR;
  * FunctionName : Cache_Read_Enable_New
  * Returns      : none
  *******************************************************************************/
-void
+void ICACHE_IRAM_ATTR
 Cache_Read_Enable_New(void) {
 #ifdef USE_OVERLAP_MODE
   if (dual_flash_flag)
@@ -56,7 +56,7 @@ Cache_Read_Enable_New(void) {
  * Опции gcc: -mno-serialize-volatile !
  *******************************************************************************/
 #define SPI_FBLK 32
-SpiFlashOpResult
+SpiFlashOpResult ICACHE_IRAM_ATTR
 spi_flash_read(uint32_t faddr, void *des, uint32_t size) {
 #if DEBUGSOO > 5
   ets_printf("fread:%p<-%p[%u]\n", des, faddr, size);
@@ -143,7 +143,7 @@ spi_flash_read(uint32_t faddr, void *des, uint32_t size) {
  * FunctionName : spi_flash_get_id
  * Returns      : flash id
  *******************************************************************************/
-uint32_t
+uint32_t ICACHE_IRAM_ATTR
 spi_flash_get_id(void) {
   Cache_Read_Disable();
   Wait_SPI_Idle(flashchip);
@@ -160,7 +160,7 @@ spi_flash_get_id(void) {
  * FunctionName : spi_flash_read_status
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
-SpiFlashOpResult
+SpiFlashOpResult ICACHE_IRAM_ATTR
 spi_flash_read_status(uint32_t * sta) {
   Cache_Read_Disable();
   uint32_t ret = SPI_read_status(flashchip, sta);
@@ -173,7 +173,7 @@ spi_flash_read_status(uint32_t * sta) {
  * FunctionName : spi_flash_write_status
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
-SpiFlashOpResult
+SpiFlashOpResult ICACHE_IRAM_ATTR
 spi_flash_write_status(uint32_t sta) {
   Cache_Read_Disable();
   SpiFlashOpResult ret = SPI_write_status(flashchip, sta);
@@ -186,7 +186,7 @@ spi_flash_write_status(uint32_t sta) {
  * FunctionName : spi_flash_erase_sector
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
-SpiFlashOpResult
+SpiFlashOpResult ICACHE_IRAM_ATTR
 spi_flash_erase_sector(uint16_t sec) {
   Cache_Read_Disable();
   open_16m();
@@ -201,7 +201,7 @@ spi_flash_erase_sector(uint16_t sec) {
  * FunctionName : spi_flash_write
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
-SpiFlashOpResult
+SpiFlashOpResult ICACHE_IRAM_ATTR
 spi_flash_write(uint32_t des_addr, uint32_t * src_addr, uint32_t size) {
   if (src_addr == NULL)
     return SPI_FLASH_RESULT_ERR;
@@ -220,7 +220,7 @@ spi_flash_write(uint32_t des_addr, uint32_t * src_addr, uint32_t size) {
  * FunctionName : spi_flash_erase_block
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
-SpiFlashOpResult
+SpiFlashOpResult ICACHE_IRAM_ATTR
 spi_flash_erase_block(uint32_t blk) {
   Cache_Read_Disable();
   open_16m();
@@ -259,7 +259,7 @@ spi_flash_real_size(void) {
  * FunctionName : spi_flash_write_bytes_array
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
-SpiFlashOpResult
+SpiFlashOpResult ICACHE_FLASH_ATTR
 spi_flash_write_bytes_array(uint32_t des_addr, uint8_t * src_addr, uint32_t size) {
   SpiFlashOpResult ret = SPI_FLASH_RESULT_ERR;
 

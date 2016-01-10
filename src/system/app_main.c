@@ -83,7 +83,8 @@ void call_user_start(void);
    ENTRY(call_user_start) in eagle.app.v6.ld
    ----------------------------------------------------------------------------- */
 #ifdef USE_FIX_QSPI_FLASH
-void __attribute__ ((section(".entry.text"))) call_user_start1(void) {
+void ENTRY_POINT_ATTR
+call_user_start1(void) {
   SPI0_USER |= SPI_CS_SETUP;	/* +1 такт перед CS = 0x80000064 */
   /* SPI на 80 MHz */
 #  if USE_FIX_QSPI_FLASH == 80
@@ -105,7 +106,8 @@ void __attribute__ ((section(".entry.text"))) call_user_start1(void) {
   ets_run();
 }
 #else
-void __attribute__ ((section(".entry.text"))) call_user_start1(void) {
+void ENTRY_POINT_ATTR
+call_user_start1(void) {
   /* Загрузка заголовка flash */
   struct SPIFlashHead fhead;
 
@@ -166,7 +168,7 @@ sflash_something(uint32_t flash_speed) {
 /* =============================================================================
    Стандартный вывод putc (UART0)
    ----------------------------------------------------------------------------- */
-void
+void ICACHE_IRAM_ATTR
 uart0_write_char(char c) {
   if (c != '\r') {
     do {
@@ -187,7 +189,7 @@ uart0_write_char(char c) {
 /* =============================================================================
    Стандартный вывод putc (UART1)
    ----------------------------------------------------------------------------- */
-void
+void ICACHE_IRAM_ATTR
 uart1_write_char(char c) {
   if (c != '\r') {
     do {
@@ -241,7 +243,7 @@ struct exception_frame {
   };
   uint32_t cause;
 };
-void
+void ICACHE_IRAM_ATTR
 read_align_exception_handler(struct exception_frame *ef, uint32_t cause) {
   /* If this is not EXCCAUSE_LOAD_STORE_ERROR you're doing it wrong! */
   (void)cause;
@@ -711,7 +713,7 @@ uart_wait_tx_fifo_empty(void) {
    user_uart_wait_tx_fifo_empty()
    Use SDK Espressif
    ----------------------------------------------------------------------------- */
-void
+void ICACHE_IRAM_ATTR
 user_uart_wait_tx_fifo_empty(uint32_t uart_num, uint32_t x) {
   if (uart_num)
     while ((UART1_STATUS >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT);
