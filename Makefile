@@ -23,6 +23,8 @@ CFLAGS += -Wundef -Wpointer-arith -Werror
 CFLAGS += -Wl,-EL -fno-inline-functions -nostdlib
 CFLAGS += -mlongcalls -mtext-section-literals
 
+CFLAGS += -ffunction-sections -fdata-sections
+
 CDIRS += $(INCDIR)
 
 USE_LOADER ?= y
@@ -227,6 +229,7 @@ FIRMWARE.LDFLAGS += \
   -nodefaultlibs \
   -nostdlib \
   -T$(firstword $(FIRMWARE.LDSCRIPTS)) \
+  -Wl,--gc-sections \
   -Wl,--no-check-sections \
   -u call_user_start \
   -Wl,-static
