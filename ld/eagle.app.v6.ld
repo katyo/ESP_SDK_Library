@@ -76,17 +76,12 @@ SECTIONS {
 
   .rodata : ALIGN(4) {
     _rodata_start = ABSOLUTE(.);
-    *(.rodata)
-    *(.rodata.*)
+    *(.rodata .rodata.*)
     *(.gnu.linkonce.r.*)
     *(.rodata1)
     *(.dynamic)
     *(.gnu.version_d)
-    . = ALIGN(4);		/* this table MUST be 4-byte aligned */
-    _bss_table_start = ABSOLUTE(.);
-/*    LONG(_bss_start)
-    LONG(_bss_end) */
-    _bss_table_end = ABSOLUTE(.);
+    . = ALIGN(4); /* this table MUST be 4-byte aligned */
     _rodata_end = ABSOLUTE(.);
   } >dram0_0_seg :dram0_0_phdr
 
@@ -118,7 +113,8 @@ SECTIONS {
     *(.entry.text)
     *(.init.literal)
     *(.init)
-    *(.iram0.literal .iram0.literal.* .iram0.text .iram0.text.*)
+    *(.iram0.literal .iram0.literal.*)
+    *(.iram0.text .iram0.text.*)
     *(.stub .gnu.warning .gnu.linkonce.literal.* .gnu.linkonce.t.*.literal .gnu.linkonce.t.*)
     *(.fini.literal)
     *(.fini)
@@ -146,10 +142,10 @@ SECTIONS {
     *(.literal .literal.*)
     *(.irom.text .irom.text.*)
     *(.text .text.*)
+    *(.irom0.rodata .irom0.rodata.*)
     
     _irom0_text_end = ABSOLUTE(.);
   } >irom0_0_seg :irom0_0_phdr
-
 }
 
 /* get ROM code address */

@@ -53,7 +53,7 @@
 #  endif
 
 #  ifndef ICACHE_RODATA_ATTR
-#    define ICACHE_RODATA_ATTR  __attribute__((aligned(4)))
+#    define ICACHE_RODATA_ATTR  __attribute__((aligned(4), section(".irom0.rodata")))
 #  endif
 
 #  ifndef ICACHE_IRAM_ATTR
