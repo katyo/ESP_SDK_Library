@@ -41,8 +41,6 @@
 #  include "user_config.h"
 #  include "sdk/sdk_config.h"
 
-#  define LWIP_IRAM_ATTR ICACHE_IRAM_ATTR
-
 #  ifdef USE_MAX_IRAM
 #    define LWIP_DATA_IRAM_ATTR DATA_IRAM_ATTR
 #  else

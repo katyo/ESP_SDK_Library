@@ -150,7 +150,7 @@ tcp_tmr(void) {
  * @return ERR_OK if connection has been closed
  *         another err_t if closing failed and pcb is not freed
  */
-static err_t LWIP_IRAM_ATTR
+static err_t
 tcp_close_shutdown(struct tcp_pcb *pcb, u8_t rst_on_unacked_data) {
   err_t err;
 
@@ -486,7 +486,7 @@ tcp_bind(struct tcp_pcb *pcb, ip_addr_t * ipaddr, u16_t port) {
 /**
  * Default accept callback if no accept callback is specified by the user.
  */
-static err_t LWIP_IRAM_ATTR
+static err_t
 tcp_accept_null(void *arg, struct tcp_pcb *pcb, err_t err) {
   LWIP_UNUSED_ARG(arg);
   LWIP_UNUSED_ARG(pcb);
@@ -643,7 +643,7 @@ tcp_recved(struct tcp_pcb *pcb, u16_t len) {
  *
  * @return a new (free) local TCP port number
  */
-static u16_t LWIP_IRAM_ATTR
+static u16_t
 tcp_new_port(void) {
   int i;
   struct tcp_pcb *pcb;

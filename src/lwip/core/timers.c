@@ -166,7 +166,7 @@ arp_timer(void *arg) {
  * @param arg unused argument
  */
 extern void dhcps_coarse_tmr(void);
-static void ICACHE_IRAM_ATTR
+static void
 dhcp_timer_coarse(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: dhcp_coarse_tmr()\n"));
@@ -180,7 +180,7 @@ dhcp_timer_coarse(void *arg) {
  *
  * @param arg unused argument
  */
-static void ICACHE_IRAM_ATTR
+static void
 dhcp_timer_fine(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: dhcp_fine_tmr()\n"));
@@ -212,7 +212,7 @@ autoip_timer(void *arg) {
  *
  * @param arg unused argument
  */
-static void ICACHE_IRAM_ATTR
+static void
 igmp_timer(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: igmp_tmr()\n"));
@@ -228,7 +228,7 @@ igmp_timer(void *arg) {
  *
  * @param arg unused argument
  */
-static void ICACHE_IRAM_ATTR
+static void
 dns_timer(void *arg) {
   LWIP_UNUSED_ARG(arg);
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: dns_tmr()\n"));
