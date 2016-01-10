@@ -119,7 +119,7 @@ build.img.$(1): $$($(1).IMG)
 $$($(1).IMG): $$($(1).OBJ)
 	@echo TARGET $(1) RDI
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(OBJCOPY) -O binary -j '.rodata.*' $$^ $$@
+	$(Q)$(OBJCOPY) -O binary -j .irom0.rodata $$^ $$@
 
 clean: clean.img.$(1)
 clean.img.$(1):
@@ -178,7 +178,6 @@ endif
 flash.img.$(1): $$(foreach t,$$($(1).flash.IMGS),$$($$(t).IMG))
 	@echo TARGET $(1) FLASH IMG
 	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $$(foreach t,$$($(1).flash.IMGS),$$($$(t).ADDR) $$($$(t).IMG))
-
 endef
 
 define LDR_RULES
