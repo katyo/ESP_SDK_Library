@@ -138,8 +138,7 @@ librapid_loader.SRCS += \
   $(SRCDIR)/loader/loader.c \
   $(SRCDIR)/loader/loader_flash_boot.S
 
-TARGET.IMGS += rapid_loader
-rapid_loader.ISLOADER := y
+TARGET.LDRS += rapid_loader
 rapid_loader.DEPLIBS += librapid_loader
 
 TARGET.LIBS += liblwipapi
@@ -294,4 +293,5 @@ clear_eep.ADDR ?= 0x79000
 # Provide rules
 $(foreach lib,$(TARGET.LIBS),$(eval $(call LIB_RULES,$(lib))))
 $(foreach rdi,$(TARGET.RDIS),$(eval $(call RDI_RULES,$(rdi))))
+$(foreach ldr,$(TARGET.LDRS),$(eval $(call LDR_RULES,$(ldr))))
 $(foreach img,$(TARGET.IMGS),$(eval $(call IMG_RULES,$(img))))

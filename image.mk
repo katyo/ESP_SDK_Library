@@ -131,6 +131,10 @@ endef
 define IMG_RULES
 $$(eval $$(call BIN_RULES,$(1)))
 
+ifneq (,$$(LOADER))
+$(1).LOADER ?= $$(LOADER)
+endif
+
 $(1).IMGS += $(1).IMG1 $(1).IMG2
 $(1).IMG1.ADDR ?= $(IMG1.ADDR)
 $(1).IMG1.IMG := $$(call IMG_P,$(1)-$(IMG1.ADDR))
@@ -139,42 +143,21 @@ $(1).IMG2.IMG := $$(call IMG_P,$(1)-$(IMG2.ADDR))
 
 $(1).IMG += $$(foreach img,$$($(1).IMGS),$$($$(img).IMG))
 
-ifneq (,$$($(1).ISLOADER))
-  $(1).LDR := $$(call IMG_P,$(1))
-else
-  ifneq (,$$($(1).LOADER))
-    $(1).LDR.IMG := $$($$($(1).LOADER).LDR)
-  else
-    ifneq (,$$(LOADER))
-      $(1).LDR.IMG := $$($$(LOADER).LDR)
-    endif
-  endif
+ifneq (,$$($(1).LOADER))
+$(1).LOADER.LDR := $$($$($(1).LOADER).LDR)
 endif
 
 build: build.img.$(1)
-
-ifneq (y,$$($(1).ISLOADER))
 build.img.$(1): $$($(1).IMG)
-else
-build.img.$(1): $$($(1).LDR)
-$$($(1).LDR): $$($(1).IMG)
-	@echo TARGET $(1) MAKE LOADER
-	$(Q)$(OBJCOPY) -O binary -j .lit4 $$($(1).BIN) $$($(1).BIN)~addld
-	$(Q)cat $$($(1).IMG1.IMG) $$($(1).BIN)~addld >$$($(1).LDR)
-	$(Q)rm -f $$($(1).BIN)~addld
-endif
-
-$$($(1).IMG): $$($(1).BIN) $$($(1).LDR.IMG)
+$$($(1).IMG): $$($(1).BIN) $$($(1).LOADER.LDR)
 	@echo TARGET $(1) IMAGE
 	$(Q)mkdir -p $$(dir $$@)
 	$(Q)$(ESPTOOL) elf2image -o $$(dir $$(firstword $$($(1).IMG)))$(1)- $(IMG_OPTION) $$($(1).BIN)
-ifneq (y,$$($(1).ISLOADER))
-  ifdef $(1).LDR.IMG
+ifneq (,$$($(1).LOADER))
 	@echo TARGET $(1) ADD LOADER
 	$(Q)mv -f $$($(1).IMG1.IMG) $$($(1).IMG1.IMG)~orig
-	$(Q)cat $$($(1).LDR.IMG) $$($(1).IMG1.IMG)~orig >$$($(1).IMG1.IMG)
+	$(Q)cat $$($(1).LOADER.LDR) $$($(1).IMG1.IMG)~orig >$$($(1).IMG1.IMG)
 	$(Q)rm -f $$($(1).IMG1.IMG)~orig
-  endif
 endif
 
 info.img.$(1): $$($(1).IMG)
@@ -184,7 +167,7 @@ info.img.$(1): $$($(1).IMG)
 clean: clean.img.$(1)
 clean.img.$(1):
 	@echo TARGET $(1) CLEAN IMAGE
-	$(Q)rm -f $$($(1).IMG) $$(call IMG_P,$(1)-addld)
+	$(Q)rm -f $$($(1).IMG)
 
 $(1).flash.IMGS += $$($(1).IMGS) # add images to flashing
 
@@ -192,12 +175,30 @@ ifeq (y,$(CLEAR)) # add images to clearing settings
 $(1).flash.IMGS += $$(clear.IMGS)
 endif
 
-ifneq (y,$$($(1).ISLOADER))
 flash.img.$(1): $$(foreach t,$$($(1).flash.IMGS),$$($$(t).IMG))
 	@echo TARGET $(1) FLASH IMG
 	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $$(foreach t,$$($(1).flash.IMGS),$$($$(t).ADDR) $$($$(t).IMG))
-endif
 
+endef
+
+define LDR_RULES
+$(1).LOADER :=
+$$(eval $$(call IMG_RULES,$(1)))
+
+$(1).LDR = $$(call IMG_P,$(1))
+
+build: build.ldr.$(1)
+build.ldr.$(1): $$($(1).LDR)
+$$($(1).LDR): $$($(1).IMG)
+	@echo TARGET $(1) MAKE LOADER
+	$(Q)$(OBJCOPY) -O binary -j .lit4 $$($(1).BIN) $$($(1).BIN)~addld
+	$(Q)cat $$($(1).IMG1.IMG) $$($(1).BIN)~addld >$$($(1).LDR)
+	$(Q)rm -f $$($(1).BIN)~addld
+
+clean: clean.ldr.$(1)
+clean.ldr.$(1):
+	@echo TARGET $(1) CLEAN LOADER
+	$(Q)rm -f $$($(1).LDR)
 endef
 
 open.tty:
