@@ -259,24 +259,35 @@ ifeq (y,$(WITH_EX_TCP_ECHO))
 endif
 
 # Image
+
+# Program codes IRAM/RAM
 IMG1.ADDR ?= 0x00000
+
+ # Program codes Cache Flash
 IMG2.ADDR ?= 0x07000
 
+# RF SDK options
 TARGET.RDIS += esp_init_data_default
 clear.IMGS += esp_init_data_default
 esp_init_data_default.SRCS += $(SRCDIR)/bin/esp_init_data_default.c
 esp_init_data_default.ADDR ?= 0x7C000
 
-TARGET.RDIS += blank
-clear.IMGS += blank
-blank.SRCS += $(SRCDIR)/bin/blank.c
-blank.ADDR ?= 0x7E000
+# Default SDK WiFi config
+# (don't used when NO_ESP_CONFIG is y)
+ifeq (y,$(NO_ESP_CONFIG))
+  TARGET.RDIS += blank
+  clear.IMGS += blank
+  blank.SRCS += $(SRCDIR)/bin/blank.c
+  blank.ADDR ?= 0x7E000
+endif
 
+# The RTC EEPROM data
 TARGET.RDIS += clear_eep
 clear.IMGS += clear_eep
 clear_eep.SRCS += $(SRCDIR)/bin/clear_eep.c
 clear_eep.ADDR ?= 0x79000
 
+# Provide rules
 $(foreach lib,$(TARGET.LIBS),$(eval $(call LIB_RULES,$(lib))))
 $(foreach rdi,$(TARGET.RDIS),$(eval $(call RDI_RULES,$(rdi))))
 $(foreach img,$(TARGET.IMGS),$(eval $(call IMG_RULES,$(img))))
