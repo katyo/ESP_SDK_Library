@@ -23,7 +23,7 @@ CFLAGS += -Wundef -Wpointer-arith -Werror
 CFLAGS += -Wl,-EL -fno-inline-functions -nostdlib
 CFLAGS += -mlongcalls -mtext-section-literals
 
-CFLAGS += -ffunction-sections -fdata-sections
+default.CFLAGS += -ffunction-sections -fdata-sections
 
 CDIRS += $(INCDIR)
 
@@ -133,12 +133,14 @@ ifeq (y,$(USE_LOADER))
 endif
 
 TARGET.LIBS += librapid_loader
+librapid_loader.IS = loader
 librapid_loader.CDEFS += __ets__
 librapid_loader.SRCS += \
   $(SRCDIR)/loader/loader.c \
   $(SRCDIR)/loader/loader_flash_boot.S
 
 TARGET.LDRS += rapid_loader
+rapid_loader.IS = loader
 rapid_loader.DEPLIBS += librapid_loader
 
 TARGET.LIBS += liblwipapi
@@ -211,27 +213,27 @@ libsdk.DEPLIBS += \
 # Application
 LDDIRS += $(LDDIR)
 
-LOADER.LDSCRIPTS += \
+loader.LDSCRIPTS += \
   $(LDDIR)/eagle.app.v6-loader.ld \
   $(LDDIR)/eagle.rom.addr.v6.ld
 
-LOADER.LDFLAGS += \
+loader.LDFLAGS += \
   -nostdlib \
-  -T$(firstword $(LOADER.LDSCRIPTS)) \
+  -T$(firstword $(loader.LDSCRIPTS)) \
   -Wl,--no-check-sections \
   -u call_user_start \
   -u loader_flash_boot \
   -Wl,-static
 
-FIRMWARE.LDSCRIPTS += \
+default.LDSCRIPTS += \
   $(LDDIR)/eagle.app.v6.ld \
   $(LDDIR)/eagle.rom.addr.v6.ld
 
-FIRMWARE.LDFLAGS += \
+default.LDFLAGS += \
   -nostartfiles \
   -nodefaultlibs \
   -nostdlib \
-  -T$(firstword $(FIRMWARE.LDSCRIPTS)) \
+  -T$(firstword $(default.LDSCRIPTS)) \
   -Wl,--gc-sections \
   -Wl,--no-check-sections \
   -u call_user_start \

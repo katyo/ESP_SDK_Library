@@ -41,8 +41,8 @@ void __attribute__ ((noreturn)) call_user_start(void) {
   /* Переход в область кеширования flash,
    * Запускаем загрузку SDK с указателем на заголовок SPIFlashHeader (находится за данным загручиком по адресу с align 16) */
 /*		((loader_call)((uint32)(&loader_flash_boot) + FLASH_BASE - IRAM_BASE + 0x10))((struct SPIFlashHeader *)(((uint32)(&_text_end) + FLASH_BASE - IRAM_BASE + 0x17) & (~15))); */
-  ((loader_call) (loader_flash_boot_addr)) ((struct SPIFlashHeader
-					     *)(next_flash_header_addr));
+  ((loader_call) (loader_flash_boot_addr))
+    ((struct SPIFlashHeader*)(next_flash_header_addr));
 
   /* контрольня сумма отображает версию и частоту
    * Checksum: 43 -> 40 MHz Ver3

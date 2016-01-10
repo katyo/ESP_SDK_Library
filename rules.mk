@@ -24,19 +24,22 @@ OBJDUMP := $(COMPILER_PREFIX)objdump
 OBJCOPY := $(COMPILER_PREFIX)objcopy
 GDB := $(COMPILER_PREFIX)gdb
 
+ifndef rules.ONCE
+rules.ONCE :=
+
 # Compiler flags
 CFLAGS += $(addprefix -D,$(CDEFS))
 CFLAGS += $(addprefix -I,$(CDIRS))
 
 # Linker flags
 LDFLAGS += $(addprefix -L,$(LDDIRS))
+endif
 
 build:
 clean:
 
 # Compilation rules
 define CC_RULES
-#$(1).SRC.$(2) := $$(wildcard $$(call SRC_P,$(1)/*,$(2)))
 $(1).SRC.$(2) += $$(filter %.$(2),$$($(1).SRCS))
 $(1).SRC += $$($(1).SRC.$(2))
 
@@ -71,6 +74,9 @@ endef
 
 # Library rules
 define LIB_RULES
+$(1).IS ?= default
+$(1).CFLAGS += $$($$($(1).IS).CFLAGS)
+
 $(1).CFLAGS += $$(addprefix -D,$$($(1).CDEFS))
 $(1).CFLAGS += $$(addprefix -I,$$($(1).CDIRS))
 
@@ -99,18 +105,14 @@ endef
 
 # Binary rules
 define BIN_RULES
+$(1).IS ?= default
+$(1).LDSCRIPTS += $$($$($(1).IS).LDSCRIPTS)
+$(1).LDFLAGS += $$($$($(1).IS).LDFLAGS)
+
 $(1).DEPLIBS_FULL := $$(foreach lib,$$(DEPLIBS) $$($(1).DEPLIBS),$$($$(lib).LIB))
 
 $(1).BIN := $$(call BIN_P,$(1))
 $(1).MAP := $$(call MAP_P,$(1))
-
-ifneq (,$$($(1).ISLOADER))
-  $(1).LDSCRIPTS += $$(LOADER.LDSCRIPTS)
-  $(1).LDFLAGS += $$(LOADER.LDFLAGS)
-else
-  $(1).LDSCRIPTS += $$(FIRMWARE.LDSCRIPTS)
-  $(1).LDFLAGS += $$(FIRMWARE.LDFLAGS)
-endif
 
 build: build.bin.$(1)
 build.bin.$(1): $$($(1).BIN)
