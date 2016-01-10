@@ -45,7 +45,7 @@ static uint8_t espconn_tcp_get_buf_count(espconn_buf * pesp_buf);
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_copy_partial(struct espconn *pesp_dest, struct espconn *pesp_source) {
   pesp_dest->type = pesp_source->type;
   pesp_dest->state = pesp_source->state;
@@ -82,7 +82,7 @@ espconn_copy_partial(struct espconn *pesp_dest, struct espconn *pesp_source) {
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_list_creat(espconn_msg ** phead, espconn_msg * pinsert) {
   espconn_msg *plist = NULL;
   espconn_msg *ptest = NULL;
@@ -113,7 +113,7 @@ espconn_list_creat(espconn_msg ** phead, espconn_msg * pinsert) {
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_list_delete(espconn_msg ** phead, espconn_msg * pdelete) {
   espconn_msg *plist = NULL;
   espconn_msg *ptest = NULL;
@@ -148,7 +148,7 @@ espconn_list_delete(espconn_msg ** phead, espconn_msg * pdelete) {
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_pbuf_create(espconn_buf ** phead, espconn_buf * pinsert) {
   espconn_buf *plist = NULL;
 
@@ -170,7 +170,7 @@ espconn_pbuf_create(espconn_buf ** phead, espconn_buf * pinsert) {
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_pbuf_delete(espconn_buf ** phead, espconn_buf * pdelete) {
   espconn_buf *plist = NULL;
 
@@ -198,7 +198,7 @@ espconn_pbuf_delete(espconn_buf ** phead, espconn_buf * pdelete) {
  * Parameters   : espconn -- the espconn used to build server
  * Returns      : true or false
  *******************************************************************************/
-bool ICACHE_FLASH_ATTR
+bool
 espconn_find_connection(struct espconn *pespconn, espconn_msg ** pnode) {
   espconn_msg *plist = NULL;
   struct ip_addr ip_remot;
@@ -253,7 +253,7 @@ espconn_find_connection(struct espconn *pespconn, espconn_msg ** pnode) {
  * Parameters   : type -- the type
  * Returns      : the count of simulatenously active connections
  *******************************************************************************/
-static uint8_t ICACHE_FLASH_ATTR
+static uint8_t
 espconn_get_acticve_num(uint8_t type) {
   espconn_msg *plist = NULL;
   uint8_t num_tcp_active = 0;
@@ -273,7 +273,7 @@ espconn_get_acticve_num(uint8_t type) {
  * Parameters   : espconn -- the espconn used to listen the connection
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_connect(struct espconn * espconn) {
   struct ip_addr ipaddr;
   struct ip_info ipinfo;
@@ -350,7 +350,7 @@ espconn_connect(struct espconn * espconn) {
  * Parameters   : espconn -- espconn to the data transmission
  * Returns      : result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_create(struct espconn * espconn) {
   int8_t value = ESPCONN_OK;
   espconn_msg *plist = NULL;
@@ -384,7 +384,7 @@ espconn_create(struct espconn * espconn) {
  *                length -- length of data to send
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_sent(struct espconn * espconn, uint8_t * psent, uint16_t length) {
   espconn_msg *pnode = NULL;
   bool value = false;
@@ -466,7 +466,7 @@ espconn_sent(struct espconn * espconn, uint8_t * psent, uint16_t length) {
  *                length -- length of data to send
  * Returns      : error
  *******************************************************************************/
-int16_t ICACHE_FLASH_ATTR
+int16_t
 espconn_sendto(struct espconn * espconn, uint8_t * psent, uint16_t length) {
   espconn_msg *pnode = NULL;
   bool value = false;
@@ -504,7 +504,7 @@ int8_t espconn_send(struct espconn * espconn, uint8_t * psent, uint16_t length)
  * Parameters   : none
  * Returns      : the number of TCP_MSS active TCP connections
  *******************************************************************************/
-uint8_t ICACHE_FLASH_ATTR
+uint8_t
 espconn_tcp_get_wnd(void) {
   uint8_t tcp_num = 0;
 
@@ -520,7 +520,7 @@ espconn_tcp_get_wnd(void) {
  * Returns      : ESPCONN_ARG -- Illegal argument
  *          ESPCONN_OK  -- No error
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_tcp_set_wnd(uint8_t num) {
   if (num == 0 || num > linkMax)
     return ESPCONN_ARG;
@@ -535,7 +535,7 @@ espconn_tcp_set_wnd(uint8_t num) {
  * Parameters   : none
  * Returns      : the size of TCP_MSS active TCP connections
  *******************************************************************************/
-uint16_t ICACHE_FLASH_ATTR
+uint16_t
 espconn_tcp_get_mss(void) {
   uint16_t tcp_num = 0;
 
@@ -550,7 +550,7 @@ espconn_tcp_get_mss(void) {
  * Parameters   : espconn -- espconn to set the connect callback
  * Returns      : none
  *******************************************************************************/
-uint8_t ICACHE_FLASH_ATTR
+uint8_t
 espconn_tcp_get_max_con(void) {
   uint8_t tcp_num = 0;
 
@@ -565,7 +565,7 @@ espconn_tcp_get_max_con(void) {
  * Parameters   : espconn -- espconn to set the connect callback
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_tcp_set_max_con(uint8_t num) {
   if (num == 0 || num > linkMax)
     return ESPCONN_ARG;
@@ -580,7 +580,7 @@ espconn_tcp_set_max_con(uint8_t num) {
  * Parameters   : none
  * Returns      : the Maximum number of retransmissions
  *******************************************************************************/
-uint8_t ICACHE_FLASH_ATTR
+uint8_t
 espconn_tcp_get_max_retran(void) {
   uint8_t tcp_num = 0;
 
@@ -595,7 +595,7 @@ espconn_tcp_get_max_retran(void) {
  * Parameters   : num -- the Maximum number of retransmissions
  * Returns      : result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_tcp_set_max_retran(uint8_t num) {
   if (num == 0 || num > 12)
     return ESPCONN_ARG;
@@ -610,7 +610,7 @@ espconn_tcp_set_max_retran(uint8_t num) {
  * Parameters   : none
  * Returns      : the Maximum number of retransmissions
  *******************************************************************************/
-uint8_t ICACHE_FLASH_ATTR
+uint8_t
 espconn_tcp_get_max_syn(void) {
   uint8_t tcp_num = 0;
 
@@ -625,7 +625,7 @@ espconn_tcp_get_max_syn(void) {
  * Parameters   : num -- the Maximum number of retransmissions
  * Returns      : result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_tcp_set_max_syn(uint8_t num) {
   if (num == 0 || num > 12)
     return ESPCONN_ARG;
@@ -640,7 +640,7 @@ espconn_tcp_set_max_syn(uint8_t num) {
  * Parameters   : espconn -- espconn to get the count
  * Returns      : result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_tcp_get_max_con_allow(struct espconn * espconn) {
   espconn_msg *pget_msg = NULL;
 
@@ -663,7 +663,7 @@ espconn_tcp_get_max_con_allow(struct espconn * espconn) {
  * Parameters   : espconn -- espconn to set the count
  * Returns      : result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_tcp_set_max_con_allow(struct espconn * espconn, uint8_t num) {
   espconn_msg *pset_msg = NULL;
 
@@ -690,7 +690,7 @@ espconn_tcp_set_max_con_allow(struct espconn * espconn, uint8_t num) {
  *          num -- the total number of espconn_buf
  * Returns      : result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_tcp_set_buf_count(struct espconn * espconn, uint8_t num) {
   espconn_msg *plist = NULL;
 
@@ -718,7 +718,7 @@ espconn_tcp_set_buf_count(struct espconn * espconn, uint8_t num) {
  * Parameters   : pesp_buf -- the list head of espconn_buf type
  * Returns      : the count of the current node which has espconn_buf
  *******************************************************************************/
-static uint8_t ICACHE_FLASH_ATTR
+static uint8_t
 espconn_tcp_get_buf_count(espconn_buf * pesp_buf) {
   espconn_buf *pbuf_list = pesp_buf;
   uint8_t pbuf_num = 0;
@@ -740,7 +740,7 @@ espconn_tcp_get_buf_count(espconn_buf * pesp_buf) {
  *                when data is successfully sent
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_regist_sentcb(struct espconn * espconn, espconn_sent_callback sent_cb) {
   if (espconn == NULL) {
     return ESPCONN_ARG;
@@ -759,7 +759,7 @@ espconn_regist_sentcb(struct espconn * espconn, espconn_sent_callback sent_cb) {
  *                when data is successfully sent
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_regist_write_finish(struct espconn * espconn,
 			    espconn_connect_callback write_finish_fn) {
   if (espconn == NULL || espconn->proto.tcp == NULL ||
@@ -779,7 +779,7 @@ espconn_regist_write_finish(struct espconn * espconn,
  *                connect_cb -- connected callback function to call when connected
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_regist_connectcb(struct espconn * espconn,
 			 espconn_connect_callback connect_cb) {
   if (espconn == NULL) {
@@ -798,7 +798,7 @@ espconn_regist_connectcb(struct espconn * espconn,
  *                recv_cb -- recv callback function to call when recv data
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_regist_recvcb(struct espconn * espconn, espconn_recv_callback recv_cb) {
   if (espconn == NULL) {
     return ESPCONN_ARG;
@@ -816,7 +816,7 @@ espconn_regist_recvcb(struct espconn * espconn, espconn_recv_callback recv_cb) {
  *                recon_cb -- err callback function to call when err
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_regist_reconcb(struct espconn * espconn,
 		       espconn_reconnect_callback recon_cb) {
   if (espconn == NULL) {
@@ -834,7 +834,7 @@ espconn_regist_reconcb(struct espconn * espconn,
  *                discon_cb -- err callback function to call when err
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_regist_disconcb(struct espconn * espconn,
 			espconn_connect_callback discon_cb) {
   if (espconn == NULL) {
@@ -852,7 +852,7 @@ espconn_regist_disconcb(struct espconn * espconn,
  *                discon_cb -- err callback function to call when err
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_get_connection_info(struct espconn * pespconn,
 			    remot_info ** pcon_info, uint8_t typeflags) {
   espconn_msg *plist = NULL;
@@ -902,7 +902,7 @@ espconn_get_connection_info(struct espconn * pespconn,
  * Parameters   : espconn -- the espconn used to listen the connection
  * Returns      :
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_accept(struct espconn * espconn) {
   int8_t value = ESPCONN_OK;
   espconn_msg *plist = NULL;
@@ -933,7 +933,7 @@ espconn_accept(struct espconn * espconn) {
  *          interval -- the timer when don't recv data
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_regist_time(struct espconn * espconn, uint32_t interval,
 		    uint8_t type_flag) {
   espconn_msg *pnode = NULL;
@@ -971,7 +971,7 @@ espconn_regist_time(struct espconn * espconn, uint32_t interval,
  * Parameters   : espconn -- the espconn used to disconnect the connection
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_disconnect(struct espconn * espconn) {
   espconn_msg *pnode = NULL;
   bool value = false;
@@ -1001,7 +1001,7 @@ espconn_disconnect(struct espconn * espconn) {
  *          infoarg -- the packet info
  * Returns      : the errur code
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_get_packet_info(struct espconn * espconn,
 			struct espconn_packet * infoarg) {
   espconn_msg *pnode = NULL;
@@ -1056,7 +1056,7 @@ espconn_get_packet_info(struct espconn * espconn,
  *          opt -- the option for set
  * Returns      : the result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_set_opt(struct espconn * espconn, uint8_t opt) {
   espconn_msg *pnode = NULL;
   struct tcp_pcb *tpcb;
@@ -1091,7 +1091,7 @@ espconn_set_opt(struct espconn * espconn, uint8_t opt) {
  *          opt -- the option for clear
  * Returns      : the result
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_clear_opt(struct espconn * espconn, uint8_t opt) {
   espconn_msg *pnode = NULL;
   struct tcp_pcb *tpcb;
@@ -1127,7 +1127,7 @@ espconn_clear_opt(struct espconn * espconn, uint8_t opt) {
  *          value -- the value of time(s)
  * Returns      : access port value
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_set_keepalive(struct espconn * espconn, uint8_t level, void *optarg) {
   espconn_msg *pnode = NULL;
   bool value = false;
@@ -1173,7 +1173,7 @@ espconn_set_keepalive(struct espconn * espconn, uint8_t level, void *optarg) {
  *          level -- the connection's level
  * Returns      : access keep alive value
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_get_keepalive(struct espconn * espconn, uint8_t level, void *optarg) {
   espconn_msg *pnode = NULL;
   bool value = false;
@@ -1217,7 +1217,7 @@ espconn_get_keepalive(struct espconn * espconn, uint8_t level, void *optarg) {
  * Parameters   : espconn -- the espconn used to disconnect the connection
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_delete(struct espconn * espconn) {
   espconn_msg *pnode = NULL;
   bool value = false;
@@ -1244,7 +1244,7 @@ espconn_delete(struct espconn * espconn) {
  * Parameters   : none
  * Returns      : access port value
  *******************************************************************************/
-uint32_t ICACHE_FLASH_ATTR
+uint32_t
 espconn_port(void) {
   uint32_t port = 0;
   static uint32_t randnum = 0;
@@ -1286,7 +1286,7 @@ espconn_port(void) {
  *                  for resolution if no errors are present.
  *                - ESPCONN_ARG: dns client not initialized or invalid hostname
  *******************************************************************************/
-err_t ICACHE_FLASH_ATTR
+err_t
 espconn_gethostbyname(struct espconn * pespconn, const char *hostname,
 		      ip_addr_t * addr, dns_found_callback found) {
   return dns_gethostbyname(hostname, addr, found, pespconn);
@@ -1300,7 +1300,7 @@ espconn_gethostbyname(struct espconn * pespconn, const char *hostname,
  *            dnsserver -- IP address of the DNS server to set
  *  Returns     : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_dns_setserver(u8_t numdns, ip_addr_t * dnsserver) {
   dns_setserver(numdns, dnsserver);
 }

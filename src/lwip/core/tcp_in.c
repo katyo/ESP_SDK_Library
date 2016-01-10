@@ -78,13 +78,13 @@ struct tcp_pcb *tcp_input_pcb LWIP_DATA_IRAM_ATTR;	/* ��ǰ���Ŀ���
 /* Forward declarations. */
 static err_t
 tcp_process(struct tcp_pcb *pcb)
-  ICACHE_FLASH_ATTR;
-     static void tcp_receive(struct tcp_pcb *pcb) ICACHE_FLASH_ATTR;
-     static void tcp_parseopt(struct tcp_pcb *pcb) ICACHE_FLASH_ATTR;
+;
+     static void tcp_receive(struct tcp_pcb *pcb);
+     static void tcp_parseopt(struct tcp_pcb *pcb);
 
      static err_t tcp_listen_input(struct tcp_pcb_listen *pcb)
-  ICACHE_FLASH_ATTR;
-     static err_t tcp_timewait_input(struct tcp_pcb *pcb) ICACHE_FLASH_ATTR;
+;
+     static err_t tcp_timewait_input(struct tcp_pcb *pcb);
 
 /**
  * The initial input processing of TCP. It verifies the TCP header, demultiplexes
@@ -898,7 +898,7 @@ tcp_process(struct tcp_pcb *pcb) {
  *
  * Called from tcp_receive()
  */
-static void ICACHE_FLASH_ATTR
+static void
 tcp_oos_insert_segment(struct tcp_seg *cseg, struct tcp_seg *next) {
   struct tcp_seg *old_seg;
 

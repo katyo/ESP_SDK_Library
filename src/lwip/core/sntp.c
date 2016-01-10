@@ -381,7 +381,7 @@ typedef struct __tzrule_struct {
 } __tzrule_type;
 
 __tzrule_type sntp__tzrule[2];
-struct tm *ICACHE_FLASH_ATTR
+struct tm *
 sntp_mktm_r(const time_t * tim_p, struct tm *res, int is_gmtime) {
   long days, rem;
   time_t lcltime;
@@ -524,18 +524,18 @@ sntp_mktm_r(const time_t * tim_p, struct tm *res, int is_gmtime) {
   return (res);
 }
 
-struct tm *ICACHE_FLASH_ATTR
+struct tm *
 sntp_localtime_r(const time_t * tim_p, struct tm *res) {
   return sntp_mktm_r(tim_p, res, 0);
 }
 
-struct tm *ICACHE_FLASH_ATTR
+struct tm *
 sntp_localtime(const time_t * tim_p) {
   return sntp_localtime_r(tim_p, &res_buf);
 }
 
 
-int ICACHE_FLASH_ATTR
+int
 sntp__tzcalc_limits(int year) {
   int days, year_days, years;
   int i, j;
@@ -591,7 +591,7 @@ sntp__tzcalc_limits(int year) {
   return 1;
 }
 
-char *ICACHE_FLASH_ATTR
+char *
 sntp_asctime_r(struct tm *tim_p, char *result) {
   static const char day_name[7][4] = {
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
@@ -608,7 +608,7 @@ sntp_asctime_r(struct tm *tim_p, char *result) {
   return result;
 }
 
-char *ICACHE_FLASH_ATTR
+char *
 sntp_asctime(struct tm *tim_p) {
 
   return sntp_asctime_r(tim_p, reult);
@@ -632,7 +632,7 @@ sntp_get_real_time(time_t t) {
 /**
  * SNTP get time_zone default GMT + 8
  */
-sint8 ICACHE_FLASH_ATTR
+sint8
 sntp_get_timezone(void) {
   return time_zone;
 }
@@ -641,7 +641,7 @@ sntp_get_timezone(void) {
  * SNTP set time_zone default GMT + 8
  */
 
-bool ICACHE_FLASH_ATTR
+bool
 sntp_set_timezone(sint8 timezone) {
   if (timezone >= -11 || timezone <= 13) {
     time_zone = timezone;
@@ -652,7 +652,7 @@ sntp_set_timezone(sint8 timezone) {
 
 }
 
-void ICACHE_FLASH_ATTR
+void
 sntp_time_inc(void) {
   realtime_stamp++;
 }
@@ -660,7 +660,7 @@ sntp_time_inc(void) {
 /**
  * SNTP processing of received timestamp
  */
-static void ICACHE_FLASH_ATTR
+static void
 sntp_process(u32_t * receive_timestamp) {
   /* convert SNTP time (1900-based) to unix GMT time (1970-based)
    * @todo: if MSB is 1, SNTP time is 2036-based!
@@ -696,7 +696,7 @@ sntp_process(u32_t * receive_timestamp) {
 /**
  * Initialize request struct to be sent to server.
  */
-static void ICACHE_FLASH_ATTR
+static void
 sntp_initialize_request(struct sntp_msg *req) {
   os_memset(req, 0, SNTP_MSG_LEN);
   req->li_vn_mode = SNTP_LI_NO_WARNING | SNTP_VERSION | SNTP_MODE_CLIENT;
@@ -722,7 +722,7 @@ sntp_initialize_request(struct sntp_msg *req) {
  *
  * @param arg is unused (only necessary to conform to sys_timeout)
  */
-static void ICACHE_FLASH_ATTR
+static void
 sntp_retry(void *arg) {
   LWIP_UNUSED_ARG(arg);
 
@@ -797,7 +797,7 @@ sntp_try_next_server(void *arg) {
        /* SNTP_SUPPORT_MULTIPLE_SERVERS */
 
 /** UDP recv callback for the sntp pcb */
-static void ICACHE_FLASH_ATTR
+static void
 sntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, ip_addr_t * addr,
 	  u16_t port) {
   u8_t mode;
@@ -895,7 +895,7 @@ sntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, ip_addr_t * addr,
  *
  * @param server_addr resolved IP address of the SNTP server
  */
-static void ICACHE_FLASH_ATTR
+static void
 sntp_send_request(ip_addr_t * server_addr) {
   struct pbuf *p;
 
@@ -957,7 +957,7 @@ sntp_dns_found(const char *hostname, ip_addr_t * ipaddr, void *arg) {
  *
  * @param arg is unused (only necessary to conform to sys_timeout)
  */
-static void ICACHE_FLASH_ATTR
+static void
 sntp_request(void *arg) {
   ip_addr_t sntp_server_address;
   err_t err;
@@ -1010,7 +1010,7 @@ sntp_request(void *arg) {
  * Initialize this module.
  * Send out request instantly or after SNTP_STARTUP_DELAY(_FUNC).
  */
-void ICACHE_FLASH_ATTR
+void
 sntp_init(void) {
 #    ifdef SNTP_SERVER_ADDRESS
 #      if SNTP_SERVER_DNS
@@ -1040,7 +1040,7 @@ sntp_init(void) {
 /**
  * Stop this module.
  */
-void ICACHE_FLASH_ATTR
+void
 sntp_stop(void) {
   if (sntp_pcb != NULL) {
     sys_untimeout(sntp_request, NULL);
@@ -1073,7 +1073,7 @@ sntp_servermode_dhcp(int set_servers_from_dhcp) {
  * @param numdns the index of the NTP server to set must be < SNTP_MAX_SERVERS
  * @param dnsserver IP address of the NTP server to set
  */
-void ICACHE_FLASH_ATTR
+void
 sntp_setserver(u8_t idx, ip_addr_t * server) {
   if (idx < SNTP_MAX_SERVERS) {
     if (server != NULL) {
@@ -1123,7 +1123,7 @@ dhcp_set_ntp_servers(u8_t num, ip_addr_t * server) {
  * @return IP address of the indexed NTP server or "ip_addr_any" if the NTP
  *         server has not been configured by address (or at all).
  */
-ip_addr_t ICACHE_FLASH_ATTR
+ip_addr_t
 sntp_getserver(u8_t idx) {
   if (idx < SNTP_MAX_SERVERS) {
     return sntp_servers[idx].addr;
@@ -1138,7 +1138,7 @@ sntp_getserver(u8_t idx) {
  * @param numdns the index of the NTP server to set must be < SNTP_MAX_SERVERS
  * @param dnsserver DNS name of the NTP server to set, to be resolved at contact time
  */
-void ICACHE_FLASH_ATTR
+void
 sntp_setservername(u8_t idx, char *server) {
   if (idx < SNTP_MAX_SERVERS) {
     sntp_servers[idx].name = server;
@@ -1152,7 +1152,7 @@ sntp_setservername(u8_t idx, char *server) {
  * @return IP address of the indexed NTP server or NULL if the NTP
  *         server has not been configured by name (or at all)
  */
-char *ICACHE_FLASH_ATTR
+char *
 sntp_getservername(u8_t idx) {
   if (idx < SNTP_MAX_SERVERS) {
     return sntp_servers[idx].name;

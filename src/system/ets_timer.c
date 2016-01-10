@@ -62,7 +62,7 @@ ets_timer_arm_new(ETSTimer * ptimer, uint32_t us_ms, int repeat_flag,
    // ------------------------------------------------------
    // system_timer_reinit
    // устанавливает делитель таймера на :16 вместо :256
-   void ICACHE_FLASH_ATTR system_timer_reinit(void)
+   voidsystem_timer_reinit(void)
    {
    timer2_ms_flag = 1;
    TIMER1_CTRL = 0x84;

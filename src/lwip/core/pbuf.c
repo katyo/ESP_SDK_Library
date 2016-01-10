@@ -101,7 +101,7 @@ static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
  * if we're running out.
  */
 #if TCP_QUEUE_OOSEQ
-void ICACHE_FLASH_ATTR
+void
 pbuf_free_ooseq_new(void *arg) {
   struct tcp_pcb *pcb;
   struct tcp_seg *head = NULL;
@@ -156,7 +156,7 @@ static u8_t pbuf_free_ooseq_queued;
  * This must be done in the correct thread context therefore this function
  * can only be used with NO_SYS=0 and through tcpip_callback.
  */
-static void ICACHE_FLASH_ATTR
+static void
 pbuf_free_ooseq(void *arg) {
   struct tcp_pcb *pcb;
 
@@ -180,7 +180,7 @@ pbuf_free_ooseq(void *arg) {
 }
 
 /** Queue a call to pbuf_free_ooseq if not already queued. */
-static void ICACHE_FLASH_ATTR
+static void
 pbuf_pool_is_empty(void) {
   u8_t queued;
 

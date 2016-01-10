@@ -67,7 +67,7 @@ delay_wait_cb(void *px) {
   ets_run_ret = 1;
 }
 
-void ICACHE_FLASH_ATTR
+void
 task_delay_us(uint32_t us) {
   if (us < MIN_DELAY_US)
     ets_delay_us(us);
@@ -81,7 +81,7 @@ task_delay_us(uint32_t us) {
   }
 }
 
-void ICACHE_FLASH_ATTR
+void
 run_sdk_tasks(void) {
   uint32_t t = phy_get_mactime();
 

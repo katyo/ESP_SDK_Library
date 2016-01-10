@@ -84,7 +84,7 @@ struct udp_pcb *udp_pcbs LWIP_DATA_IRAM_ATTR;
  * @param inp network interface on which the datagram was received.
  *
  */
-void ICACHE_FLASH_ATTR
+void
 udp_input(struct pbuf *p, struct netif *inp) {
   struct udp_hdr *udphdr;
   struct udp_pcb *pcb, *prev;
@@ -417,7 +417,7 @@ udp_input(struct pbuf *p, struct netif *inp) {
  *
  * @see udp_disconnect() udp_sendto()
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_send(struct udp_pcb *pcb, struct pbuf *p) {
   /* send to the packet using remote ip and port stored in the pcb */
   return udp_sendto(pcb, p, &pcb->remote_ip, pcb->remote_port);
@@ -426,7 +426,7 @@ udp_send(struct udp_pcb *pcb, struct pbuf *p) {
 #  if LWIP_CHECKSUM_ON_COPY
 /** Same as udp_send() but with checksum
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_send_chksum(struct udp_pcb * pcb, struct pbuf * p,
 		u8_t have_chksum, u16_t chksum) {
   /* send to the packet using remote ip and port stored in the pcb */
@@ -453,7 +453,7 @@ udp_send_chksum(struct udp_pcb * pcb, struct pbuf * p,
  *
  * @see udp_disconnect() udp_send()
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_sendto(struct udp_pcb * pcb, struct pbuf * p,
 	   ip_addr_t * dst_ip, u16_t dst_port) {
 #  if LWIP_CHECKSUM_ON_COPY
@@ -461,7 +461,7 @@ udp_sendto(struct udp_pcb * pcb, struct pbuf * p,
 }
 
 /** Same as udp_sendto(), but with checksum */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_sendto_chksum(struct udp_pcb * pcb, struct pbuf * p, ip_addr_t * dst_ip,
 		  u16_t dst_port, u8_t have_chksum, u16_t chksum) {
 #  endif
@@ -517,7 +517,7 @@ udp_sendto_chksum(struct udp_pcb * pcb, struct pbuf * p, ip_addr_t * dst_ip,
  *
  * @see udp_disconnect() udp_send()
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_sendto_if(struct udp_pcb * pcb, struct pbuf * p,
 	      ip_addr_t * dst_ip, u16_t dst_port, struct netif * netif) {
 #  if LWIP_CHECKSUM_ON_COPY
@@ -525,7 +525,7 @@ udp_sendto_if(struct udp_pcb * pcb, struct pbuf * p,
 }
 
 /** Same as udp_sendto_if(), but with checksum */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_sendto_if_chksum(struct udp_pcb * pcb, struct pbuf * p,
 		     ip_addr_t * dst_ip, u16_t dst_port, struct netif * netif,
 		     u8_t have_chksum, u16_t chksum) {
@@ -781,7 +781,7 @@ udp_sendto_if_chksum(struct udp_pcb * pcb, struct pbuf * p,
  *
  * @see udp_disconnect()
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_bind(struct udp_pcb * pcb, ip_addr_t * ipaddr, u16_t port) {
   struct udp_pcb *ipcb;
   u8_t rebind;
@@ -886,7 +886,7 @@ udp_bind(struct udp_pcb * pcb, ip_addr_t * ipaddr, u16_t port) {
  *
  * @see udp_disconnect()
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 udp_connect(struct udp_pcb * pcb, ip_addr_t * ipaddr, u16_t port) {
   struct udp_pcb *ipcb;
 
@@ -945,7 +945,7 @@ udp_connect(struct udp_pcb * pcb, ip_addr_t * ipaddr, u16_t port) {
  *
  * @param pcb the udp pcb to disconnect.
  */
-void ICACHE_FLASH_ATTR
+void
 udp_disconnect(struct udp_pcb *pcb) {
   /* reset remote address association */
   ip_addr_set_any(&pcb->remote_ip);
@@ -963,7 +963,7 @@ udp_disconnect(struct udp_pcb *pcb) {
  * @param recv function pointer of the callback function
  * @param recv_arg additional argument to pass to the callback function
  */
-void ICACHE_FLASH_ATTR
+void
 udp_recv(struct udp_pcb *pcb, udp_recv_fn recv, void *recv_arg) {
   /* remember recv() callback and user data */
   pcb->recv = recv;
@@ -978,7 +978,7 @@ udp_recv(struct udp_pcb *pcb, udp_recv_fn recv, void *recv_arg) {
  *
  * @see udp_new()
  */
-void ICACHE_FLASH_ATTR
+void
 udp_remove(struct udp_pcb *pcb) {
   struct udp_pcb *pcb2;
 
@@ -1008,7 +1008,7 @@ udp_remove(struct udp_pcb *pcb) {
  *
  * @see udp_remove()
  */
-struct udp_pcb *ICACHE_FLASH_ATTR
+struct udp_pcb *
 udp_new(void) {
   struct udp_pcb *pcb;
 
@@ -1031,7 +1031,7 @@ udp_new(void) {
  *
  * @param udphdr pointer to the udp header in memory.
  */
-void ICACHE_FLASH_ATTR
+void
 udp_debug_print(struct udp_hdr *udphdr) {
   LWIP_DEBUGF(UDP_DEBUG, ("UDP header:\n"));
   LWIP_DEBUGF(UDP_DEBUG, ("+-------------------------------+\n"));

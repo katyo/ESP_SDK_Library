@@ -80,56 +80,56 @@ bool system_upgrade_userbin_set(uint32_t flag);	/* system_get_boot_version(), st
 
 int
 atoi(const char *str)
-  ICACHE_FLASH_ATTR;
+;
 
-     int os_printf_plus(const char *format, ...) ICACHE_FLASH_ATTR;
-     int ets_sprintf(char *str, const char *format, ...) ICACHE_FLASH_ATTR;
+     int os_printf_plus(const char *format, ...);
+     int ets_sprintf(char *str, const char *format, ...);
 
-     void wifi_softap_set_default_ssid(void) ICACHE_FLASH_ATTR;
-     void wDev_Set_Beacon_Int(uint32_t) ICACHE_FLASH_ATTR;
-     extern void wDev_ProcessFiq(void) ICACHE_FLASH_ATTR;
+     void wifi_softap_set_default_ssid(void);
+     void wDev_Set_Beacon_Int(uint32_t);
+     extern void wDev_ProcessFiq(void);
      void ets_timer_arm_new(ETSTimer * ptimer, uint32_t milliseconds,
 			    int repeat_flag, int isMstimer);
-     void sleep_reset_analog_rtcreg_8266(void) ICACHE_FLASH_ATTR;
+     void sleep_reset_analog_rtcreg_8266(void);
      void wifi_softap_cacl_mac(uint8_t * mac_out,
-			       uint8_t * mac_in) ICACHE_FLASH_ATTR;
+			       uint8_t * mac_in);
      void user_init(void);
-     int wifi_mode_set(int mode) ICACHE_FLASH_ATTR;
-     int wifi_station_start(void) ICACHE_FLASH_ATTR;
+     int wifi_mode_set(int mode);
+     int wifi_station_start(void);
 
 #  if DEF_SDK_VERSION >= 1200
-     int wifi_softap_start(int) ICACHE_FLASH_ATTR;
-     int wifi_softap_stop(int) ICACHE_FLASH_ATTR;
+     int wifi_softap_start(int);
+     int wifi_softap_stop(int);
 #  else
-     int wifi_softap_start(void) ICACHE_FLASH_ATTR;
+     int wifi_softap_start(void);
 #  endif
-     int register_chipv6_phy(uint8_t * esp_init_data) ICACHE_FLASH_ATTR;	/* esp_init_data_default[128] */
-     void ieee80211_phy_init(int phy_mode) ICACHE_FLASH_ATTR;	/* ieee80211_setup_ratetable() */
-     void lmacInit(void) ICACHE_FLASH_ATTR;
-     void wDev_Initialize(uint8_t * mac) ICACHE_FLASH_ATTR;
-     void pp_attach(void) ICACHE_FLASH_ATTR;
-     void ieee80211_ifattach(void *_g_ic) ICACHE_FLASH_ATTR;	/* g_ic in main\Include\libmain.h */
-     void pm_attach(void) ICACHE_FLASH_ATTR;
-     int fpm_attach(void) ICACHE_FLASH_ATTR;	/* all return  1 */
-     void cnx_attach(void *_g_ic) ICACHE_FLASH_ATTR;	/* g_ic in main\Include\libmain.h */
-     void wDevEnableRx(void) ICACHE_FLASH_ATTR;	/* io(0x3FF20004) |= 0x80000000; */
+     int register_chipv6_phy(uint8_t * esp_init_data);	/* esp_init_data_default[128] */
+     void ieee80211_phy_init(int phy_mode);	/* ieee80211_setup_ratetable() */
+     void lmacInit(void);
+     void wDev_Initialize(uint8_t * mac);
+     void pp_attach(void);
+     void ieee80211_ifattach(void *_g_ic);	/* g_ic in main\Include\libmain.h */
+     void pm_attach(void);
+     int fpm_attach(void);	/* all return  1 */
+     void cnx_attach(void *_g_ic);	/* g_ic in main\Include\libmain.h */
+     void wDevEnableRx(void);	/* io(0x3FF20004) |= 0x80000000; */
 
 /* in mem_manager.h
-   void *pvPortMalloc(size_t xWantedSize) ICACHE_FLASH_ATTR;
+   void *pvPortMalloc(size_t xWantedSize);
    void *pvPortRealloc(void * rmem, size_t newsize);
-   void vPortFree(void *pv) ICACHE_FLASH_ATTR;
-   size_t xPortGetFreeHeapSize(void) ICACHE_FLASH_ATTR;
-   void vPortInitialiseBlocks(void) ICACHE_FLASH_ATTR;
-   void *pvPortZalloc(size_t size) ICACHE_FLASH_ATTR;
+   void vPortFree(void *pv);
+   size_t xPortGetFreeHeapSize(void);
+   void vPortInitialiseBlocks(void);
+   void *pvPortZalloc(size_t size);
  */
-     uint32_t readvdd33(void) ICACHE_FLASH_ATTR;
-     int get_noisefloor_sat(void) ICACHE_FLASH_ATTR;
-     int read_hw_noisefloor(void) ICACHE_FLASH_ATTR;
-     int ram_get_fm_sar_dout(int) ICACHE_FLASH_ATTR;
+     uint32_t readvdd33(void);
+     int get_noisefloor_sat(void);
+     int read_hw_noisefloor(void);
+     int ram_get_fm_sar_dout(int);
 
 /* noise_init(), rom_get_noisefloor(), ram_set_noise_floor(), noise_check_loop(), ram_start_noisefloor()
-   void sys_check_timeouts(void *timer_arg) ICACHE_FLASH_ATTR; // lwip */
-     uint32_t system_get_checksum(uint8_t * ptr, uint32_t len) ICACHE_FLASH_ATTR;
+   void sys_check_timeouts(void *timer_arg); // lwip */
+     uint32_t system_get_checksum(uint8_t * ptr, uint32_t len);
      void read_macaddr_from_otp(uint8_t * mac);
 
      void wifi_station_set_default_hostname(const uint8_t * mac);

@@ -41,7 +41,7 @@ enum send_opt {
   ESPCONN_SENDTO,
   ESPCONN_SEND
 };
-static void ICACHE_FLASH_ATTR
+static void
 espconn_data_sentcb(struct espconn *pespconn) {
   if (pespconn == NULL) {
     return;
@@ -52,7 +52,7 @@ espconn_data_sentcb(struct espconn *pespconn) {
   }
 }
 
-static void ICACHE_FLASH_ATTR
+static void
 espconn_data_sent(void *arg, enum send_opt opt) {
   espconn_msg *psent = arg;
 
@@ -85,7 +85,7 @@ espconn_data_sent(void *arg, enum send_opt opt) {
  * - ESPCONN_RTE. Could not find route to destination address.
  * - More errors could be returned by lower protocol layers.
  *******************************************************************************/
-err_t ICACHE_FLASH_ATTR
+err_t
 espconn_udp_sent(void *arg, uint8_t * psent, uint16_t length) {
   espconn_msg *pudp_sent = arg;
   struct udp_pcb *upcb = pudp_sent->pcommon.pcb;
@@ -193,7 +193,7 @@ espconn_udp_sent(void *arg, uint8_t * psent, uint16_t length) {
  * - ESPCONN_RTE. Could not find route to destination address.
  * - More errors could be returned by lower protocol layers.
  *******************************************************************************/
-err_t ICACHE_FLASH_ATTR
+err_t
 espconn_udp_sendto(void *arg, uint8_t * psent, uint16_t length) {
   espconn_msg *pudp_sent = arg;
   struct udp_pcb *upcb = pudp_sent->pcommon.pcb;
@@ -300,7 +300,7 @@ espconn_udp_sendto(void *arg, uint8_t * psent, uint16_t length) {
  *                port -- the remote port from which the packet was received
  * Returns      : none
  *******************************************************************************/
-static void ICACHE_FLASH_ATTR
+static void
 espconn_udp_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 		 struct ip_addr *addr, u16_t port) {
   espconn_msg *precv = arg;
@@ -374,7 +374,7 @@ espconn_udp_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
  * Parameters   : espconn -- the espconn used to disconnect with host
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_udp_disconnect(espconn_msg * pdiscon) {
   if (pdiscon == NULL) {
     return;
@@ -398,7 +398,7 @@ espconn_udp_disconnect(espconn_msg * pdiscon) {
  * Parameters   : pespconn -- the espconn used to build server
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_udp_server(struct espconn *pespconn) {
   struct udp_pcb *upcb = NULL;
   espconn_msg *pserver = NULL;
@@ -431,7 +431,7 @@ espconn_udp_server(struct espconn *pespconn) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_igmp_leave(ip_addr_t * host_ip, ip_addr_t * multicast_ip) {
   if (igmp_leavegroup(host_ip, multicast_ip) != ERR_OK) {
     LWIP_DEBUGF(ESPCONN_UDP_DEBUG, ("udp_leave_multigrup failed!\n"));
@@ -448,7 +448,7 @@ espconn_igmp_leave(ip_addr_t * host_ip, ip_addr_t * multicast_ip) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR
+int8_t
 espconn_igmp_join(ip_addr_t * host_ip, ip_addr_t * multicast_ip) {
   if (igmp_joingroup(host_ip, multicast_ip) != ERR_OK) {
     LWIP_DEBUGF(ESPCONN_UDP_DEBUG, ("udp_join_multigrup failed!\n"));

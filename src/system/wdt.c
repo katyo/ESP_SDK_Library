@@ -20,7 +20,7 @@
    extern int soft_wdt_interval; // default = 1600 // wifi_set_sleep_type() (pm_set_sleep_type_from_upper()) set 1600 или 3000 в зависимости от режима sleep WiFi (периода timeouts_timer, noise_timer) */
 extern void pp_soft_wdt_init(void);
 
-void ICACHE_FLASH_ATTR
+void
 wdt_init(int flg) {
   if (flg != 0) {
     RTC_MEM(0) = 0;
@@ -66,7 +66,7 @@ wdt_task(ETSEvent * e) {
   ets_intr_unlock();
 }
 
-void ICACHE_FLASH_ATTR
+void
 wdt_init(void) {
 /*	RTC_MEM(0) = 0; */
   ets_task(wdt_task, WDT_TASK_PRIO, &wdt_eventq, 1);
@@ -110,7 +110,7 @@ fatal_error(uint32_t errn, void *addr, void *txt) {
 /* RAM_BIOS:3FFFD870 aNull .ascii "<null>" */
 #define aNull ((char *)(0x3FFFD870))
 
-void ICACHE_FLASH_ATTR
+void
 os_print_reset_error(void) {
   struct rst_info *rst_inf = (struct rst_info *)&RTC_MEM(0);
 

@@ -60,9 +60,9 @@ extern "C" {
     u8_t timer;
   };
 
-  void ip_reass_init(void) ICACHE_FLASH_ATTR;
-  void ip_reass_tmr(void) ICACHE_FLASH_ATTR;
-  struct pbuf *ip_reass(struct pbuf *p) ICACHE_FLASH_ATTR;
+  void ip_reass_init(void);
+  void ip_reass_tmr(void);
+  struct pbuf *ip_reass(struct pbuf *p);
 #  endif			/* IP_REASSEMBLY */
 
 #  if IP_FRAG
@@ -79,7 +79,7 @@ extern "C" {
 #    endif			/* !IP_FRAG_USES_STATIC_BUF && !LWIP_NETIF_TX_SINGLE_PBUF */
 
   err_t ip_frag(struct pbuf *p, struct netif *netif,
-		ip_addr_t * dest) ICACHE_FLASH_ATTR;
+		ip_addr_t * dest);
 #  endif			/* IP_FRAG */
 
 #  ifdef __cplusplus

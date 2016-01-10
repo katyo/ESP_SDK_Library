@@ -52,10 +52,6 @@
 #    define ENTRY_POINT_ATTR __attribute__ ((section(".entry.text")))
 #  endif
 
-#  ifndef ICACHE_FLASH_ATTR
-#    define ICACHE_FLASH_ATTR
-#  endif
-
 #  ifndef ICACHE_RODATA_ATTR
 #    define ICACHE_RODATA_ATTR  __attribute__((aligned(4)))
 #  endif

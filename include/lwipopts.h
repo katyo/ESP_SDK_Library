@@ -39,17 +39,17 @@
 #  define __LWIPOPTS_H__
 
 #  include "user_config.h"
+#  include "sdk/sdk_config.h"
+
+#  define LWIP_IRAM_ATTR ICACHE_IRAM_ATTR
 
 #  ifdef USE_MAX_IRAM
-#    define LWIP_DATA_IRAM_ATTR __attribute__((aligned(4), section(".iram.data")))
+#    define LWIP_DATA_IRAM_ATTR DATA_IRAM_ATTR
 #  else
 #    define LWIP_DATA_IRAM_ATTR
 #  endif
 
 #  define LWIP_SNTP 0
-
-#  include "sdk/sdk_config.h"
-#  define LWIP_IRAM_ATTR ICACHE_IRAM_ATTR
 
 /*
 	-----------------------------------------------

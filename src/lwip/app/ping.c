@@ -75,7 +75,7 @@ static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
 static u16_t ping_seq_num = 0;
 static u32_t ping_time;
 
-static void ICACHE_FLASH_ATTR
+static void
 ping_timeout(void *arg) {
   struct ping_msg *pingmsg = (struct ping_msg *)arg;
 
@@ -92,7 +92,7 @@ ping_timeout(void *arg) {
 }
 
 /** Prepare a echo ICMP request */
-static void ICACHE_FLASH_ATTR
+static void
 ping_prepare_echo(struct icmp_echo_hdr *iecho, u16_t len) {
   size_t i = 0;
   size_t data_len = len - sizeof(struct icmp_echo_hdr);
@@ -115,7 +115,7 @@ ping_prepare_echo(struct icmp_echo_hdr *iecho, u16_t len) {
   iecho->chksum = inet_chksum(iecho, len);
 }
 
-static void ICACHE_FLASH_ATTR
+static void
 ping_prepare_er(struct icmp_echo_hdr *iecho, u16_t len) {
 
   ICMPH_TYPE_SET(iecho, ICMP_ER);
@@ -126,7 +126,7 @@ ping_prepare_er(struct icmp_echo_hdr *iecho, u16_t len) {
 }
 
 /* Ping using the raw ip */
-static u8_t ICACHE_FLASH_ATTR
+static u8_t
 ping_recv(void *arg, struct raw_pcb *pcb, struct pbuf *p, ip_addr_t * addr) {
   struct icmp_echo_hdr *iecho = NULL;
   static u16_t seqno = 0;
@@ -202,7 +202,7 @@ ping_recv(void *arg, struct raw_pcb *pcb, struct pbuf *p, ip_addr_t * addr) {
   return 0;			/* don't eat the packet */
 }
 
-static void ICACHE_FLASH_ATTR
+static void
 ping_send(struct raw_pcb *raw, ip_addr_t * addr) {
   struct pbuf *p = NULL;
   struct icmp_echo_hdr *iecho = NULL;
@@ -228,7 +228,7 @@ ping_send(struct raw_pcb *raw, ip_addr_t * addr) {
   pbuf_free(p);
 }
 
-static void ICACHE_FLASH_ATTR
+static void
 ping_coarse_tmr(void *arg) {
   struct ping_msg *pingmsg = (struct ping_msg *)arg;
   struct ping_option *ping_opt = NULL;
@@ -271,7 +271,7 @@ ping_coarse_tmr(void *arg) {
   }
 }
 
-static bool ICACHE_FLASH_ATTR
+static bool
 ping_raw_init(struct ping_msg *pingmsg) {
   if (pingmsg == NULL)
     return false;
@@ -293,7 +293,7 @@ ping_raw_init(struct ping_msg *pingmsg) {
   return true;
 }
 
-bool ICACHE_FLASH_ATTR
+bool
 ping_start(struct ping_option * ping_opt) {
   struct ping_msg *pingmsg = NULL;
 
@@ -317,7 +317,7 @@ ping_start(struct ping_option * ping_opt) {
   return ping_raw_init(pingmsg);
 }
 
-bool ICACHE_FLASH_ATTR
+bool
 ping_regist_recv(struct ping_option * ping_opt, ping_recv_function ping_recv) {
   if (ping_opt == NULL)
     return false;
@@ -326,7 +326,7 @@ ping_regist_recv(struct ping_option * ping_opt, ping_recv_function ping_recv) {
   return true;
 }
 
-bool ICACHE_FLASH_ATTR
+bool
 ping_regist_sent(struct ping_option * ping_opt, ping_sent_function ping_sent) {
   if (ping_opt == NULL)
     return false;

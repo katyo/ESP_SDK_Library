@@ -58,6 +58,6 @@ void default_exception_handler(void);
 
 void store_exception_error(uint32_t errn);
 
-void os_print_reset_error(void) ICACHE_FLASH_ATTR;
+void os_print_reset_error(void);
 
 #endif /* _INCLUDE_WDT_H_ */

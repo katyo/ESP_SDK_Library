@@ -14,15 +14,15 @@ extern char print_mem_buf[1024];	/* 0x3FFFE364..0x3FFFEA80 max 1820 bytes */
 extern bool system_get_os_print(void);
 
 /* =============================================================================
-   FLASH code (ICACHE_FLASH_ATTR)
+   FLASH code ()
    =============================================================================
    =============================================================================
    int os_printf_plus(const char *format, ...)
    Использует буфер в области RAM-BIOS
    ----------------------------------------------------------------------------- */
-int ICACHE_FLASH_ATTR
+int
 __wrap_os_printf_plus(const char *format, ...)
-/* int ICACHE_FLASH_ATTR rom_printf(const char *format, ...) */
+/* introm_printf(const char *format, ...) */
 {
   int i = 0;
 
@@ -46,7 +46,7 @@ __wrap_os_printf_plus(const char *format, ...)
    Использует буфер в области RAM-BIOS
    Вывод может быть расположен в IRAM
    ----------------------------------------------------------------------------- */
-void ICACHE_FLASH_ATTR
+void
 _sprintf_out(char c) {
   if (_sprintf_buf != NULL) {
     write_align4_chr(_sprintf_buf++, c);	/* *_sprintf_buf++ = c; */
@@ -54,7 +54,7 @@ _sprintf_out(char c) {
   }
 }
 
-int ICACHE_FLASH_ATTR
+int
 ets_sprintf(char *str, const char *format, ...) {
   _sprintf_buf = str;
   va_list args;

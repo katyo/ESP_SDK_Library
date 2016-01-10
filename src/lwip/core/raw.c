@@ -76,7 +76,7 @@ static struct raw_pcb *raw_pcbs LWIP_DATA_IRAM_ATTR;
  *           caller).
  *
  */
-u8_t ICACHE_FLASH_ATTR
+u8_t
 raw_input(struct pbuf *p, struct netif *inp) {
   struct raw_pcb *pcb, *prev;
   struct ip_hdr *iphdr;
@@ -143,7 +143,7 @@ raw_input(struct pbuf *p, struct netif *inp) {
  *
  * @see raw_disconnect()
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 raw_bind(struct raw_pcb * pcb, ip_addr_t * ipaddr) {
   ip_addr_set(&pcb->local_ip, ipaddr);
   return ERR_OK;
@@ -162,7 +162,7 @@ raw_bind(struct raw_pcb * pcb, ip_addr_t * ipaddr) {
  *
  * @see raw_disconnect() and raw_sendto()
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 raw_connect(struct raw_pcb * pcb, ip_addr_t * ipaddr) {
   ip_addr_set(&pcb->remote_ip, ipaddr);
   return ERR_OK;
@@ -182,7 +182,7 @@ raw_connect(struct raw_pcb * pcb, ip_addr_t * ipaddr) {
  * @return non-zero if the packet was free()d, zero if the packet remains
  * available for others.
  */
-void ICACHE_FLASH_ATTR
+void
 raw_recv(struct raw_pcb *pcb, raw_recv_fn recv, void *recv_arg) {
   /* remember recv() callback and user data */
   pcb->recv = recv;
@@ -201,7 +201,7 @@ raw_recv(struct raw_pcb *pcb, raw_recv_fn recv, void *recv_arg) {
  * @param ipaddr the destination address of the IP packet
  *
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 raw_sendto(struct raw_pcb *pcb, struct pbuf *p, ip_addr_t * ipaddr) {
   err_t err;
   struct netif *netif;
@@ -298,7 +298,7 @@ raw_sendto(struct raw_pcb *pcb, struct pbuf *p, ip_addr_t * ipaddr) {
  * @param p the IP payload to send
  *
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 raw_send(struct raw_pcb * pcb, struct pbuf * p) {
   return raw_sendto(pcb, p, &pcb->remote_ip);
 }
@@ -311,7 +311,7 @@ raw_send(struct raw_pcb * pcb, struct pbuf * p) {
  *
  * @see raw_new()
  */
-void ICACHE_FLASH_ATTR
+void
 raw_remove(struct raw_pcb *pcb) {
   struct raw_pcb *pcb2;
 
@@ -342,7 +342,7 @@ raw_remove(struct raw_pcb *pcb) {
  *
  * @see raw_remove()
  */
-struct raw_pcb *ICACHE_FLASH_ATTR
+struct raw_pcb *
 raw_new(u8_t proto) {
   struct raw_pcb *pcb;
 

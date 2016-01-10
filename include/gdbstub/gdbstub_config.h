@@ -55,7 +55,7 @@
    are called when the flash is disabled (eg due to a Ctrl-C at the wrong time), the ESP8266 will most
    likely crash.
  */
-#  define ATTR_GDBINIT  ICACHE_FLASH_ATTR
-#  define ATTR_GDBFN
+#  define ATTR_GDBINIT
+#  define ATTR_GDBFN ICACHE_IRAM_ATTR
 
 #endif

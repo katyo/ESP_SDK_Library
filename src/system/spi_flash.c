@@ -235,7 +235,7 @@ spi_flash_erase_block(uint32_t blk) {
  * FunctionName : spi_flash_real_size
  * Returns      : real flash size (512k, 1M, 2M, 4M, 8M, 16M)
  *******************************************************************************/
-uint32_t ICACHE_FLASH_ATTR
+uint32_t
 spi_flash_real_size(void) {
   if (flash_size == 0) {
     uint32_t size = FLASH_MIN_SIZE;
@@ -259,7 +259,7 @@ spi_flash_real_size(void) {
  * FunctionName : spi_flash_write_bytes_array
  * Returns      : SpiFlashOpResult
  *******************************************************************************/
-SpiFlashOpResult ICACHE_FLASH_ATTR
+SpiFlashOpResult
 spi_flash_write_bytes_array(uint32_t des_addr, uint8_t * src_addr, uint32_t size) {
   SpiFlashOpResult ret = SPI_FLASH_RESULT_ERR;
 

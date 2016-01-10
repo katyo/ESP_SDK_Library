@@ -369,7 +369,7 @@ vPortInitialiseBlocks(void) {
 
 /*-----------------------------------------------------------*/
 
-void ICACHE_FLASH_ATTR
+void
 prvHeapInit(void) {
   xBlockLink *pxFirstFreeBlock;
   unsigned char *pucHeapEnd, *pucAlignedHeap;

@@ -23,10 +23,10 @@ void read_macaddr_from_otp(uint8_t * mac);
 void user_uart_wait_tx_fifo_empty(uint32_t n, uint32_t x);
 void
 startup(void)
-  ICACHE_FLASH_ATTR;
-     void read_wifi_config(void) ICACHE_FLASH_ATTR;
-     void init_wifi(uint8_t * init_data, uint8_t * mac) ICACHE_FLASH_ATTR;
-     void uart_wait_tx_fifo_empty(void) ICACHE_FLASH_ATTR;
+;
+     void read_wifi_config(void);
+     void init_wifi(uint8_t * init_data, uint8_t * mac);
+     void uart_wait_tx_fifo_empty(void);
      void user_uart_wait_tx_fifo_empty(uint32_t uart_num, uint32_t x);
 
 /* ----------------------------------------------------------------------------- */

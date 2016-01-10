@@ -23,7 +23,7 @@ SpiFlashOpResult spi_flash_write(uint32_t faddr, uint32_t * src_addr,
 SpiFlashOpResult spi_flash_read(uint32_t faddr, void *des, uint32_t size);
 SpiFlashOpResult spi_flash_erase_block(uint32_t blk);
 
-uint32_t spi_flash_real_size(void) ICACHE_FLASH_ATTR;
+uint32_t spi_flash_real_size(void);
 
 #  ifdef USE_OVERLAP_MODE
 

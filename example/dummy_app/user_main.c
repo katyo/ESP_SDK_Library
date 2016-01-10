@@ -12,7 +12,7 @@
  * Parameters   : none
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR user_init(void) {
+void user_init(void) {
   /* nothing to do */
   gdbstub_init();
 }

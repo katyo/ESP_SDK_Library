@@ -95,7 +95,7 @@ static void tcp_output_segment(struct tcp_seg *seg, struct tcp_pcb *pcb);
  * @param seqno_be seqno in network byte order (big-endian)
  * @return pbuf with p->payload being the tcp_hdr
  */
-static struct pbuf *ICACHE_FLASH_ATTR
+static struct pbuf *
 tcp_output_alloc_header(struct tcp_pcb *pcb, u16_t optlen, u16_t datalen,
 			u32_t seqno_be /* already in network byte order */ ) {
   struct tcp_hdr *tcphdr;
@@ -160,7 +160,7 @@ tcp_send_fin(struct tcp_pcb * pcb) {
  * The TCP header is filled in except ackno and wnd.
  * p is freed on failure.
  */
-static struct tcp_seg *ICACHE_FLASH_ATTR
+static struct tcp_seg *
 tcp_create_segment(struct tcp_pcb *pcb, struct pbuf *p, u8_t flags,
 		   u32_t seqno, u8_t optflags) {
   struct tcp_seg *seg;
@@ -223,7 +223,7 @@ tcp_create_segment(struct tcp_pcb *pcb, struct pbuf *p, u8_t flags,
  * @param
  */
 #  if TCP_OVERSIZE
-static struct pbuf *ICACHE_FLASH_ATTR
+static struct pbuf *
 tcp_pbuf_prealloc(pbuf_layer layer, u16_t length, u16_t max_length,
 		  u16_t * oversize, struct tcp_pcb *pcb, u8_t apiflags,
 		  u8_t first_seg) {
@@ -278,7 +278,7 @@ tcp_pbuf_prealloc(pbuf_layer layer, u16_t length, u16_t max_length,
 
 #  if TCP_CHECKSUM_ON_COPY
 /** Add a checksum of newly added data to the segment */
-static void ICACHE_FLASH_ATTR
+static void
 tcp_seg_add_chksum(u16_t chksum, u16_t len, u16_t * seg_chksum,
 		   u8_t * seg_chksum_swapped) {
   u32_t helper;
@@ -301,7 +301,7 @@ tcp_seg_add_chksum(u16_t chksum, u16_t len, u16_t * seg_chksum,
  * @param len length of data to send (checked agains snd_buf)
  * @return ERR_OK if tcp_write is allowed to proceed, another err_t otherwise
  */
-static err_t ICACHE_FLASH_ATTR
+static err_t
 tcp_write_checks(struct tcp_pcb *pcb, u16_t len) {
   /* connection is in invalid state for data transmission? */
   if ((pcb->state != ESTABLISHED) &&
@@ -893,7 +893,7 @@ tcp_enqueue_flags(struct tcp_pcb * pcb, u8_t flags) {
  * @param pcb tcp_pcb
  * @param opts option pointer where to store the timestamp option
  */
-static void ICACHE_FLASH_ATTR
+static void
 tcp_build_timestamp_option(struct tcp_pcb *pcb, u32_t * opts) {
   /* Pad with two NOP options to make everything nicely aligned */
   opts[0] = PP_HTONL(0x0101080A);
@@ -964,7 +964,7 @@ tcp_send_empty_ack(struct tcp_pcb *pcb) {
  * @return ERR_OK if data has been sent or nothing to send
  *         another err_t on error
  */
-err_t ICACHE_FLASH_ATTR
+err_t
 tcp_output(struct tcp_pcb * pcb) {
   struct tcp_seg *seg, *useg;
   u32_t wnd, snd_nxt;

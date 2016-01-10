@@ -11,43 +11,43 @@
 /* (!) закоменитрованы неиспользуемые функции */
 
 /* вызывается из phy_chip_v6.o */
-void ICACHE_FLASH_ATTR
+void
 chip_v6_set_sense(void) {
   /* ret.n */
 }
 
 /*
-   void ICACHE_FLASH_ATTR chip_v6_get_sense(void)
+   voidchip_v6_get_sense(void)
    {
    // ret.n
    }
  */
 
 /* вызывается из phy_chip_v6.o */
-int ICACHE_FLASH_ATTR
+int
 chip_v6_unset_chanfreq(void) {
   return 0;
 }
 
 /*
-   int ICACHE_FLASH_ATTR data_collect(void)
+   intdata_collect(void)
    {
    ???
    }
 
-   void ICACHE_FLASH_ATTR operation_test(void)
+   voidoperation_test(void)
    {
    ???
    }
 
 
    // используется из slop_test()
-   void ICACHE_FLASH_ATTR slop_wdt_feed(void)
+   voidslop_wdt_feed(void)
    {
    WDT_FEED = WDT_FEED_MAGIC;
    }
 
-   void ICACHE_FLASH_ATTR slop_test(void)
+   voidslop_test(void)
    {
 
    os_printf_plus("slop_test\n");
@@ -70,7 +70,7 @@ chip_v6_unset_chanfreq(void) {
    }
    }
 
-   void ICACHE_FLASH_ATTR wd_reset_cnt(void)
+   voidwd_reset_cnt(void)
    {
    uint32 x = rtc_get_reset_reason();
    if(x == 4)	os_printf("wd_reset %d\n", RTC_RAM_BASE[0xFC>>2]);

@@ -223,16 +223,16 @@ extern "C" {
 #  endif			/* NO_SYS */
 
 /* sys_init() must be called before anthing else. */
-  void sys_init(void) ICACHE_FLASH_ATTR;
+  void sys_init(void);
 
 #  ifndef sys_jiffies
 /** Ticks/jiffies since power up. */
-  u32_t sys_jiffies(void) ICACHE_FLASH_ATTR;
+  u32_t sys_jiffies(void);
 #  endif
 
 /** Returns the current time in milliseconds,
  * may be the same as sys_jiffies or at least based on it. */
-  static inline u32_t sys_now(void) ICACHE_FLASH_ATTR;
+  static inline u32_t sys_now(void);
   static inline u32_t sys_now(void) {
     return NOW() / (TIMER_CLK_FREQ / 1000);
   }
@@ -272,8 +272,8 @@ extern "C" {
  * this macro may be defined in sys_arch.h
  */
 #      define SYS_ARCH_UNPROTECT(lev) sys_arch_unprotect(lev)
-  sys_prot_t sys_arch_protect(void)ICACHE_FLASH_ATTR;
-  void sys_arch_unprotect(sys_prot_t pval) ICACHE_FLASH_ATTR;
+  sys_prot_t sys_arch_protect(void);
+  void sys_arch_unprotect(sys_prot_t pval);
 
 #    else
 #      define SYS_ARCH_DECL_PROTECT(lev)

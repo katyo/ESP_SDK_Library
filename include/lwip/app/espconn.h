@@ -243,7 +243,7 @@ enum espconn_sig {
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR espconn_pbuf_delete(espconn_buf ** phead,
+voidespconn_pbuf_delete(espconn_buf ** phead,
 					   espconn_buf * pdelete);
 
 /******************************************************************************

@@ -6,12 +6,12 @@
 #include "user_config.h"
 #include "bios.h"
 
-unsigned int ICACHE_FLASH_ATTR
+unsigned int
 eloop_cancel_timeout(void) {
   return 0;
 }
 
-unsigned int ICACHE_FLASH_ATTR
+unsigned int
 eloop_register_timeout(void) {
   return 0;
 }

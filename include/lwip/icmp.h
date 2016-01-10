@@ -96,11 +96,11 @@ extern "C" {
 #  define ICMPH_TYPE_SET(hdr, t) ((hdr)->type = (t))
 #  define ICMPH_CODE_SET(hdr, c) ((hdr)->code = (c))
 #  if LWIP_ICMP			/* don't build if not configured for use in lwipopts.h */
-  void icmp_input(struct pbuf *p, struct netif *inp) ICACHE_FLASH_ATTR;
+  void icmp_input(struct pbuf *p, struct netif *inp);
   void icmp_dest_unreach(struct pbuf *p,
-			 enum icmp_dur_type t) ICACHE_FLASH_ATTR;
+			 enum icmp_dur_type t);
   void icmp_time_exceeded(struct pbuf *p,
-			  enum icmp_te_type t) ICACHE_FLASH_ATTR;
+			  enum icmp_te_type t);
 
 #  endif			/* LWIP_ICMP */
 

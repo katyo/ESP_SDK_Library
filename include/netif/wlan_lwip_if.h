@@ -29,7 +29,7 @@ enum {
 struct netif *
 eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8_t * macaddr,
 		    struct ip_info *info)
-  ICACHE_FLASH_ATTR;
+;
      struct netif *eagle_lwip_getif(uint8_t index);
 
 #  ifndef IOT_SIP_MODE

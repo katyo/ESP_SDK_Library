@@ -8,7 +8,7 @@
 #include "bios.h"
 
 /*
-   char * ICACHE_FLASH_ATTR ets_strdup(char * s)
+   char *ets_strdup(char * s)
    {
    char * pret = (0);
    if(s != (0)) {
@@ -20,19 +20,19 @@
    }
  */
 
-uint32_t ICACHE_FLASH_ATTR
+uint32_t
 os_get_time(void) {
   return 0;
 }
 
 extern uint32_t phy_get_rand(void);	/* return *((uint32_t *)(&g_phyFuns+0x290)) ^ *((uint32_t *)0x3FF20E44); */
 
-uint32_t ICACHE_FLASH_ATTR
+uint32_t
 r_rand(void) {
   return phy_get_rand();
 }
 
-uint32_t ICACHE_FLASH_ATTR
+uint32_t
 os_random(void) {
   return phy_get_rand();
 }
@@ -41,7 +41,7 @@ os_random(void) {
  * Buffer for pseudo random data :
  * Length of the buffer Returns:
  * 0 on success, -1 on failure  */
-int ICACHE_FLASH_ATTR
+int
 os_get_random(unsigned char *buf, size_t len) {
   if (buf != NULL) {
     while (len) {
@@ -66,7 +66,7 @@ os_get_random(unsigned char *buf, size_t len) {
    For example,
          strrchr ("hello, world", 'l')
               "ld"	*/
-char *ICACHE_FLASH_ATTR
+char *
 ets_strrchr(const char *string, int c) {
   char *pret = NULL;
 

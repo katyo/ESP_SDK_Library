@@ -213,7 +213,7 @@ static uint8 mdns_flag = 0;
 /*
  *  Function to set the UDP pcb used to send the mDNS packages
  */
-void ICACHE_FLASH_ATTR
+void
 getPcb(struct udp_pcb *pcb) {
   mdns_pcb = pcb;
 }
@@ -229,7 +229,7 @@ getPcb(struct udp_pcb *pcb) {
  * @param response encoded hostname in the DNS response
  * @return 0: names equal; 1: names differ
  */
-static u8_t ICACHE_FLASH_ATTR
+static u8_t
 mdns_compare_name(unsigned char *query, unsigned char *response) {
   unsigned char n;
 
@@ -265,7 +265,7 @@ mdns_compare_name(unsigned char *query, unsigned char *response) {
  * @param id transaction ID in the DNS query packet
  * @return ERR_OK if packet is sent; an err_t indicating the problem otherwise
  */
-static err_t ICACHE_FLASH_ATTR
+static err_t
 mdns_answer(u16_t type, const char *name, u8_t id) {
   err_t err;
   struct mdns_hdr *hdr;
@@ -571,7 +571,7 @@ mdns_answer(u16_t type, const char *name, u8_t id) {
  * @param id transaction ID in the DNS query packet
  * @return ERR_OK if packet is sent; an err_t indicating the problem otherwise
  */
-static err_t ICACHE_FLASH_ATTR
+static err_t
 mdns_send_service(struct mdns_info *info, u8_t id) {
   err_t err;
   struct mdns_hdr *hdr;
@@ -875,7 +875,7 @@ mdns_send_service(struct mdns_info *info, u8_t id) {
  *
  * @params see udp.h
  */
-static void ICACHE_FLASH_ATTR
+static void
 mdns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
 	  struct ip_addr *addr, u16_t port) {
   u8_t i;
@@ -946,26 +946,26 @@ mdns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
 /**
  * close the UDP pcb .
  */
-void ICACHE_FLASH_ATTR
+void
 mdns_close(void) {
   if (mdns_pcb != NULL)
     udp_remove(mdns_pcb);
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_set_name(const char *name) {
   /* strcpy(host_name, name); */
   os_strcpy(service_name, name);
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_enable(void) {
   if (mdns_flag == 0) {
     udp_recv(mdns_pcb, mdns_recv, NULL);
   }
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_disable(void) {
   if (mdns_flag == 1) {
     udp_recv(mdns_pcb, NULL, NULL);
@@ -975,7 +975,7 @@ mdns_disable(void) {
 /**
  * close the UDP pcb .
  */
-char *ICACHE_FLASH_ATTR
+char *
 mdns_get_hostname(void) {
   /* strcpy(host_name, name); */
   char *name = host_name;
@@ -987,7 +987,7 @@ mdns_get_hostname(void) {
   }
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_set_hostname(char *name) {
   if (name == NULL) {
     os_strncpy(host_name, "ESP8266", os_strlen("ESP8266") + 3);
@@ -1001,7 +1001,7 @@ mdns_set_hostname(char *name) {
   }
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_set_servername(const char *name) {
   if (name == NULL) {
     PUCK_SERVICE = "_ESP8266._tcp._local";
@@ -1011,7 +1011,7 @@ mdns_set_servername(const char *name) {
   }
 }
 
-char *ICACHE_FLASH_ATTR
+char *
 mdns_get_servername(void) {
   char *name = PUCK_SERVICE;
 
@@ -1021,7 +1021,7 @@ mdns_get_servername(void) {
   return name;
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_server_unregister(void) {
   struct ip_addr ap_host_addr;
   struct ip_info ipconfig;
@@ -1043,7 +1043,7 @@ mdns_server_unregister(void) {
   }
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_server_register(void) {
 
   if (register_flag == 1) {
@@ -1056,7 +1056,7 @@ mdns_server_register(void) {
   register_flag = 1;
 }
 
-void ICACHE_FLASH_ATTR
+void
 mdns_reg(struct mdns_info *info) {
 
   static uint8 i = 0;
@@ -1073,7 +1073,7 @@ mdns_reg(struct mdns_info *info) {
  * Initialize the resolver: set up the UDP pcb and configure the default server
  * (NEW IP).
  */
-void ICACHE_FLASH_ATTR
+void
 mdns_init(struct mdns_info *info) {
   /* initialize default DNS server address */
   multicast_addr.addr = DNS_MULTICAST_ADDRESS;

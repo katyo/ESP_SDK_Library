@@ -32,13 +32,13 @@ void register_phy_ops(struct phy_funcs *phy_base);
 void register_get_phy_addr(struct phy_funcs *prt);
 int phy_change_channel(int chfr);
 uint32_t phy_get_mactime(void);
-int chip_v6_set_chanfreq(uint32_t chfr) ICACHE_FLASH_ATTR;
-void phy_init(int8_t ch, int n) ICACHE_FLASH_ATTR;
-void RFChannelSel(int8_t ch) ICACHE_FLASH_ATTR;
-void phy_delete_channel(void) ICACHE_FLASH_ATTR;
-void phy_enable_agc(void) ICACHE_FLASH_ATTR;
-void phy_disable_agc(void) ICACHE_FLASH_ATTR;
-void phy_initialize_bb(int n) ICACHE_FLASH_ATTR;
-void phy_set_sense(void) ICACHE_FLASH_ATTR;
+int chip_v6_set_chanfreq(uint32_t chfr);
+void phy_init(int8_t ch, int n);
+void RFChannelSel(int8_t ch);
+void phy_delete_channel(void);
+void phy_enable_agc(void);
+void phy_disable_agc(void);
+void phy_initialize_bb(int n);
+void phy_set_sense(void);
 
 #endif /* _LIBS_PHY_H_ */

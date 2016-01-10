@@ -15,7 +15,7 @@ extern uint32_t _text_start[];	/* start addr IRAM */
 extern uint32_t _lit4_start[];	/* addr data buf IRAM */
 
 /* Определение размера свободного буфера в IRAM и очистка BSS IRAM (сегмент DATA_IRAM_ATTR) */
-int ICACHE_FLASH_ATTR
+int
 iram_buf_init(void) {
   uint32_t *end =
     &_text_start[((((DPORT_BASE[9] >> 3) & 3) ==

@@ -38,7 +38,7 @@ bool default_hostname;		/*  = true; */
 
 ETSEvent *lwip_if_queues[2] LWIP_DATA_IRAM_ATTR;
 
-static void ICACHE_FLASH_ATTR
+static void
 task_if0(struct ETSEventTag *e) {
   struct netif *myif = eagle_lwip_getif(0);
 
@@ -54,7 +54,7 @@ task_if0(struct ETSEventTag *e) {
   }
 }
 
-static void ICACHE_FLASH_ATTR
+static void
 task_if1(struct ETSEventTag *e) {
   struct netif *myif = eagle_lwip_getif(1);
 
@@ -70,7 +70,7 @@ task_if1(struct ETSEventTag *e) {
   }
 }
 
-static err_t ICACHE_FLASH_ATTR
+static err_t
 init_fn(struct netif *myif) {
   myif->hwaddr_len = 6;		/* +46 //+50 SDK 1.4.0 */
   myif->mtu = DEFAULT_MTU;	/* +44 1500 //+48 SDK 1.4.0 */
@@ -78,7 +78,7 @@ init_fn(struct netif *myif) {
   return 0;
 }
 
-struct netif *ICACHE_FLASH_ATTR
+struct netif *
 eagle_lwip_getif(uint8_t index) {
   struct netif **ret;
 
@@ -93,7 +93,7 @@ eagle_lwip_getif(uint8_t index) {
   return NULL;
 }
 
-struct netif *ICACHE_FLASH_ATTR
+struct netif *
 eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8_t * macaddr,
 		    struct ip_info *ipinfo) {
   struct netif *myif = conn->myif;
@@ -159,7 +159,7 @@ eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8_t * macaddr,
   return myif;
 }
 
-void ICACHE_FLASH_ATTR
+void
 eagle_lwip_if_free(struct ieee80211_conn *conn) {
   if (conn->dhcps_if == 0) {	/* SDK 1.4.0 +200 */
     netif_remove(conn->myif);

@@ -80,14 +80,14 @@ _timer0_isr(void *arg) {
   }
 }
 
-void ICACHE_FLASH_ATTR
+void
 timer0_stop(void) {
   ets_isr_mask(BIT(ETS_FRC_TIMER0_INUM));
   TIMER0_CTRL = 0;
   INTC_EDGE_EN &= ~BIT(1);
 }
 
-void ICACHE_FLASH_ATTR
+void
 timer0_start(uint32_t us, bool repeat_flg) {
   TIMER0_LOAD = 0xFFFFFFFF;
   if (repeat_flg) {

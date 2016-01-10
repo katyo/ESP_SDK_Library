@@ -126,39 +126,39 @@ extern "C" {
 #  define pbuf_init()
 
   struct pbuf *pbuf_alloc(pbuf_layer l, u16_t length,
-			  pbuf_type type) ICACHE_FLASH_ATTR;
+			  pbuf_type type);
 #  if LWIP_SUPPORT_CUSTOM_PBUF
   struct pbuf *pbuf_alloced_custom(pbuf_layer l, u16_t length, pbuf_type type,
 				   struct pbuf_custom *p, void *payload_mem,
-				   u16_t payload_mem_len) ICACHE_FLASH_ATTR;
+				   u16_t payload_mem_len);
 #  endif			/* LWIP_SUPPORT_CUSTOM_PBUF */
-  void pbuf_realloc(struct pbuf *p, u16_t size) ICACHE_FLASH_ATTR;
-  u8_t pbuf_header(struct pbuf *p, s16_t header_size) ICACHE_FLASH_ATTR;
-  void pbuf_ref(struct pbuf *p) ICACHE_FLASH_ATTR;
-  u8_t pbuf_free(struct pbuf *p) ICACHE_FLASH_ATTR;
-  u8_t pbuf_clen(struct pbuf *p) ICACHE_FLASH_ATTR;
-  void pbuf_cat(struct pbuf *head, struct pbuf *tail) ICACHE_FLASH_ATTR;
-  void pbuf_chain(struct pbuf *head, struct pbuf *tail) ICACHE_FLASH_ATTR;
-  struct pbuf *pbuf_dechain(struct pbuf *p) ICACHE_FLASH_ATTR;
-  err_t pbuf_copy(struct pbuf *p_to, struct pbuf *p_from) ICACHE_FLASH_ATTR;
+  void pbuf_realloc(struct pbuf *p, u16_t size);
+  u8_t pbuf_header(struct pbuf *p, s16_t header_size);
+  void pbuf_ref(struct pbuf *p);
+  u8_t pbuf_free(struct pbuf *p);
+  u8_t pbuf_clen(struct pbuf *p);
+  void pbuf_cat(struct pbuf *head, struct pbuf *tail);
+  void pbuf_chain(struct pbuf *head, struct pbuf *tail);
+  struct pbuf *pbuf_dechain(struct pbuf *p);
+  err_t pbuf_copy(struct pbuf *p_to, struct pbuf *p_from);
   u16_t pbuf_copy_partial(struct pbuf *p, void *dataptr, u16_t len,
-			  u16_t offset) ICACHE_FLASH_ATTR;
+			  u16_t offset);
   err_t pbuf_take(struct pbuf *buf, const void *dataptr,
-		  u16_t len) ICACHE_FLASH_ATTR;
+		  u16_t len);
   struct pbuf *pbuf_coalesce(struct pbuf *p,
-			     pbuf_layer layer) ICACHE_FLASH_ATTR;
+			     pbuf_layer layer);
 #  if LWIP_CHECKSUM_ON_COPY
   err_t pbuf_fill_chksum(struct pbuf *p, u16_t start_offset,
 			 const void *dataptr, u16_t len,
-			 u16_t * chksum) ICACHE_FLASH_ATTR;
+			 u16_t * chksum);
 #  endif			/* LWIP_CHECKSUM_ON_COPY */
 
-  u8_t pbuf_get_at(struct pbuf *p, u16_t offset) ICACHE_FLASH_ATTR;
+  u8_t pbuf_get_at(struct pbuf *p, u16_t offset);
   u16_t pbuf_memcmp(struct pbuf *p, u16_t offset, const void *s2,
-		    u16_t n) ICACHE_FLASH_ATTR;
+		    u16_t n);
   u16_t pbuf_memfind(struct pbuf *p, const void *mem, u16_t mem_len,
-		     u16_t start_offset) ICACHE_FLASH_ATTR;
-  u16_t pbuf_strstr(struct pbuf *p, const char *substr) ICACHE_FLASH_ATTR;
+		     u16_t start_offset);
+  u16_t pbuf_strstr(struct pbuf *p, const char *substr);
 
 #  ifdef __cplusplus
 }

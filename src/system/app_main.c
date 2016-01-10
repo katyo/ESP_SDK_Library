@@ -301,11 +301,11 @@ read_align_exception_handler(struct exception_frame *ef, uint32_t cause) {
 #endif
 
 /* =============================================================================
-   FLASH code (ICACHE_FLASH_ATTR)
+   FLASH code ()
    =============================================================================
    Чтение MAC из OTP
    ----------------------------------------------------------------------------- */
-void ICACHE_FLASH_ATTR
+void
 read_macaddr_from_otp(uint8_t * mac) {
   mac[0] = 0x18;
   mac[1] = 0xfe;
@@ -324,7 +324,7 @@ read_macaddr_from_otp(uint8_t * mac) {
 /* -----------------------------------------------------------------------------
    Очистка сегмента bss
    ----------------------------------------------------------------------------- */
-/*void ICACHE_FLASH_ATTR mem_clr_bss(void)
+/*voidmem_clr_bss(void)
    {
    uint8_t * ptr = &_bss_start;
    while(ptr < &_bss_end) *ptr++ = 0;
@@ -332,7 +332,7 @@ read_macaddr_from_otp(uint8_t * mac) {
 /* -----------------------------------------------------------------------------
    Тест конфигурации для WiFi (будет переделан)
    ----------------------------------------------------------------------------- */
-void ICACHE_FLASH_ATTR
+void
 tst_cfg_wifi(void) {
   struct s_wifi_store *wifi_config = &g_ic.g.wifi_store;
 
@@ -375,7 +375,7 @@ tst_cfg_wifi(void) {
 
 /* =============================================================================
    ----------------------------------------------------------------------------- */
-void ICACHE_FLASH_ATTR
+void
 read_wifi_config(void) {
   struct s_wifi_store *wifi_config = &g_ic.g.wifi_store;
   
@@ -404,7 +404,7 @@ read_wifi_config(void) {
 }
 
 #ifdef DEBUG_UART
-void ICACHE_FLASH_ATTR
+void
 startup_uart_init(void) {
   ets_isr_mask(1 << ETS_UART_INUM);
   UART0_INT_ENA = 0;
@@ -428,7 +428,7 @@ startup_uart_init(void) {
 /* =============================================================================
    startup()
    ----------------------------------------------------------------------------- */
-void ICACHE_FLASH_ATTR
+void
 startup(void) {
   ets_set_user_start(call_user_start);	/* установить адрес для возможной перезагрузки сразу в call_user_start() */
   /* cтарт на модуле с кварцем в 26MHz, а ROM-BIOS выставил 40MHz? */
@@ -657,7 +657,7 @@ startup(void) {
 
 /* ----------------------------------------------------------------------------- */
 #ifdef DEBUG_UART
-void ICACHE_FLASH_ATTR
+void
 puts_buf(uint8_t ch) {
   if (UartDev.trx_buff.TrxBuffSize < (TX_BUFF_SIZE - 1)) {
     UartDev.trx_buff.pTrxBuff[UartDev.trx_buff.TrxBuffSize++] = ch;
@@ -669,7 +669,7 @@ puts_buf(uint8_t ch) {
    init_wifi()
    ----------------------------------------------------------------------------- */
 const char aFATAL_ERR_R6PHY[] ICACHE_RODATA_ATTR = "register_chipv6_phy";
-void ICACHE_FLASH_ATTR
+void
 init_wifi(uint8_t * init_data, uint8_t * mac) {
 #ifdef DEBUG_UART
   uart_wait_tx_fifo_empty();
@@ -703,7 +703,7 @@ init_wifi(uint8_t * init_data, uint8_t * mac) {
 /* =============================================================================
    uart_wait_tx_fifo_empty()
    ----------------------------------------------------------------------------- */
-void ICACHE_FLASH_ATTR
+void
 uart_wait_tx_fifo_empty(void) {
   while ((UART0_STATUS >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT);
   while ((UART1_STATUS >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT);

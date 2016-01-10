@@ -23,7 +23,7 @@
  * Returns      : ESPCONN_MEM: memory error
  *          ESPCONN_OK:have enough space for write packet
  *******************************************************************************/
-err_t ICACHE_FLASH_ATTR espconn_tcp_write(void *arg);
+err_tespconn_tcp_write(void *arg);
 
 /******************************************************************************
  * FunctionName : espconn_tcp_delete
@@ -31,7 +31,7 @@ err_t ICACHE_FLASH_ATTR espconn_tcp_write(void *arg);
  * Parameters   : pdeletecon -- the espconn used to delete a server
  * Returns      : none
  *******************************************************************************/
-int8_t ICACHE_FLASH_ATTR espconn_tcp_delete(struct espconn *pdeletecon);
+int8_tespconn_tcp_delete(struct espconn *pdeletecon);
 
 /******************************************************************************
  * FunctionName : espconn_kill_oldest_pcb

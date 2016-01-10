@@ -198,10 +198,10 @@ extern "C" {
 
 #  define ip_addr_isbroadcast(ipaddr, netif) ip4_addr_isbroadcast((ipaddr)->addr, (netif))
   u8_t ip4_addr_isbroadcast(u32_t addr,
-			    const struct netif *netif) ICACHE_FLASH_ATTR;
+			    const struct netif *netif);
 
 #  define ip_addr_netmask_valid(netmask) ip4_addr_netmask_valid((netmask)->addr)
-  u8_t ip4_addr_netmask_valid(u32_t netmask) ICACHE_FLASH_ATTR;
+  u8_t ip4_addr_netmask_valid(u32_t netmask);
 
 #  define ip_addr_ismulticast(addr1) (((addr1)->addr & PP_HTONL(0xf0000000UL)) == PP_HTONL(0xe0000000UL))
 
@@ -226,12 +226,12 @@ extern "C" {
 /** For backwards compatibility */
 #  define ip_ntoa(ipaddr)  ipaddr_ntoa(ipaddr)
 
-  u32_t ipaddr_addr(const char *cp) ICACHE_FLASH_ATTR;
-  int ipaddr_aton(const char *cp, ip_addr_t * addr) ICACHE_FLASH_ATTR;
+  u32_t ipaddr_addr(const char *cp);
+  int ipaddr_aton(const char *cp, ip_addr_t * addr);
 /** returns ptr to static buffer; not reentrant! */
-  char *ipaddr_ntoa(const ip_addr_t * addr) ICACHE_FLASH_ATTR;
+  char *ipaddr_ntoa(const ip_addr_t * addr);
   char *ipaddr_ntoa_r(const ip_addr_t * addr, char *buf,
-		      int buflen) ICACHE_FLASH_ATTR;
+		      int buflen);
 
 #  define IP2STR(ipaddr) ip4_addr1_16(ipaddr), \
   ip4_addr2_16(ipaddr), \

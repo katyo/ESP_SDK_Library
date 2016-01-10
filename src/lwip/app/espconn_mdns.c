@@ -25,7 +25,7 @@
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_enable(void) {
   mdns_enable();
 }
@@ -37,7 +37,7 @@ espconn_mdns_enable(void) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_disable(void) {
   mdns_disable();
 }
@@ -49,7 +49,7 @@ espconn_mdns_disable(void) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_set_hostname(char *name) {
   mdns_set_hostname(name);
 }
@@ -61,7 +61,7 @@ espconn_mdns_set_hostname(char *name) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-char *ICACHE_FLASH_ATTR
+char *
 espconn_mdns_get_hostname(void) {
   return (char *)mdns_get_hostname();
 }
@@ -72,7 +72,7 @@ espconn_mdns_get_hostname(void) {
  * Parameters   : info -- the info  of mdns
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_set_servername(const char *name) {
   mdns_set_servername(name);
 }
@@ -83,7 +83,7 @@ espconn_mdns_set_servername(const char *name) {
  * Parameters   : info -- the info  of mdns
  * Returns      : none
  *******************************************************************************/
-char *ICACHE_FLASH_ATTR
+char *
 espconn_mdns_get_servername(void) {
   return (char *)mdns_get_servername();
 }
@@ -94,7 +94,7 @@ espconn_mdns_get_servername(void) {
  * Parameters   : info -- the info  of mdns
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_server_register(void) {
   mdns_server_register();
 }
@@ -105,7 +105,7 @@ espconn_mdns_server_register(void) {
  * Parameters   : info -- the info  of mdns
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_server_unregister(void) {
   mdns_server_unregister();
 }
@@ -117,7 +117,7 @@ espconn_mdns_server_unregister(void) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_close(void) {
   mdns_close();
 }
@@ -129,7 +129,7 @@ espconn_mdns_close(void) {
  *          multicast_ip -- multicast ip given by user
  * Returns      : none
  *******************************************************************************/
-void ICACHE_FLASH_ATTR
+void
 espconn_mdns_init(struct mdns_info *info) {
   mdns_init(info);
 }
