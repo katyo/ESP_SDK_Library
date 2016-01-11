@@ -8,9 +8,9 @@
 #ifndef ESP8266_H
 #  define ESP8266_H
 
-/* #include "hw/eagle_soc.h" */
+/* #  include "hw/eagle_soc.h" */
 
-#  define Q_CLK_FREQ  26000000ul/* unit: Hz, 40000000 Hz */
+#  define Q_CLK_FREQ  26000000ul /* unit: Hz, 40000000 Hz */
 
 extern volatile uint32_t dport_[64];	/* 0x3ff00000 */
 extern volatile uint32_t io2_regs_[1536];	/* 0x3ff20000 */
@@ -387,7 +387,7 @@ typedef enum {
 #  define TIMER1_ALARM  timer_[12]	/* the alarm value for the counter */
 #  define TIMER1_ALARM_DATA_MASK  0xffffffff
 /*	Returns	the	current	time	according	to	the	timer	timer. */
-#  define NOW()     TIMER1_COUNT/* RTC_REG_READ(FRC2_COUNT_ADDRESS) */
+#  define NOW()     TIMER1_COUNT /* RTC_REG_READ(FRC2_COUNT_ADDRESS) */
 
 /* WDT:0x60000900 registers
    WDT_CTRL:0x60000900 register */
