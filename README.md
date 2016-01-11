@@ -1,7 +1,7 @@
-MinEspSDK (meSDK)
-=================
+Alternative ESP SDK (altSDK)
+============================
 
-Minimalist SDK for ESP8266ex v1.4.1
+Alternative SDK for ESP8266
 
 Forked from [pvvx:MinEspSDKLib](//github.com/pvvx/MinEspSDKLib)
 
@@ -25,6 +25,24 @@ the TCP connection from STATION to SOFTAP typically is established
 less than ~540 ms, when no DHCP operation is required.
 The most time is wasted by WiFi initialization.
 The half duplex speed of TCP is greater than 1 MByte per second.
+
+Key differences
+---------------
+
+The differences from *pvvx:MinEspSDKLib* and other *Espressif's SDK* includes:
+
+* Strict dependency-driven single-level build system
+  (instead of messy recursive makefiles)
+* Simple integration with other projects as submodule
+* Less size of firmware images
+  (by using special flags of compiler/linker)
+* Functions are located in flash by default
+  (the `ICACHE_FLASH_ATTR` don't needed)
+* The special attribute `ICACHE_IRAM_ATTR` for functions,
+  which required to be located in RAM
+  (i.e. interrupt handlers and other hot code)
+* Built-in *pvvx's* **Rapid Loader**
+* Built-in **gdbstub**
 
 Components
 ----------

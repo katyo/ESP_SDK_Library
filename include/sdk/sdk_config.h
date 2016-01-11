@@ -2,7 +2,7 @@
 #  define _sdk_config_h_
 
 #  ifndef SDK_NAME_STR
-#    define SDK_NAME_STR "meSDK"
+#    define SDK_NAME_STR "altSDK"
 #  endif
 
 #  define DEF_SDK_VERSION 1500	/* 1302 // ver 1.3.0 + patch (lib_1.3.0_deep_sleep_plus_freq_offset_plus_freedom_callback_02.zip SDK ver: 1.3.0 compiled @ Aug 19 2015 17:50:07) */
