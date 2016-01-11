@@ -108,6 +108,7 @@ define BIN_RULES
 $(1).IS ?= default
 $(1).LDSCRIPTS += $$($$($(1).IS).LDSCRIPTS)
 $(1).LDFLAGS += $$($$($(1).IS).LDFLAGS)
+$(1).LDLIBS += $$($$($(1).IS).LDLIBS)
 
 $(1).DEPLIBS_FULL := $$(foreach lib,$$(DEPLIBS) $$($(1).DEPLIBS),$$($$(lib).LIB))
 
@@ -120,7 +121,7 @@ build.bin.$(1): $$($(1).BIN)
 $$($(1).BIN): $$($(1).DEPLIBS_FULL) $$($(1).LDSCRIPTS)
 	@echo TARGET $(1) BIN
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(LD) $$(LDFLAGS) $$($(1).LDFLAGS) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).DEPLIBS_FULL) -Wl,--end-group -o $$@
+	$(Q)$(LD) $$(LDFLAGS) $$($(1).LDFLAGS) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).DEPLIBS_FULL) $(LDLIBS) $$($(1).LDLIBS) -Wl,--end-group -o $$@
 
 clean: clean.bin.$(1)
 clean.bin.$(1):

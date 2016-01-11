@@ -201,12 +201,16 @@ endif
 
 TARGET.LIBS += libsdk
 libsdk.SDKLIBS += \
-  libmgcc \
   libmmain \
   libmphy \
   libpp \
   libmwpa \
   libnet80211
+
+ifneq (y,$(USE_STDLIBS))
+  libsdk.SDKLIBS += libmgcc
+endif
+
 libsdk.DEPLIBS += \
   libaddmmain \
   libaddmphy \
@@ -242,6 +246,11 @@ default.LDFLAGS += \
   -Wl,--no-check-sections \
   -u call_user_start \
   -Wl,-static
+
+ifeq (y,$(USE_STDLIBS))
+default.LDLIBS += \
+  $(addprefix -l,c m gcc)
+endif
 
 ifeq (y,$(WITH_EX_DUMMY_APP))
   TARGET.LIBS += libdummy_app
