@@ -284,6 +284,12 @@ IMG1.ADDR ?= 0x00000
  # Program codes Cache Flash
 IMG2.ADDR ?= 0x07000
 
+# The RTC EEPROM data
+TARGET.RDIS += clear_eep
+clear.IMGS += clear_eep
+clear_eep.SRCS += $(SRCDIR)/bin/clear_eep.c
+clear_eep.ADDR ?= 0x79000
+
 # RF SDK options
 TARGET.RDIS += esp_init_data_default
 clear.IMGS += esp_init_data_default
@@ -298,12 +304,6 @@ ifeq (y,$(NO_ESP_CONFIG))
   blank.SRCS += $(SRCDIR)/bin/blank.c
   blank.ADDR ?= 0x7E000
 endif
-
-# The RTC EEPROM data
-TARGET.RDIS += clear_eep
-clear.IMGS += clear_eep
-clear_eep.SRCS += $(SRCDIR)/bin/clear_eep.c
-clear_eep.ADDR ?= 0x79000
 
 # Provide rules
 $(foreach lib,$(TARGET.LIBS),$(eval $(call LIB_RULES,$(lib))))

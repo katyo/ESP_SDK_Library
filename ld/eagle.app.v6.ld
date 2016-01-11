@@ -15,6 +15,15 @@ PHDRS {
   irom0_0_phdr PT_LOAD;
 }
 
+PROVIDE(_eep_start = 0x79000);
+PROVIDE(_eep_end = 0x79000 + 0x3000);
+
+PROVIDE(_esp_init_data_start = 0x7c000);
+PROVIDE(_esp_init_data_end = 0x7c000 + 128);
+
+PROVIDE(_blank_start = 0x7e000);
+PROVIDE(_blank_end = 0x7e000 + 4k);
+
 /*  Default entry point:  */
 ENTRY(call_user_start)
 PROVIDE(_memmap_vecbase_reset = 0x40000000);

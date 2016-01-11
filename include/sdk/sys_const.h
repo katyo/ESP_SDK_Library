@@ -12,7 +12,7 @@
 #  define MAX_IDX_SYS_CONST 128
 #  define SIZE_SYS_CONST 128
 #  define SIZE_SAVE_SYS_CONST 756
-				/* размер сохранения блока системных констант в секторе с номером (max_flash - 4). SDK 1.4.0 */
+/* размер сохранения блока системных констант в секторе с номером (max_flash - 4). SDK 1.4.0 */
 
 #  ifdef USE_FIX_SDK_FLASH_SIZE
 #    define esp_init_data_default_sec (0x7C)
