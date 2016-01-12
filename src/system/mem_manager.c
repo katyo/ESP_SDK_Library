@@ -343,16 +343,33 @@ pvPortRealloc(void *mem, size_t newsize) {
   void *p = NULL;
   
   if (newsize > 0) {
+    size_t oldsize = 0;
+    
+    if (mem) {
+      unsigned char *puc = (unsigned char *)mem;
+      puc -= heapSTRUCT_SIZE;
+      
+      xBlockLink *pxLink = (void *)puc;
+      oldsize = pxLink->xBlockSize;
+      
+      if (newsize <= oldsize) {
+	return mem;
+      }
+    }
+
+    /* allocate the memory */
     p = pvPortMalloc(newsize);
-    if (p && mem) {
-      /* copy the memory */
-      ets_memcpy(p, mem, newsize);
+    
+    if (p && oldsize > 0) { /* copy the memory */
+      ets_memcpy(p, mem, oldsize);
     }
   }
+  
   if (mem) {
     /* free the memory */
     vPortFree(mem);
   }
+  
   return p;
 }
 
