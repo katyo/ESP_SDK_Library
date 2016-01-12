@@ -340,12 +340,17 @@ pvPortZalloc(size_t size) {
 
 void * ICACHE_IRAM_ATTR
 pvPortRealloc(void *mem, size_t newsize) {
-  void *p;
-
-  p = pvPortMalloc(newsize);
-  if (p) {
-    /* zero the memory */
-    ets_memcpy(p, mem, newsize);
+  void *p = NULL;
+  
+  if (newsize > 0) {
+    p = pvPortMalloc(newsize);
+    if (p && mem) {
+      /* copy the memory */
+      ets_memcpy(p, mem, newsize);
+    }
+  }
+  if (mem) {
+    /* free the memory */
     vPortFree(mem);
   }
   return p;
