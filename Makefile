@@ -14,18 +14,19 @@ include $(BASEPATH)rules.mk
 include $(BASEPATH)image.mk
 -include config.mk
 
-CFLAGS += -std=gnu90
-CFLAGS += -Wall -Wextra -Wno-pointer-sign
-CFLAGS += -fno-tree-ccp -foptimize-register-move
-CFLAGS += -mno-target-align -mno-serialize-volatile
+default.CSTD ?= gnu90
+default.CWARN ?= all extra no-pointer-sign undef pointer-arith error
+default.COPTS ?= no-tree-ccp optimize-register-move no-inline-functions function-sections data-sections
+default.CMACH ?= no-target-align no-serialize-volatile longcalls text-section-literals
+default.CDIRS ?= $(INCDIR)
 
-CFLAGS += -Wundef -Wpointer-arith -Werror
-CFLAGS += -Wl,-EL -fno-inline-functions -nostdlib
-CFLAGS += -mlongcalls -mtext-section-literals
-
-default.CFLAGS += -ffunction-sections -fdata-sections
-
-CDIRS += $(INCDIR)
+loader.CSTD ?= $(default.CSTD)
+loader.COPT ?= $(default.COPT)
+loader.CDBG ?= $(default.CDBG)
+loader.CWARN ?= $(default.CWARN)
+loader.COPTS ?= $(default.COPTS)
+loader.CMACH ?= $(default.CMACH)
+loader.CDIRS ?= $(default.CDIRS)
 
 USE_LOADER ?= y
 
@@ -48,54 +49,54 @@ WITH_EX_MEM_USAGE ?= $(WITH_EXAMPLES)
 WITH_EX_TCP_ECHO ?= $(WITH_EXAMPLES)
 
 ifneq (,$(SDK_NAME))
-  CDEFS += SDK_NAME_STR='"$(SDK_NAME)"'
+  default.CDEFS += SDK_NAME_STR='"$(SDK_NAME)"'
 endif
 
 ifneq (,$(DEBUG_UART))
-  CDEFS += DEBUG_UART=$(DEBUG_UART)
+  default.CDEFS += DEBUG_UART=$(DEBUG_UART)
 endif
 
 ifneq (,$(DEBUG_LEVEL))
-  CDEFS += DEBUGSOO=$(DEBUG_LEVEL)
+  default.CDEFS += DEBUGSOO=$(DEBUG_LEVEL)
 endif
 
 ifneq (,$(UART0_BAUD))
-  CDEFS += DEBUG_UART0_BAUD=$(UART0_BAUD)
+  default.CDEFS += DEBUG_UART0_BAUD=$(UART0_BAUD)
 endif
 
 ifneq (,$(UART1_BAUD))
-  CDEFS += DEBUG_UART1_BAUD=$(UART1_BAUD)
+  default.CDEFS += DEBUG_UART1_BAUD=$(UART1_BAUD)
 endif
 
 ifeq (y,$(USE_ESPCONN))
-  CDEFS += USE_ESPCONN
+  default.CDEFS += USE_ESPCONN
 endif
 
 ifneq (,$(USE_MAX_IRAM))
-  CDEFS += USE_MAX_IRAM=$(USE_MAX_IRAM)
+  default.CDEFS += USE_MAX_IRAM=$(USE_MAX_IRAM)
 endif
 
 ifneq (,$(STARTUP_CPU_CLK))
-  CDEFS += STARTUP_CPU_CLK=$(STARTUP_CPU_CLK)
+  default.CDEFS += STARTUP_CPU_CLK=$(STARTUP_CPU_CLK)
 endif
 
 ifeq (y,$(USE_US_TIMER))
-  CDEFS += USE_US_TIMER
+  default.CDEFS += USE_US_TIMER
 endif
 
 ifeq (y,$(USE_OPTIMIZE_PRINTF))
-  CDEFS += USE_OPTIMIZE_PRINTF
+  default.CDEFS += USE_OPTIMIZE_PRINTF
 endif
 
 ifeq (y,$(USE_OPEN_LWIP))
   libsdk.DEPLIBS += liblwip
-  CDEFS += \
+  default.CDEFS += \
     USE_OPEN_LWIP \
     PBUF_RSV_FOR_WLAN \
     LWIP_OPEN_SRC \
     EBUF_LWIP
   ifneq (,$(LWIP_DEBUG))
-    CDEFS += \
+    default.CDEFS += \
       LWIP_DEBUG \
       LWIP_DBG_TYPES_ON='(LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH)' \
       $(patsubst %,%_DEBUG='(LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON)',$(LWIP_DEBUG))
@@ -107,7 +108,7 @@ else
 endif
 
 ifeq (y,$(USE_OPEN_DHCPS))
-  CDEFS += USE_OPEN_DHCPS
+  default.CDEFS += USE_OPEN_DHCPS
 else
   libsdk.SDKLIBS += libdhcps
 endif
@@ -117,19 +118,19 @@ COMMA_CHAR := ,
 IP4_ADDR = 'IP4_UINT($(subst $(POINT_CHAR),$(COMMA_CHAR),$(1)))'
 
 ifneq (,$(SOFTAP_GATEWAY))
-  CDEFS += SOFTAP_GATEWAY=$(call IP4_ADDR,$(SOFTAP_GATEWAY))
+  default.CDEFS += SOFTAP_GATEWAY=$(call IP4_ADDR,$(SOFTAP_GATEWAY))
 endif
 
 ifneq (,$(SOFTAP_IP_ADDR))
-  CDEFS += SOFTAP_IP_ADDR=$(call IP4_ADDR,$(SOFTAP_IP_ADDR))
+  default.CDEFS += SOFTAP_IP_ADDR=$(call IP4_ADDR,$(SOFTAP_IP_ADDR))
 endif
 
 ifneq (,$(SOFTAP_NETMASK))
-  CDEFS += SOFTAP_NETMASK=$(call IP4_ADDR,$(SOFTAP_NETMASK))
+  default.CDEFS += SOFTAP_NETMASK=$(call IP4_ADDR,$(SOFTAP_NETMASK))
 endif
 
 ifeq (y,$(NO_ESP_CONFIG))
-  CDEFS += NO_ESP_CONFIG
+  default.CDEFS += NO_ESP_CONFIG
 endif
 
 ifeq (y,$(USE_LOADER))
@@ -183,16 +184,18 @@ TARGET.LIBS += libaddwpa
 libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
 ifeq (y,$(DEBUG))
-  CFLAGS += -Og -ggdb3
-  CDEFS += USE_DEBUG
+  default.COPT ?= g
+  default.CDBG ?= gdb3
+  default.CDEFS += USE_DEBUG
   ifeq (y,$(DEBUG_BREAK))
-    CDEFS += GDBSTUB_BREAK_ON_INIT=1
+    default.CDEFS += GDBSTUB_BREAK_ON_INIT=1
   endif
   libsdk.DEPLIBS += libgdbstub
   TARGET.LIBS += libgdbstub
   libgdbstub.SRCS += $(wildcard $(addprefix $(SRCDIR)/gdbstub/*.,c S))
 else
-  CFLAGS += -Os -g
+  default.COPT ?= s
+  default.CDBG ?= 
 endif
 
 ifeq (y,$(DEBUG_EXCEPT))
@@ -219,37 +222,22 @@ libsdk.DEPLIBS += \
   $(addprefix esp/,$(libsdk.SDKLIBS))
 
 # Application
-LDDIRS += $(LDDIR)
+default.LDDIRS += $(LDDIR)
+default.LDSCRIPT ?= $(LDDIR)/eagle.app.v6.ld
+default.LDSCRIPTS ?= $(default.LDSCRIPT) $(LDDIR)/eagle.rom.addr.v6.ld
+default.LDOPTS ?= EL -gc-sections -no-check-sections -wrap=os_printf_plus static
+default.UNDEFS ?= call_user_start
+default.LDFLAGS += -nostartfiles -nodefaultlibs -nostdlib
 
-loader.LDSCRIPTS += \
-  $(LDDIR)/eagle.app.v6-loader.ld \
-  $(LDDIR)/eagle.rom.addr.v6.ld
-
-loader.LDFLAGS += \
-  -nostdlib \
-  -T$(firstword $(loader.LDSCRIPTS)) \
-  -Wl,--no-check-sections \
-  -u call_user_start \
-  -u loader_flash_boot \
-  -Wl,-static
-
-default.LDSCRIPTS += \
-  $(LDDIR)/eagle.app.v6.ld \
-  $(LDDIR)/eagle.rom.addr.v6.ld
-
-default.LDFLAGS += \
-  -nostartfiles \
-  -nodefaultlibs \
-  -nostdlib \
-  -T$(firstword $(default.LDSCRIPTS)) \
-  -Wl,--gc-sections \
-  -Wl,--no-check-sections \
-  -u call_user_start \
-  -Wl,-static
+loader.LDDIRS += $(default.LDDIRS)
+loader.LDSCRIPT ?= $(LDDIR)/eagle.app.v6-loader.ld
+loader.LDSCRIPTS ?= $(loader.LDSCRIPT) $(LDDIR)/eagle.rom.addr.v6.ld
+loader.LDOPTS ?= -no-check-sections static
+loader.UNDEFS ?= call_user_start loader_flash_boot
+loader.LDFLAGS ?= -nostdlib
 
 ifeq (y,$(USE_STDLIBS))
-default.LDLIBS += \
-  $(addprefix -l,c m gcc)
+  default.LDLIBS += $(addprefix -l,c m gcc)
 endif
 
 ifeq (y,$(WITH_EX_DUMMY_APP))
@@ -298,7 +286,7 @@ esp_init_data_default.ADDR ?= 0x7C000
 
 # Default SDK WiFi config
 # (don't used when NO_ESP_CONFIG is y)
-ifeq (y,$(NO_ESP_CONFIG))
+ifneq (y,$(NO_ESP_CONFIG))
   TARGET.RDIS += blank
   clear.IMGS += blank
   blank.SRCS += $(SRCDIR)/bin/blank.c

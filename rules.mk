@@ -24,17 +24,6 @@ OBJDUMP := $(COMPILER_PREFIX)objdump
 OBJCOPY := $(COMPILER_PREFIX)objcopy
 GDB := $(COMPILER_PREFIX)gdb
 
-ifndef rules.ONCE
-rules.ONCE :=
-
-# Compiler flags
-CFLAGS += $(addprefix -D,$(CDEFS))
-CFLAGS += $(addprefix -I,$(CDIRS))
-
-# Linker flags
-LDFLAGS += $(addprefix -L,$(LDDIRS))
-endif
-
 build:
 clean:
 
@@ -52,7 +41,7 @@ $(1).DEP += $$($(1).DEP.$(2))
 $$(call OBJ_P,$(1)/%.$(2)): $$(call SRC_P,%,$(2))
 	@echo TARGET $(1) CC $(2) $$<
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(CC) -MD -MF $$(call DEP_P,$(1)/$$*.$(2)) -c $$(CFLAGS) $$($(1).CFLAGS) -o $$@ $$<
+	$(Q)$(CC) -MD -MF $$(call DEP_P,$(1)/$$*.$(2)) -c $$($(1).CFLAGS) -o $$@ $$<
 
 -include $$($(1).DEP.$(2))
 endef
@@ -72,13 +61,30 @@ endif
 endif
 endef
 
+# Expand profile flags
+define CFLAGS_EXPAND
+ifneq (y,$$($(1).CFLAGS_EXPANDED))
+$(1).CFLAGS_EXPANDED := y
+
+$(1).CFLAGS += $$(addprefix -I,$$($(1).CDIRS))
+$(1).CFLAGS += $$(addprefix -D,$$($(1).CDEFS))
+
+$(1).CFLAGS += $$(if $$($(1).CSTD),-std=$$($(1).CSTD))
+$(1).CFLAGS += $$(addprefix -W,$$($(1).CWARN))
+$(1).CFLAGS += $$(if $$($(1).COPT),-O$$($(1).COPT))
+$(1).CFLAGS += $$(if $$($(1).CDBG),-g$$($(1).CDBG))
+$(1).CFLAGS += $$(addprefix -f,$$($(1).COPTS))
+$(1).CFLAGS += $$(addprefix -m,$$($(1).CMACH))
+endif
+endef
+
 # Library rules
 define LIB_RULES
 $(1).IS ?= default
-$(1).CFLAGS += $$($$($(1).IS).CFLAGS)
 
-$(1).CFLAGS += $$(addprefix -D,$$($(1).CDEFS))
-$(1).CFLAGS += $$(addprefix -I,$$($(1).CDIRS))
+$$(eval $$(call CFLAGS_EXPAND,$$($(1).IS)))
+$$(eval $$(call CFLAGS_EXPAND,$(1)))
+$(1).CFLAGS += $$($$($(1).IS).CFLAGS)
 
 $$(eval $$(call CC_RULES,$(1),c))
 $$(eval $$(call CC_RULES,$(1),S))
@@ -103,14 +109,30 @@ clean.lib.$(1):
 	$(Q)rm -f $$($(1).LIB) $$($(1).OBJ) $$($(1).DEP)
 endef
 
+COMMA := ,
+
+# Expand profile flags
+define LDFLAGS_EXPAND
+ifneq (y,$$($(1).LDFLAGS_EXPANDED))
+$(1).LDFLAGS_EXPANDED := y
+
+$(1).LDFLAGS += $$(if $$($(1).LDSCRIPT),-T$$($(1).LDSCRIPT))
+$(1).LDFLAGS += $$(addprefix -u ,$$($(1).UNDEFS))
+$(1).LDFLAGS += $$(addprefix -Wl$$(COMMA)-,$$($(1).LDOPTS))
+$(1).LDFLAGS += $$(addprefix -L,$$($(1).LDDIRS))
+$(1).LDLIBS += $$(foreach lib,$$($(1).DEPLIBS),$$($$(lib).LIB))
+endif
+endef
+
 # Binary rules
 define BIN_RULES
 $(1).IS ?= default
-$(1).LDSCRIPTS += $$($$($(1).IS).LDSCRIPTS)
+
+$$(eval $$(call LDFLAGS_EXPAND,$$($(1).IS)))
+$$(eval $$(call LDFLAGS_EXPAND,$(1)))
+
 $(1).LDFLAGS += $$($$($(1).IS).LDFLAGS)
 $(1).LDLIBS += $$($$($(1).IS).LDLIBS)
-
-$(1).DEPLIBS_FULL := $$(foreach lib,$$(DEPLIBS) $$($(1).DEPLIBS),$$($$(lib).LIB))
 
 $(1).BIN := $$(call BIN_P,$(1))
 $(1).MAP := $$(call MAP_P,$(1))
@@ -121,7 +143,7 @@ build.bin.$(1): $$($(1).BIN)
 $$($(1).BIN): $$($(1).DEPLIBS_FULL) $$($(1).LDSCRIPTS)
 	@echo TARGET $(1) BIN
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(LD) $$(LDFLAGS) $$($(1).LDFLAGS) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).DEPLIBS_FULL) $(LDLIBS) $$($(1).LDLIBS) -Wl,--end-group -o $$@
+	$(Q)$(LD) $$($(1).LDFLAGS) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).LDLIBS) -Wl,--end-group -o $$@
 
 clean: clean.bin.$(1)
 clean.bin.$(1):

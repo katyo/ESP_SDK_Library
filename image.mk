@@ -106,8 +106,11 @@ IMG_OPTION ?= -ff $(FLASH_FREQ)m -fm $(FLASH_MODE_NAME) -fs $(FLASH_SIZE_MBITS)m
 
 # Raw-data image rules
 define RDI_RULES
-$(1).CFLAGS += $$(addprefix -D,$$($(1).CDEFS))
-$(1).CFLAGS += $$(addprefix -I,$$($(1).CDIRS))
+$(1).IS ?= default
+
+$$(eval $$(call CFLAGS_EXPAND,$$($(1).IS)))
+$$(eval $$(call CFLAGS_EXPAND,$(1)))
+$(1).CFLAGS += $$($$($(1).IS).CFLAGS)
 
 $$(eval $$(call CC_RULES,$(1),c))
 
