@@ -182,6 +182,28 @@ libaddmain.SRCS = $(wildcard $(addprefix $(SRCDIR)/,system/*.c bin/esp_init_data
 TARGET.LIBS += libaddwpa
 libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
+TARGET.LIBS += libnet80211
+libnet80211.SRCS = $(patsubst %,$(SRCDIR)/net80211/%.c,\
+  ieee80211_action \
+  ieee80211 \
+  ieee80211_crypto \
+  ieee80211_crypto_ccmp \
+  ieee80211_crypto_tkip \
+  ieee80211_crypto_wep \
+  ieee80211_hostap \
+  ieee80211_ht \
+  ieee80211_hwmp \
+  ieee80211_input \
+  ieee80211_mesh \
+  ieee80211_node \
+  ieee80211_output \
+  ieee80211_phy \
+  ieee80211_power \
+  ieee80211_proto \
+  ieee80211_scan \
+  ieee80211_sta)
+# missing: ieee80211_action_vendor.o ieee80211_ie_vendor.o ieee80211_mesh_quick.o ieee80211_ets.o ieee80211_rfid.o if_eagle.o wl_chm.o wl_cnx.o
+
 ifeq (y,$(DEBUG))
   CFLAGS += -Og -ggdb3
   CDEFS += USE_DEBUG
