@@ -103,7 +103,7 @@ ifeq (y,$(USE_OPEN_LWIP))
 else
   libsdk.SDKLIBS += \
     liblwipif \
-    libmlwip
+    liblwip
 endif
 
 ifeq (y,$(USE_OPEN_DHCPS))
@@ -170,14 +170,14 @@ liblwip.DEPLIBS += \
   liblwipipv4 \
   liblwipnetif
 
-TARGET.LIBS += libaddmphy
-libaddmphy.SRCS = $(wildcard $(SRCDIR)/phy/*.c)
+TARGET.LIBS += libaddphy
+libaddphy.SRCS = $(wildcard $(SRCDIR)/phy/*.c)
 
 TARGET.LIBS += libaddpp
 libaddpp.SRCS = $(wildcard $(SRCDIR)/pp/*.c)
 
-TARGET.LIBS += libaddmmain
-libaddmmain.SRCS = $(wildcard $(addprefix $(SRCDIR)/,system/*.c bin/esp_init_data_default.c))
+TARGET.LIBS += libaddmain
+libaddmain.SRCS = $(wildcard $(addprefix $(SRCDIR)/,system/*.c bin/esp_init_data_default.c))
 
 TARGET.LIBS += libaddwpa
 libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
@@ -201,19 +201,19 @@ endif
 
 TARGET.LIBS += libsdk
 libsdk.SDKLIBS += \
-  libmmain \
-  libmphy \
+  libmain \
+  libphy \
   libpp \
-  libmwpa \
+  libwpa \
   libnet80211
 
 ifneq (y,$(USE_STDLIBS))
-  libsdk.SDKLIBS += libmgcc
+  libsdk.SDKLIBS += libgcc
 endif
 
 libsdk.DEPLIBS += \
-  libaddmmain \
-  libaddmphy \
+  libaddmain \
+  libaddphy \
   libaddpp \
   libaddwpa \
   $(addprefix esp/,$(libsdk.SDKLIBS))
