@@ -34,9 +34,11 @@ $(1).$(3) ?= $$($(2).$(3))
 endif
 endef
 
+uniq = $(if $(1),$(firstword $(1)) $(call uniq,$(filter-out $(firstword $(1)),$(1))))
+
 define INHERIT_ADD
 ifneq (,$$($(2).$(3)))
-$(1).$(3) += $$($(2).$(3))
+$(1).$(3) := $$(call uniq,$$($(1).$(3)) $$($(2).$(3)))
 endif
 endef
 
