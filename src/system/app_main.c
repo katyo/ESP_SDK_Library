@@ -364,6 +364,8 @@ tst_cfg_wifi(void) {
   }
   wifi_config->field_880 = 0;
   wifi_config->field_884 = 0;
+  g_ic.c[257] = 0; /* ? */
+  
   if (wifi_config->field_316 > 6)
     wifi_config->field_316 = 1;
   if (wifi_config->field_169 > 2)
@@ -491,6 +493,7 @@ startup(void) {
   default_hostname = true;	/* используется default_hostname */
 #endif
   /*  */
+  /* IO_RTC_4 = 0xfe000000; */
   sleep_reset_analog_rtcreg_8266();
   /* создать два MAC адреса для AP и SP */
   read_macaddr_from_otp(info.st_mac);
@@ -525,7 +528,7 @@ startup(void) {
   uint8_t *buf = os_malloc(SIZE_SAVE_SYS_CONST);
 
   spi_flash_read(esp_init_data_default_addr, (uint32_t *) buf, SIZE_SAVE_SYS_CONST);	/* esp_init_data_default.bin + ??? */
-#  if DEF_SDK_VERSION == 1410
+#  if DEF_SDK_VERSION >= 1410
   if (buf[112] == 3)
     g_ic.c[471] = 1;
   else
@@ -602,7 +605,9 @@ startup(void) {
 #else
   wdt_init();
 #endif
-/*      uart_wait_tx_fifo_empty(); */
+#ifdef DEBUG_UART
+  uart_wait_tx_fifo_empty();
+#endif
   user_init();
   user_init_flag = true;
 #if DEF_SDK_VERSION >= 1200

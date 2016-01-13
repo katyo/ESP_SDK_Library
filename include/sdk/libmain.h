@@ -170,7 +170,7 @@ struct s_g_ic {
   uint32_t field_1BC;       /* +01BC g_ic+444 */
   uint32_t field_1C0;       /* +01C0 g_ic+448 */
   uint32_t field_1C4;       /* +01C4 g_ic+452 */
-#  if DEF_SDK_VERSION >= 1500   /* SDK >= 1.4.0 */
+#  if DEF_SDK_VERSION >= 1500   /* SDK >= 1.5.0 */
   uint32_t field_1C8[12];       /* +01C8 g_ic+456 504-456 */
 #  elif DEF_SDK_VERSION >= 1400 /* SDK >= 1.4.0 */
   uint32_t field_1C8[11];       /* +01C8 g_ic+456 500-456 */
