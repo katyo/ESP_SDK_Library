@@ -27,6 +27,25 @@ GDB := $(COMPILER_PREFIX)gdb
 build:
 clean:
 
+# Options inherits
+define INHERIT_SET
+ifneq (,$$($(2).$(3)))
+$(1).$(3) ?= $$($(2).$(3))
+endif
+endef
+
+define INHERIT_ADD
+ifneq (,$$($(2).$(3)))
+$(1).$(3) += $$($(2).$(3))
+endif
+endef
+
+define INHERIT_ALL # child action option
+$$(foreach parent,$$($(1).INHERIT),$$(eval $$(call $(2),$(1),$$(parent),$(3))))
+endef
+
+INHERITS = $(eval $(call INHERIT_ALL,$(1),INHERIT_$(2),$(3)))
+
 # Compilation rules
 define CC_RULES
 $(1).SRC.$(2) += $$(filter %.$(2),$$($(1).SRCS))
@@ -41,7 +60,7 @@ $(1).DEP += $$($(1).DEP.$(2))
 $$(call OBJ_P,$(1)/%.$(2)): $$(call SRC_P,%,$(2))
 	@echo TARGET $(1) CC $(2) $$<
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(CC) -MD -MF $$(call DEP_P,$(1)/$$*.$(2)) -c $$($(1).CFLAGS) -o $$@ $$<
+	$(Q)$(CC) -MD -MF $$(call DEP_P,$(1)/$$*.$(2)) -c $$($(1).CFLAGS_EXPANDED) -o $$@ $$<
 
 -include $$($(1).DEP.$(2))
 endef
@@ -63,28 +82,35 @@ endef
 
 # Expand profile flags
 define CFLAGS_EXPAND
-ifneq (y,$$($(1).CFLAGS_EXPANDED))
-$(1).CFLAGS_EXPANDED := y
+ifndef $(1).CFLAGS_EXPANDED
+$$(foreach parent,$$($(1).INHERIT),$$(eval $$(call CFLAGS_EXPAND,$$(parent))))
 
-$(1).CFLAGS += $$(addprefix -I,$$($(1).CDIRS))
-$(1).CFLAGS += $$(addprefix -D,$$($(1).CDEFS))
+$$(call INHERITS,$(1),ADD,CFLAGS)
+$$(call INHERITS,$(1),ADD,CDIRS)
+$$(call INHERITS,$(1),ADD,CDEFS)
+$$(call INHERITS,$(1),SET,CSTD)
+$$(call INHERITS,$(1),ADD,CWARN)
+$$(call INHERITS,$(1),SET,COPT)
+$$(call INHERITS,$(1),SET,CDBG)
+$$(call INHERITS,$(1),ADD,COPTS)
+$$(call INHERITS,$(1),ADD,CMACH)
 
-$(1).CFLAGS += $$(if $$($(1).CSTD),-std=$$($(1).CSTD))
-$(1).CFLAGS += $$(addprefix -W,$$($(1).CWARN))
-$(1).CFLAGS += $$(if $$($(1).COPT),-O$$($(1).COPT))
-$(1).CFLAGS += $$(if $$($(1).CDBG),-g$$($(1).CDBG))
-$(1).CFLAGS += $$(addprefix -f,$$($(1).COPTS))
-$(1).CFLAGS += $$(addprefix -m,$$($(1).CMACH))
+$(1).CFLAGS_EXPANDED := \
+  $$($(1).CFLAGS) \
+  $$(addprefix -I,$$($(1).CDIRS)) \
+  $$(addprefix -D,$$($(1).CDEFS)) \
+  $$(if $$($(1).CSTD),-std=$$($(1).CSTD)) \
+  $$(addprefix -W,$$($(1).CWARN)) \
+  $$(if $$($(1).COPT),-O$$($(1).COPT)) \
+  $$(if $$($(1).CDBG),-g$$($(1).CDBG)) \
+  $$(addprefix -f,$$($(1).COPTS)) \
+  $$(addprefix -m,$$($(1).CMACH))
 endif
 endef
 
 # Library rules
 define LIB_RULES
-$(1).IS ?= default
-
-$$(eval $$(call CFLAGS_EXPAND,$$($(1).IS)))
 $$(eval $$(call CFLAGS_EXPAND,$(1)))
-$(1).CFLAGS += $$($$($(1).IS).CFLAGS)
 
 $$(eval $$(call CC_RULES,$(1),c))
 $$(eval $$(call CC_RULES,$(1),S))
@@ -113,26 +139,33 @@ COMMA := ,
 
 # Expand profile flags
 define LDFLAGS_EXPAND
-ifneq (y,$$($(1).LDFLAGS_EXPANDED))
-$(1).LDFLAGS_EXPANDED := y
+ifndef $(1).LDFLAGS_EXPANDED
+$$(foreach parent,$$($(1).INHERIT),$$(eval $$(call LDFLAGS_EXPAND,$$(parent))))
 
-$(1).LDFLAGS += $$(if $$($(1).LDSCRIPT),-T$$($(1).LDSCRIPT))
-$(1).LDFLAGS += $$(addprefix -u ,$$($(1).UNDEFS))
-$(1).LDFLAGS += $$(addprefix -Wl$$(COMMA)-,$$($(1).LDOPTS))
-$(1).LDFLAGS += $$(addprefix -L,$$($(1).LDDIRS))
-$(1).LDLIBS += $$(foreach lib,$$($(1).DEPLIBS),$$($$(lib).LIB))
+$$(call INHERITS,$(1),ADD,LDFLAGS)
+$$(call INHERITS,$(1),ADD,LDDIRS)
+$$(call INHERITS,$(1),SET,LDSCRIPT)
+$$(call INHERITS,$(1),ADD,LDSCRIPTS)
+$$(call INHERITS,$(1),ADD,UNDEFS)
+$$(call INHERITS,$(1),ADD,LDOPTS)
+$$(call INHERITS,$(1),ADD,DEPLIBS)
+$$(call INHERITS,$(1),ADD,LDLIBS)
+
+$(1).LDFLAGS_EXPANDED := \
+  $$($(1).LDFLAGS) \
+  $$(addprefix -L,$$($(1).LDDIRS)) \
+  $$(if $$($(1).LDSCRIPT),-T$$($(1).LDSCRIPT)) \
+  $$(addprefix -u ,$$($(1).UNDEFS)) \
+  $$(addprefix -Wl$$(COMMA)-,$$($(1).LDOPTS))
+$(1).LDLIBS_EXPANDED := \
+  $$($(1).LDLIBS) \
+  $$(foreach lib,$$($(1).DEPLIBS),$$($$(lib).LIB))
 endif
 endef
 
 # Binary rules
 define BIN_RULES
-$(1).IS ?= default
-
-$$(eval $$(call LDFLAGS_EXPAND,$$($(1).IS)))
 $$(eval $$(call LDFLAGS_EXPAND,$(1)))
-
-$(1).LDFLAGS += $$($$($(1).IS).LDFLAGS)
-$(1).LDLIBS += $$($$($(1).IS).LDLIBS)
 
 $(1).BIN := $$(call BIN_P,$(1))
 $(1).MAP := $$(call MAP_P,$(1))
@@ -143,7 +176,7 @@ build.bin.$(1): $$($(1).BIN)
 $$($(1).BIN): $$($(1).DEPLIBS_FULL) $$($(1).LDSCRIPTS)
 	@echo TARGET $(1) BIN
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(LD) $$($(1).LDFLAGS) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).LDLIBS) -Wl,--end-group -o $$@
+	$(Q)$(LD) $$($(1).LDFLAGS_EXPANDED) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).LDLIBS_EXPANDED) -Wl,--end-group -o $$@
 
 clean: clean.bin.$(1)
 clean.bin.$(1):
