@@ -13,6 +13,7 @@ TARGET_LIBP ?= esp/lib%.a
 #SOURCE_LIBS := $(patsubst %,$(SOURCE_LIBP),$(LIB_NAMES))
 TARGET_LIBS := $(patsubst %,$(TARGET_LIBP),$(LIB_NAMES))
 
+ifndef RENAME_SECTIONS_ONLY
 gcc.DELETE_OBJECTS := \
   _fixunsdfsi _umoddi3 _umodsi3 _extendsfdf2 _fixdfsi _divsi3 _divdf3 _divdi3 _fixunssfsi \
   _floatsidf _floatsisf _floatunsidf _floatunsisf _muldf3 _muldi3 _mulsf3 _truncdfsf2 \
@@ -36,6 +37,7 @@ wpa.NEEDED_OBJECTS := \
   aes-internal-enc aes-wrap ap_config common ieee802_1x \
   sta_info wpa wpa_auth wpa_auth_ie wpa_common wpa_ie \
   wpa_main wpabuf wpas_glue
+endif
 
 RENAME_SECTIONS := \
   .literal=.iram0.literal \
