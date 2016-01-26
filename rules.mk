@@ -159,9 +159,11 @@ $(1).LDFLAGS_EXPANDED := \
   $$(if $$($(1).LDSCRIPT),-T$$($(1).LDSCRIPT)) \
   $$(addprefix -u ,$$($(1).UNDEFS)) \
   $$(addprefix -Wl$$(COMMA)-,$$($(1).LDOPTS))
+$(1).DEPLIBS_EXPANDED := \
+  $$(foreach lib,$$($(1).DEPLIBS),$$($$(lib).LIB))
 $(1).LDLIBS_EXPANDED := \
   $$($(1).LDLIBS) \
-  $$(foreach lib,$$($(1).DEPLIBS),$$($$(lib).LIB))
+  $$($(1).DEPLIBS_EXPANDED)
 endif
 endef
 
@@ -175,7 +177,7 @@ $(1).MAP := $$(call MAP_P,$(1))
 build: build.bin.$(1)
 build.bin.$(1): $$($(1).BIN)
 
-$$($(1).BIN): $$($(1).DEPLIBS_FULL) $$($(1).LDSCRIPTS)
+$$($(1).BIN): $$($(1).DEPLIBS_EXPANDED) $$($(1).LDSCRIPTS)
 	@echo TARGET $(1) BIN
 	$(Q)mkdir -p $$(dir $$@)
 	$(Q)$(LD) $$($(1).LDFLAGS_EXPANDED) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).LDLIBS_EXPANDED) -Wl,--end-group -o $$@
