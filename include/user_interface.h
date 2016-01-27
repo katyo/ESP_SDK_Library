@@ -74,8 +74,6 @@ bool system_os_task(os_task_t task, uint8_t prio, os_event_t * queue,
 bool system_os_post(uint8_t prio, os_signal_t sig, os_param_t par);
 
 void system_print_meminfo(void);
-uint32_t system_get_free_heap_size(void);
-
 void system_set_os_print(uint8_t onoff);
 bool system_get_os_print();
 

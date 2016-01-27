@@ -1,76 +1,3 @@
-/*
-    FreeRTOS V7.5.2 - Copyright (C) 2013 Real Time Engineers Ltd.
-
-    VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
-
- ***************************************************************************
- *                                                                       *
- *    FreeRTOS provides completely free yet professionally developed,    *
- *    robust, strictly quality controlled, supported, and cross          *
- *    platform software that has become a de facto standard.             *
- *                                                                       *
- *    Help yourself get started quickly and support the FreeRTOS         *
- *    project by purchasing a FreeRTOS tutorial book, reference          *
- *    manual, or both from: http://www.FreeRTOS.org/Documentation        *
- *                                                                       *
- *    Thank you!                                                         *
- *                                                                       *
- ***************************************************************************
-
-    This file is part of the FreeRTOS distribution.
-
-    FreeRTOS is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation >>!AND MODIFIED BY!<< the FreeRTOS exception.
-
-    >>! NOTE: The modification to the GPL is included to allow you to distribute
-    >>! a combined work that includes FreeRTOS without being obliged to provide
-    >>! the source code for proprietary components outside of the FreeRTOS
-    >>! kernel.
-
-    FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE.  Full license text is available from the following
-    link: http://www.freertos.org/a00114.html
-
-    1 tab == 4 spaces!
-
- ***************************************************************************
- *                                                                       *
- *    Having a problem?  Start by reading the FAQ "My application does   *
- *    not run, what could be wrong?"                                     *
- *                                                                       *
- *    http://www.FreeRTOS.org/FAQHelp.html                               *
- *                                                                       *
- ***************************************************************************
-
-    http://www.FreeRTOS.org - Documentation, books, training, latest versions,
-    license and Real Time Engineers Ltd. contact details.
-
-    http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
-    including FreeRTOS+Trace - an indispensable productivity tool, a DOS
-    compatible FAT file system, and our tiny thread aware UDP/IP stack.
-
-    http://www.OpenRTOS.com - Real Time Engineers ltd license FreeRTOS to High
-    Integrity Systems to sell under the OpenRTOS brand.  Low cost OpenRTOS
-    licenses offer ticketed support, indemnification and middleware.
-
-    http://www.SafeRTOS.com - High Integrity Systems also provide a safety
-    engineered and independently SIL3 certified version for use in safety and
-    mission critical applications that require provable dependability.
-
-    1 tab == 4 spaces!
- */
-
-/*
- * A sample implementation of pvPortMalloc() and vPortFree() that combines
- * (coalescences) adjacent memory blocks as they are freed, and in so doing
- * limits memory fragmentation.
- *
- * See heap_1.c, heap_2.c and heap_3.c for alternative implementations, and the
- * memory management pages of http://www.FreeRTOS.org for more information.
- */
-#if 1
 #  include <stdlib.h>
 #  include <string.h>
 
@@ -78,418 +5,435 @@
 #  include "sdk/sdk_config.h"
 #  include "sdk/mem_manager.h"
 
-/* Architecture specifics. */
-#  define portBYTE_ALIGNMENT      8
-#  define portBYTE_ALIGNMENT_MASK (7)
-#  ifndef portPOINTER_SIZE_TYPE
-#    define portPOINTER_SIZE_TYPE unsigned long
-#  endif
-#  ifndef configUSE_MALLOC_FAILED_HOOK
-#    define configUSE_MALLOC_FAILED_HOOK 0
-#  endif
-#  ifndef configASSERT
-#    define configASSERT( x )
-#    define configASSERT_DEFINED 0
-#  else
-#    define configASSERT_DEFINED 1
-#  endif
+#ifndef MEM_DEBUG
+#define MEM_DEBUG 0
+#endif
 
+#if MEM_DEBUG
+#include <assert.h>
+#else
+#define assert(x) ((void)0)
+#endif
+
+#ifndef MAX
+#define MAX(a,b) ((a) >= (b) ? (a) : (b))
+#endif
+
+#define RARG
+#define RONEARG
+#define RCALL
+#define RONECALL
+#define MALLOC_LOCK ets_intr_lock()
+#define MALLOC_UNLOCK ets_intr_unlock()
+
+#define nano_malloc		port_malloc
+#define nano_free		port_free
+#define nano_realloc		port_realloc
+#define nano_zalloc		port_zalloc
+#define nano_calloc		port_calloc
+
+#define nano_malloc_usable_size port_malloc_usable_size
+#define nano_mallinfo		port_mallinfo
+
+/* Redefine names to avoid conflict with user names */
+#define free_list __malloc_free_list
+#define sbrk_start __malloc_sbrk_start
+#define current_mallinfo __malloc_current_mallinfo
+
+#define ALIGN_TO(size, align)                   \
+  (((size) + (align) -1) & ~((align) -1))
+
+/* Alignment of allocated block */
+#define MALLOC_ALIGN (8U)
+#define CHUNK_ALIGN (sizeof(void*))
+#define MALLOC_PADDING ((MAX(MALLOC_ALIGN, CHUNK_ALIGN)) - CHUNK_ALIGN)
+
+/* as well as the minimal allocation size
+ * to hold a free pointer */
+#define MALLOC_MINSIZE (sizeof(void *))
+#define MALLOC_PAGE_ALIGN (0x1000)
+#define MAX_ALLOC_SIZE (0x80000000U)
+
+typedef size_t malloc_size_t;
+
+typedef struct malloc_chunk {
+  /*          ------------------
+   *   chunk->| size (4 bytes) |
+   *          ------------------
+   *          | Padding for    |
+   *          | alignment      |
+   *          | holding neg    |
+   *          | offset to size |
+   *          ------------------
+   * mem_ptr->| point to next  |
+   *          | free when freed|
+   *          | or data load   |
+   *          | when allocated |
+   *          ------------------
+   */
+  /* size of the allocated payload area, including size before
+     CHUNK_OFFSET */
+  long size;
+
+  /* since here, the memory is either the next free block, or data load */
+  struct malloc_chunk * next;
+} chunk;
+
+#define CHUNK_OFFSET ((malloc_size_t)(&(((struct malloc_chunk *)0)->next)))
+
+/* size of smallest possible chunk. A memory piece smaller than this size
+ * won't be able to create a chunk */
+#define MALLOC_MINCHUNK (CHUNK_OFFSET + MALLOC_PADDING + MALLOC_MINSIZE)
+
+/* Forward data declarations */
+extern chunk * free_list;
+extern char * sbrk_start;
+extern struct mallinfo current_mallinfo;
+
+/* Forward function declarations */
+extern void * nano_malloc(RARG malloc_size_t);
+extern void nano_free (RARG void * free_p);
+extern void nano_cfree(RARG void * ptr);
+extern void * nano_calloc(RARG malloc_size_t n, malloc_size_t elem);
+extern struct mallinfo nano_mallinfo(RONEARG);
+extern void nano_malloc_stats(RONEARG);
+extern malloc_size_t nano_malloc_usable_size(RARG void * ptr);
+extern void * nano_realloc(RARG void * ptr, malloc_size_t size);
+extern void * nano_memalign(RARG size_t align, size_t s);
+extern int nano_mallopt(RARG int parameter_number, int parameter_value);
+extern void * nano_zalloc(RARG size_t s);
+
+static inline chunk * ICACHE_IRAM_ATTR
+get_chunk_from_ptr(void * ptr) {
+  chunk * c = (chunk *)((char *)ptr - CHUNK_OFFSET);
+  /* Skip the padding area */
+  if (c->size < 0) c = (chunk *)((char *)c + c->size);
+  return c;
+}
 
 extern char _heap_start;
+#define _heap_end (*(char*)0x3fffc000)
+#define _heap_size ((size_t)((size_t)&_heap_end - (size_t)&_heap_start))
 
-#  define configTOTAL_HEAP_SIZE     ( ( size_t ) ( 0x3fffc000 - (uint32_t)&_heap_start ) )
+static char * ICACHE_IRAM_ATTR
+_sbrk_r(int incr) {
+  static char *heap_top = (char*)&_heap_start;
+  char *prev_heap_top;
+  
+  prev_heap_top = heap_top;
+  
+  if (heap_top + incr > &_heap_end) {
+    //os_printf("Heap and stack collision\n");
+    return (char*)-1;
+  }
+  
+  heap_top += incr;
+  return prev_heap_top;
+}
 
-/* Block sizes must not get too small. */
-#  define heapMINIMUM_BLOCK_SIZE  ( ( size_t ) ( heapSTRUCT_SIZE * 2 ) )
+/* List list header of free blocks */
+chunk * free_list = NULL;
 
-/* Assumes 8bit bytes! */
-#  define heapBITS_PER_BYTE   ( ( size_t ) 8 )
+/* Starting point of memory allocated from system */
+char * sbrk_start = NULL;
 
-/* A few bytes might be lost to byte aligning the heap start address. */
-#  define heapADJUSTED_HEAP_SIZE  ( configTOTAL_HEAP_SIZE - portBYTE_ALIGNMENT )
-
-/* Allocate the memory for the heap. */
-/* static unsigned char ucHeap[ configTOTAL_HEAP_SIZE ];
-   static unsigned char *ucHeap; */
-
-/* Define the linked list structure.  This is used to link free blocks in order
-   of their memory address. */
-typedef struct A_BLOCK_LINK {
-  struct A_BLOCK_LINK *pxNextFreeBlock;	/*<< The next free block in the list. */
-  size_t xBlockSize;		/*<< The size of the free block. */
-} xBlockLink;
-
-/*-----------------------------------------------------------*/
-
-/*
- * Inserts a block of memory that is being freed into the correct position in
- * the list of free memory blocks.  The block being freed will be merged with
- * the block in front it and/or the block behind it if the memory blocks are
- * adjacent to each other.
+/** Function sbrk_aligned
+ * Algorithm:
+ *   Use sbrk() to obtain more memory and ensure it is CHUNK_ALIGN aligned
+ *   Optimise for the case that it is already aligned - only ask for extra
+ *   padding after we know we need it
  */
-static void prvInsertBlockIntoFreeList(xBlockLink * pxBlockToInsert);
+static void* ICACHE_IRAM_ATTR
+sbrk_aligned(RARG malloc_size_t s) {
+  char *p, *align_p;
 
-/*
- * Called automatically to setup the required heap structures the first time
- * pvPortMalloc() is called.
+  if (sbrk_start == NULL) sbrk_start = _sbrk_r(RCALL 0);
+
+  p = _sbrk_r(RCALL s);
+
+  /* sbrk returns -1 if fail to allocate */
+  if (p == (void *)-1)
+    return p;
+
+  align_p = (char*)ALIGN_TO((unsigned long)p, CHUNK_ALIGN);
+  if (align_p != p) {
+    /* p is not aligned, ask for a few more bytes so that we have s
+     * bytes reserved from align_p. */
+    p = _sbrk_r(RCALL align_p - p);
+    if (p == (void *)-1)
+      return p;
+  }
+  return align_p;
+}
+
+/** Function nano_malloc
+ * Algorithm:
+ *   Walk through the free list to find the first match. If fails to find
+ *   one, call sbrk to allocate a new chunk.
  */
-/* void prvHeapInit( void ); */
-
-/*-----------------------------------------------------------*/
-
-/* The size of the structure placed at the beginning of each allocated memory
-   block must by correctly byte aligned. */
-#  define heapSTRUCT_SIZE ( ( sizeof ( xBlockLink ) + ( portBYTE_ALIGNMENT - 1 ) ) & ~portBYTE_ALIGNMENT_MASK )
-
-/* Ensure the pxEnd pointer will end up on the correct byte alignment. */
-/* static const size_t xTotalHeapSize = ( ( size_t ) heapADJUSTED_HEAP_SIZE ) & ( ( size_t ) ~portBYTE_ALIGNMENT_MASK );
-   static size_t xTotalHeapSize; */
-
-/* Create a couple of list links to mark the start and end of the list. */
-static xBlockLink xStart, *pxEnd DATA_IRAM_ATTR;	/* = NULL; */
-
-/* Keeps track of the number of free bytes remaining, but says nothing about
-   fragmentation. */
-/* static size_t xFreeBytesRemaining = ( ( size_t ) heapADJUSTED_HEAP_SIZE ) & ( ( size_t ) ~portBYTE_ALIGNMENT_MASK ); */
-static size_t xFreeBytesRemaining DATA_IRAM_ATTR;
-
-/* Gets set to the top bit of an size_t type.  When this bit in the xBlockSize
-   member of an xBlockLink structure is set then the block belongs to the
-   application.  When the bit is free the block is still part of the free heap
-   space. */
-static size_t xBlockAllocatedBit DATA_IRAM_ATTR;	/* = 0; */
-
-/*-----------------------------------------------------------*/
-
 void * ICACHE_IRAM_ATTR
-pvPortMalloc(size_t xWantedSize) {
-  xBlockLink *pxBlock, *pxPreviousBlock, *pxNewBlockLink;
-  void *pvReturn = NULL;
+nano_malloc(RARG malloc_size_t s) {
+  chunk *p, *r;
+  char * ptr, * align_ptr;
+  int offset;
 
-/*    os_printf("%s %d %d\n", __func__, xWantedSize, xFreeBytesRemaining); */
+  malloc_size_t alloc_size;
 
-  ets_intr_lock();
-  {
-    /* If this is the first call to malloc then the heap will require
-     * initialisation to setup the list of free blocks. */
-#  if 0
-    if (pxEnd == NULL) {
-      prvHeapInit();
-    }
-#  endif
-    /* Check the requested block size is not so large that the top bit is
-     * set.  The top bit of the block size member of the xBlockLink structure
-     * is used to determine who owns the block - the application or the
-     * kernel, so it must be free. */
-    if ((xWantedSize & xBlockAllocatedBit) == 0) {
-      /* The wanted size is increased so it can contain a xBlockLink
-       * structure in addition to the requested amount of bytes. */
-      if (xWantedSize > 0) {
-	xWantedSize += heapSTRUCT_SIZE;
+  alloc_size = ALIGN_TO(s, CHUNK_ALIGN); /* size of aligned data load */
+  alloc_size += MALLOC_PADDING; /* padding */
+  alloc_size += CHUNK_OFFSET; /* size of chunk head */
+  alloc_size = MAX(alloc_size, MALLOC_MINCHUNK);
 
-	/* Ensure that blocks are always aligned to the required number
-	 * of bytes. */
-	if ((xWantedSize & portBYTE_ALIGNMENT_MASK) != 0x00) {
-	  /* Byte alignment required. */
-	  xWantedSize +=
-	    (portBYTE_ALIGNMENT - (xWantedSize & portBYTE_ALIGNMENT_MASK));
-	}
-      }
-
-      if ((xWantedSize > 0) && (xWantedSize <= xFreeBytesRemaining)) {
-	/* Traverse the list from the start     (lowest address) block until
-	 * one  of adequate size is found. */
-	pxPreviousBlock = &xStart;
-	pxBlock = xStart.pxNextFreeBlock;
-	while ((pxBlock->xBlockSize < xWantedSize) &&
-	       (pxBlock->pxNextFreeBlock != NULL)) {
-	  pxPreviousBlock = pxBlock;
-	  pxBlock = pxBlock->pxNextFreeBlock;
-	}
-
-	/* If the end marker was reached then a block of adequate size
-	 * was  not found. */
-	if (pxBlock != pxEnd) {
-	  /* Return the memory space pointed to - jumping over the
-	   * xBlockLink structure at its start. */
-	  pvReturn =
-	    (void *)(((unsigned char *)pxPreviousBlock->pxNextFreeBlock) +
-		     heapSTRUCT_SIZE);
-
-	  /* This block is being returned for use so must be taken out
-	   * of the list of free blocks. */
-	  pxPreviousBlock->pxNextFreeBlock = pxBlock->pxNextFreeBlock;
-
-	  /* If the block is larger than required it can be split into
-	   * two. */
-	  if ((pxBlock->xBlockSize - xWantedSize) > heapMINIMUM_BLOCK_SIZE) {
-	    /* This block is to be split into two.  Create a new
-	     * block following the number of bytes requested. The void
-	     * cast is used to prevent byte alignment warnings from the
-	     * compiler. */
-	    pxNewBlockLink =
-	      (void *)(((unsigned char *)pxBlock) + xWantedSize);
-
-	    /* Calculate the sizes of two blocks split from the
-	     * single block. */
-	    pxNewBlockLink->xBlockSize = pxBlock->xBlockSize - xWantedSize;
-	    pxBlock->xBlockSize = xWantedSize;
-
-	    /* Insert the new block into the list of free blocks. */
-	    prvInsertBlockIntoFreeList((pxNewBlockLink));
-	  }
-
-	  xFreeBytesRemaining -= pxBlock->xBlockSize;
-
-	  /* The block is being returned - it is allocated and owned
-	   * by the application and has no "next" block. */
-	  pxBlock->xBlockSize |= xBlockAllocatedBit;
-	  pxBlock->pxNextFreeBlock = NULL;
-	}
-      }
-    }
+  if (alloc_size >= MAX_ALLOC_SIZE || alloc_size < s) {
+    //RERRNO = ENOMEM;
+    return NULL;
   }
-  ets_intr_unlock();
 
-#  if ( configUSE_MALLOC_FAILED_HOOK == 1 )
-  {
-    if (pvReturn == NULL) {
-      extern void vApplicationMallocFailedHook(void);
+  MALLOC_LOCK;
 
-      vApplicationMallocFailedHook();
+  p = free_list;
+  r = p;
+
+  while (r) {
+    int rem = r->size - alloc_size;
+    if (rem >= 0) {
+      if (rem >= (int)MALLOC_MINCHUNK) {
+        /* Find a chunk that much larger than required size, break
+         * it into two chunks and return the second one */
+        r->size = rem;
+        r = (chunk *)((char *)r + rem);
+        r->size = alloc_size;
+      }
+      /* Find a chunk that is exactly the size or slightly bigger
+       * than requested size, just return this chunk */
+      else if (p == r) {
+        /* Now it implies p==r==free_list. Move the free_list
+         * to next chunk */
+        free_list = r->next;
+      } else {
+        /* Normal case. Remove it from free_list */
+        p->next = r->next;
+      }
+      break;
     }
+    p=r;
+    r=r->next;
   }
-#  endif
 
-/*    os_printf("%s %x %x\n", __func__, pvReturn, pxBlock); */
-  return pvReturn;
+  /* Failed to find a appropriate chunk. Ask for more memory */
+  if (r == NULL) {
+    r = sbrk_aligned(RCALL alloc_size);
+
+    /* sbrk returns -1 if fail to allocate */
+    if (r == (void *)-1) {
+      //RERRNO = ENOMEM;
+      MALLOC_UNLOCK;
+      return NULL;
+    }
+    r->size = alloc_size;
+  }
+  MALLOC_UNLOCK;
+
+  ptr = (char *)r + CHUNK_OFFSET;
+
+  align_ptr = (char *)ALIGN_TO((unsigned long)ptr, MALLOC_ALIGN);
+  offset = align_ptr - ptr;
+
+  if (offset) {
+    *(int *)((char *)r + offset) = -offset;
+  }
+
+  assert(align_ptr + size <= (char *)r + alloc_size);
+  return align_ptr;
 }
 
-/* void *malloc(size_t nbytes) __attribute__((alias("pvPortMalloc"))); */
+#define MALLOC_CHECK_DOUBLE_FREE
 
-/*-----------------------------------------------------------*/
-
+/** Function nano_free
+ * Implementation of libc free.
+ * Algorithm:
+ *  Maintain a global free chunk single link list, headed by global
+ *  variable free_list.
+ *  When free, insert the to-be-freed chunk into free list. The place to
+ *  insert should make sure all chunks are sorted by address from low to
+ *  high.  Then merge with neighbor chunks if adjacent.
+ */
 void ICACHE_IRAM_ATTR
-vPortFree(void *pv) {
-  unsigned char *puc = (unsigned char *)pv;
-  xBlockLink *pxLink;
+nano_free (RARG void * free_p) {
+  chunk * p_to_free;
+  chunk * p, * q;
 
-/*    os_printf("%s\n", __func__); */
+  if (free_p == NULL) return;
 
-  if (pv != NULL) {
-    /* The memory being freed will have an xBlockLink structure immediately
-     * before it. */
-    puc -= heapSTRUCT_SIZE;
+  p_to_free = get_chunk_from_ptr(free_p);
 
-    /* This casting is to keep the compiler from issuing warnings. */
-    pxLink = (void *)puc;
-
-    /* Check the block is actually allocated. */
-    configASSERT((pxLink->xBlockSize & xBlockAllocatedBit) != 0);
-    configASSERT(pxLink->pxNextFreeBlock == NULL);
-
-    if ((pxLink->xBlockSize & xBlockAllocatedBit) != 0) {
-      if (pxLink->pxNextFreeBlock == NULL) {
-	/* The block is being returned to the heap - it is no longer
-	 * allocated. */
-	pxLink->xBlockSize &= ~xBlockAllocatedBit;
-
-	ets_intr_lock();
-	{
-	  /* Add this block to the list of free blocks. */
-	  xFreeBytesRemaining += pxLink->xBlockSize;
-	  prvInsertBlockIntoFreeList(((xBlockLink *) pxLink));
-	}
-	ets_intr_unlock();
-      }
-    }
+  MALLOC_LOCK;
+  if (free_list == NULL) {
+    /* Set first free list element */
+    p_to_free->next = free_list;
+    free_list = p_to_free;
+    MALLOC_UNLOCK;
+    return;
   }
 
-/*	os_printf("%s %x %d\n", __func__, pv, xFreeBytesRemaining); */
-}
-
-/* void free(void *ptr) __attribute__((alias("vPortFree"))); */
-
-/*-----------------------------------------------------------*/
-
-void * ICACHE_IRAM_ATTR
-pvPortCalloc(size_t count, size_t size) {
-  void *p;
-
-  /* allocate 'count' objects of size 'size' */
-  p = pvPortMalloc(count * size);
-  if (p) {
-    /* zero the memory */
-    ets_memset(p, 0, count * size);
-  }
-  return p;
-}
-
-/* void *calloc(size_t count, size_t nbytes) __attribute__((alias("pvPortCalloc"))); */
-
-/*-----------------------------------------------------------*/
-
-void * ICACHE_IRAM_ATTR
-pvPortZalloc(size_t size) {
-  return pvPortCalloc(1, size);
-}
-
-/* void *zalloc(size_t nbytes) __attribute__((alias("pvPortZalloc"))); */
-
-/*-----------------------------------------------------------*/
-
-void * ICACHE_IRAM_ATTR
-pvPortRealloc(void *mem, size_t newsize) {
-  void *p = NULL;
-  
-  if (newsize > 0) {
-    size_t oldsize = 0;
-    
-    if (mem) {
-      unsigned char *puc = (unsigned char *)mem;
-      puc -= heapSTRUCT_SIZE;
-      
-      xBlockLink *pxLink = (void *)puc;
-      oldsize = pxLink->xBlockSize;
-      
-      if (newsize <= oldsize) {
-	return mem;
-      }
-    }
-
-    /* allocate the memory */
-    p = pvPortMalloc(newsize);
-    
-    if (p && oldsize > 0) { /* copy the memory */
-      ets_memcpy(p, mem, oldsize);
-    }
-  }
-  
-  if (mem) {
-    /* free the memory */
-    vPortFree(mem);
-  }
-  
-  return p;
-}
-
-/* void *realloc(void *ptr, size_t nbytes) __attribute__((alias("pvPortRealloc"))); */
-
-/*-----------------------------------------------------------*/
-
-size_t ICACHE_IRAM_ATTR
-xPortGetFreeHeapSize(void) {
-  return xFreeBytesRemaining;
-}
-
-/*-----------------------------------------------------------*/
-
-void ICACHE_IRAM_ATTR
-vPortInitialiseBlocks(void) {
-  /* This just exists to keep the linker quiet. */
-}
-
-/*-----------------------------------------------------------*/
-
-void
-prvHeapInit(void) {
-  xBlockLink *pxFirstFreeBlock;
-  unsigned char *pucHeapEnd, *pucAlignedHeap;
-
-  xFreeBytesRemaining =
-    ((size_t) heapADJUSTED_HEAP_SIZE) & ((size_t) ~ portBYTE_ALIGNMENT_MASK);
-  unsigned char *ucHeap = &_heap_start;
-
-  /* Ensure the heap starts on a correctly aligned boundary. */
-  pucAlignedHeap =
-    (unsigned char *)(((portPOINTER_SIZE_TYPE) & ucHeap[portBYTE_ALIGNMENT]) &
-		      ((portPOINTER_SIZE_TYPE) ~ portBYTE_ALIGNMENT_MASK));
-
-  /* xStart is used to hold a pointer to the first item in the list of free
-   * blocks.  The void cast is used to prevent compiler warnings. */
-  xStart.pxNextFreeBlock = (void *)pucAlignedHeap;
-  xStart.xBlockSize = (size_t) 0;
-
-  /* pxEnd is used to mark the end of the list of free blocks and is inserted
-   * at the end of the heap space. */
-  pucHeapEnd = pucAlignedHeap + xFreeBytesRemaining;
-  pucHeapEnd -= heapSTRUCT_SIZE;
-  pxEnd = (void *)pucHeapEnd;
-  configASSERT((((unsigned long)pxEnd) &
-		((unsigned long)portBYTE_ALIGNMENT_MASK)) == 0UL);
-  pxEnd->xBlockSize = 0;
-  pxEnd->pxNextFreeBlock = NULL;
-
-  /* To start with there is a single free block that is sized to take up the
-   * entire heap space, minus the space taken by pxEnd. */
-  pxFirstFreeBlock = (void *)pucAlignedHeap;
-  pxFirstFreeBlock->xBlockSize = xFreeBytesRemaining - heapSTRUCT_SIZE;
-  pxFirstFreeBlock->pxNextFreeBlock = pxEnd;
-
-  /* The heap now contains pxEnd. */
-  xFreeBytesRemaining -= heapSTRUCT_SIZE;
-
-  /* Work out the position of the top bit in a size_t variable. */
-  xBlockAllocatedBit =
-    ((size_t) 1) << ((sizeof(size_t) * heapBITS_PER_BYTE) - 1);
-}
-
-/*-----------------------------------------------------------*/
-
-static void ICACHE_IRAM_ATTR
-prvInsertBlockIntoFreeList(xBlockLink * pxBlockToInsert) {
-  xBlockLink *pxIterator;
-  unsigned char *puc;
-
-  /* Iterate through the list until a block is found that has a higher address than the block being inserted. */
-  for (pxIterator = &xStart; pxIterator->pxNextFreeBlock < pxBlockToInsert;
-       pxIterator = pxIterator->pxNextFreeBlock) {
-    /* Nothing to do here, just iterate to the right position. */
-  }
-
-  /* Do the block being inserted, and the block it is being inserted after
-   * make a contiguous block of memory? */
-  puc = (unsigned char *)pxIterator;
-  if ((puc + pxIterator->xBlockSize) == (unsigned char *)pxBlockToInsert) {
-    pxIterator->xBlockSize += pxBlockToInsert->xBlockSize;
-    pxBlockToInsert = pxIterator;
-  }
-
-  /* Do the block being inserted, and the block it is being inserted before
-   * make a contiguous block of memory? */
-  puc = (unsigned char *)pxBlockToInsert;
-  if ((puc + pxBlockToInsert->xBlockSize) ==
-      (unsigned char *)pxIterator->pxNextFreeBlock) {
-    if (pxIterator->pxNextFreeBlock != pxEnd) {
-      /* Form one big block from the two blocks. */
-      pxBlockToInsert->xBlockSize += pxIterator->pxNextFreeBlock->xBlockSize;
-      pxBlockToInsert->pxNextFreeBlock =
-	pxIterator->pxNextFreeBlock->pxNextFreeBlock;
+  if (p_to_free < free_list) {
+    if ((char *)p_to_free + p_to_free->size == (char *)free_list) {
+      /* Chunk to free is just before the first element of
+       * free list  */
+      p_to_free->size += free_list->size;
+      p_to_free->next = free_list->next;
     } else {
-      pxBlockToInsert->pxNextFreeBlock = pxEnd;
+      /* Insert before current free_list */
+      p_to_free->next = free_list;
     }
-  } else {
-    pxBlockToInsert->pxNextFreeBlock = pxIterator->pxNextFreeBlock;
+    free_list = p_to_free;
+    MALLOC_UNLOCK;
+    return;
   }
 
-  /* If the block being inserted plugged a gab, so was merged with the block
-   * before and the block after, then it's pxNextFreeBlock pointer will have
-   * already been set, and should not be set here as that would make it point
-   * to itself. */
-  if (pxIterator != pxBlockToInsert) {
-    pxIterator->pxNextFreeBlock = pxBlockToInsert;
-  }
-}
+  q = free_list;
+  /* Walk through the free list to find the place for insert. */
+  do {
+    p = q;
+    q = q->next;
+  } while (q && q <= p_to_free);
 
-/* use os_printf_plus() SDK 1.1.2 */
-size_t ICACHE_IRAM_ATTR
-xPortWantedSizeAlign(size_t xSize) {
-  xSize += heapSTRUCT_SIZE;	/* + 0x10 SDK 1.1.2 */
-  if ((xSize & 7) != 0) {
-    xSize &= ~7;
-    xSize += 8;
-  }
-  return xSize;
-}
+  /* Now p <= p_to_free and either q == NULL or q > p_to_free
+   * Try to merge with chunks immediately before/after it. */
 
+  if ((char *)p + p->size == (char *)p_to_free) {
+    /* Chunk to be freed is adjacent
+     * to a free chunk before it */
+    p->size += p_to_free->size;
+    /* If the merged chunk is also adjacent
+     * to the chunk after it, merge again */
+    if ((char *)p + p->size == (char *) q)
+      {
+        p->size += q->size;
+        p->next = q->next;
+      }
+  }
+#ifdef MALLOC_CHECK_DOUBLE_FREE
+  else if ((char *)p + p->size > (char *)p_to_free) {
+    /* Report double free fault */
+    //RERRNO = ENOMEM;
+    MALLOC_UNLOCK;
+    return;
+  }
 #endif
+  else if ((char *)p_to_free + p_to_free->size == (char *) q) {
+    /* Chunk to be freed is adjacent
+     * to a free chunk after it */
+    p_to_free->size += q->size;
+    p_to_free->next = q->next;
+    p->next = p_to_free;
+  } else {
+    /* Not adjacent to any chunk. Just insert it. Resulting
+     * a fragment. */
+    p_to_free->next = q;
+    p->next = p_to_free;
+  }
+  MALLOC_UNLOCK;
+}
+
+/* Function nano_calloc
+ * Implement calloc simply by calling malloc and set zero */
+void * ICACHE_IRAM_ATTR
+nano_calloc(RARG malloc_size_t n, malloc_size_t elem) {
+  void * mem = nano_malloc(RCALL n * elem);
+  if (mem != NULL) memset(mem, 0, n * elem);
+  return mem;
+}
+
+/* Function nano_zalloc
+ * Implement zalloc simply by calling cmalloc with one elem */
+void * ICACHE_IRAM_ATTR
+nano_zalloc(RARG malloc_size_t n) {
+  return nano_calloc(RCALL n, 1);
+}
+
+/* Function nano_realloc
+ * Implement realloc by malloc + memcpy */
+void * ICACHE_IRAM_ATTR
+nano_realloc(RARG void * ptr, malloc_size_t size) {
+  void * mem;
+
+  if (ptr == NULL) return nano_malloc(RCALL size);
+
+  if (size == 0) {
+    nano_free(RCALL ptr);
+    return NULL;
+  }
+
+  /* TODO: There is chance to shrink the chunk if newly requested
+   * size is much small */
+  if (nano_malloc_usable_size(RCALL ptr) >= size)
+    return ptr;
+
+  mem = nano_malloc(RCALL size);
+  if (mem != NULL) {
+    memcpy(mem, ptr, size);
+    nano_free(RCALL ptr);
+  }
+  return mem;
+}
+
+struct mallinfo current_mallinfo={0,0,0,0,0,0,0,0,0,0};
+
+struct mallinfo ICACHE_IRAM_ATTR
+nano_mallinfo(RONEARG) {
+  char * sbrk_now;
+  chunk * pf;
+  size_t free_size = 0;
+  size_t total_size;
+
+  MALLOC_LOCK;
+
+  if (sbrk_start == NULL) total_size = 0;
+  else {
+    sbrk_now = _sbrk_r(RCALL 0);
+
+    if (sbrk_now == (void *)-1)
+      total_size = (size_t)-1;
+    else
+      total_size = (size_t) (sbrk_now - sbrk_start);
+  }
+
+  for (pf = free_list; pf; pf = pf->next)
+    free_size += pf->size;
+
+  current_mallinfo.arena = total_size;
+  current_mallinfo.fordblks = free_size;
+  current_mallinfo.uordblks = total_size - free_size;
+
+  MALLOC_UNLOCK;
+  return current_mallinfo;
+}
+
+size_t ICACHE_IRAM_ATTR
+port_free_heap(void) {
+  return port_mallinfo().fordblks;
+}
+
+malloc_size_t ICACHE_IRAM_ATTR
+nano_malloc_usable_size(RARG void * ptr) {
+  chunk * c = (chunk *)((char *)ptr - CHUNK_OFFSET);
+  int size_or_offset = c->size;
+
+  if (size_or_offset < 0) {
+    /* Padding is used. Excluding the padding size */
+    c = (chunk *)((char *)c + c->size);
+    return c->size - CHUNK_OFFSET + size_or_offset;
+  }
+  return c->size - CHUNK_OFFSET;
+}
+
+size_t ICACHE_IRAM_ATTR
+port_size_align(size_t size) {
+  size += MALLOC_MINCHUNK;	/* + 0x10 SDK 1.1.2 */
+  if ((size & 7) != 0) {
+    size &= ~7;
+    size += 8;
+  }
+  return size;
+}
