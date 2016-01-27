@@ -98,15 +98,15 @@ $$(call INHERITS,$(1),ADD,COPTS)
 $$(call INHERITS,$(1),ADD,CMACH)
 
 $(1).CFLAGS_EXPANDED := \
-  $$($(1).CFLAGS) \
-  $$(addprefix -I,$$($(1).CDIRS)) \
-  $$(addprefix -D,$$($(1).CDEFS)) \
+  $$($(1).CFLAGS) $$($(1).CFLAGS!) \
+  $$(addprefix -I,$$($(1).CDIRS) $$($(1).CDIRS!)) \
+  $$(addprefix -D,$$($(1).CDEFS) $$($(1).CDEFS!)) \
   $$(if $$($(1).CSTD),-std=$$($(1).CSTD)) \
-  $$(addprefix -W,$$($(1).CWARN)) \
+  $$(addprefix -W,$$($(1).CWARN) $$($(1).CWARN!)) \
   $$(if $$($(1).COPT),-O$$($(1).COPT)) \
   $$(if $$($(1).CDBG),-g$$($(1).CDBG)) \
-  $$(addprefix -f,$$($(1).COPTS)) \
-  $$(addprefix -m,$$($(1).CMACH))
+  $$(addprefix -f,$$($(1).COPTS) $$($(1).COPTS!)) \
+  $$(addprefix -m,$$($(1).CMACH) $$($(1).COPTS!))
 endif
 endef
 
@@ -154,15 +154,15 @@ $$(call INHERITS,$(1),ADD,DEPLIBS)
 $$(call INHERITS,$(1),ADD,LDLIBS)
 
 $(1).LDFLAGS_EXPANDED := \
-  $$($(1).LDFLAGS) \
-  $$(addprefix -L,$$($(1).LDDIRS)) \
+  $$($(1).LDFLAGS) $$($(1).LDFLAGS!) \
+  $$(addprefix -L,$$($(1).LDDIRS) $$($(1).LDDIRS!)) \
   $$(if $$($(1).LDSCRIPT),-T$$($(1).LDSCRIPT)) \
-  $$(addprefix -u ,$$($(1).UNDEFS)) \
-  $$(addprefix -Wl$$(COMMA)-,$$($(1).LDOPTS))
+  $$(addprefix -u ,$$($(1).UNDEFS) $$($(1).UNDEFS!)) \
+  $$(addprefix -Wl$$(COMMA)-,$$($(1).LDOPTS) $$($(1).LDOPTS!))
 $(1).DEPLIBS_EXPANDED := \
   $$(foreach lib,$$($(1).DEPLIBS),$$($$(lib).LIB))
 $(1).LDLIBS_EXPANDED := \
-  $$($(1).LDLIBS) \
+  $$($(1).LDLIBS) $$($(1).LDLIBS!) \
   $$($(1).DEPLIBS_EXPANDED)
 endif
 endef
