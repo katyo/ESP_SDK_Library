@@ -206,7 +206,7 @@ ifeq (y,$(DEBUG))
   libgdbstub.SRCS += $(wildcard $(addprefix $(SRCDIR)/gdbstub/*.,c S))
 else
   firmware.COPT ?= s
-  firmware.CDBG ?= 
+  firmware.CDBG ?= gdb
 endif
 
 ifeq (y,$(DEBUG_EXCEPT))
