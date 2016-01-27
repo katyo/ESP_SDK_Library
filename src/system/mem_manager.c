@@ -412,7 +412,7 @@ nano_mallinfo(RONEARG) {
 
 size_t ICACHE_IRAM_ATTR
 port_free_heap(void) {
-  return port_mallinfo().fordblks;
+  return _heap_size - port_mallinfo().uordblks;
 }
 
 malloc_size_t ICACHE_IRAM_ATTR
