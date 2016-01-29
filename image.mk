@@ -128,6 +128,8 @@ clean: clean.img.$(1)
 clean.img.$(1):
 	@echo TARGET $(1) RDI CLEAN
 	$(Q)rm -f $$($(1).IMG) $$($(1).OBJ) $$($(1).DEP)
+
+flash.clear: $$($(1).IMG)
 endef
 
 # Image rules
@@ -207,6 +209,6 @@ open.tty:
 	@echo OPEN TTY
 	$(Q)$(TTYTOOL) $(TTYOPTION)
 
-flash.clear: $(foreach img,$(clear.IMGS),$($(img).IMG))
+flash.clear:
 	@echo FLASH CLEAR SETTINGS
 	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $(foreach img,$(clear.IMGS),$($(img).ADDR) $($(img).IMG))
