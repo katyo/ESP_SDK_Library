@@ -13,7 +13,8 @@ OBJ_P = obj/$(1).o
 SRC_P = $(1).$(2)
 
 # Compiler configuration
-COMPILER_PREFIX ?= $(if $(COMPILER_PATH),$(COMPILER_PATH)/)xtensa-lx106-elf-
+COMPILER_NAME ?= 
+COMPILER_PREFIX ?= $(if $(COMPILER_PATH),$(COMPILER_PATH)/)$(COMPILER_NAME)
 
 CC := $(COMPILER_PREFIX)gcc
 AR := $(COMPILER_PREFIX)ar
@@ -194,9 +195,3 @@ endef
 
 GDBBAUD ?= $(BAUD)
 GDBPORT ?= $(PORT)
-GDBCMDS += \
-  -ex 'set remote hardware-breakpoint-limit 1' \
-  -ex 'set remote hardware-watchpoint-limit 1' \
-  -ex 'set debug xtensa 4' \
-  -ex 'set remotebaud $(GDBBAUD)' \
-  -ex 'target remote $(GDBPORT)'

@@ -1,3 +1,12 @@
+# Compiler
+COMPILER_NAME ?= xtensa-lx106-elf-
+GDBCMDS += \
+  -ex 'set remote hardware-breakpoint-limit 1' \
+  -ex 'set remote hardware-watchpoint-limit 1' \
+  -ex 'set debug xtensa 4' \
+  -ex 'set remotebaud $(GDBBAUD)' \
+  -ex 'target remote $(GDBPORT)'
+
 # Serial port setup
 PORT ?= /dev/ttyUSB0
 BAUD ?= 230400
