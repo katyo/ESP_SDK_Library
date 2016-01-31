@@ -21,6 +21,7 @@ AR := $(COMPILER_PREFIX)ar
 LD := $(COMPILER_PREFIX)gcc
 NM := $(COMPILER_PREFIX)nm
 CPP := $(COMPILER_PREFIX)cpp
+SIZE := $(COMPILER_PREFIX)size
 OBJDUMP := $(COMPILER_PREFIX)objdump
 OBJCOPY := $(COMPILER_PREFIX)objcopy
 GDB := $(COMPILER_PREFIX)gdb
@@ -182,6 +183,7 @@ $$($(1).BIN): $$($(1).DEPLIBS_EXPANDED) $$($(1).LDSCRIPTS)
 	@echo TARGET $(1) BIN
 	$(Q)mkdir -p $$(dir $$@)
 	$(Q)$(LD) $$($(1).LDFLAGS_EXPANDED) -Wl,-Map -Wl,$$($(1).MAP) -Wl,--start-group $$($(1).LDLIBS_EXPANDED) -Wl,--end-group -o $$@
+	$(Q)$(SIZE) $$@
 
 clean: clean.bin.$(1)
 clean.bin.$(1):
