@@ -108,7 +108,7 @@ $(1).CFLAGS_EXPANDED := \
   $$(if $$($(1).COPT),-O$$($(1).COPT)) \
   $$(if $$($(1).CDBG),-g$$($(1).CDBG)) \
   $$(addprefix -f,$$($(1).COPTS) $$($(1).COPTS!)) \
-  $$(addprefix -m,$$($(1).CMACH) $$($(1).COPTS!))
+  $$(addprefix -m,$$($(1).CMACH) $$($(1).CMACH!))
 endif
 endef
 
@@ -146,6 +146,7 @@ define LDFLAGS_EXPAND
 ifndef $(1).LDFLAGS_EXPANDED
 $$(foreach parent,$$($(1).INHERIT),$$(eval $$(call LDFLAGS_EXPAND,$$(parent))))
 
+$$(call INHERITS,$(1),ADD,CMACH)
 $$(call INHERITS,$(1),ADD,LDFLAGS)
 $$(call INHERITS,$(1),ADD,LDDIRS)
 $$(call INHERITS,$(1),SET,LDSCRIPT)
@@ -156,6 +157,7 @@ $$(call INHERITS,$(1),ADD,DEPLIBS)
 $$(call INHERITS,$(1),ADD,LDLIBS)
 
 $(1).LDFLAGS_EXPANDED := \
+  $$(addprefix -m,$$($(1).CMACH) $$($(1).CMACH!)) \
   $$($(1).LDFLAGS) $$($(1).LDFLAGS!) \
   $$(addprefix -L,$$($(1).LDDIRS) $$($(1).LDDIRS!)) \
   $$(if $$($(1).LDSCRIPT),-T$$($(1).LDSCRIPT)) \
