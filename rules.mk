@@ -194,7 +194,19 @@ clean.bin.$(1):
 
 debug.$(1):
 	@echo RUN GDB STUB
-	@$(GDB) -ex 'file $$($(1).BIN)' $$(GDBCMDS)
+	$(Q)$(GDB) -ex 'file $$($(1).BIN)' $$(GDBCMDS)
+
+dump.sym.$(1): $$($(1).BIN)
+	@echo DUMP SYMBOLS $(1)
+	$(Q)$(OBJDUMP) -t $$<
+
+dump.asm.$(1): $$($(1).BIN)
+	@echo DUMP DISASSEMBLE $(1)
+	$(Q)$(OBJDUMP) -D $$<
+
+dump.src.$(1): $$($(1).BIN)
+	@echo DUMP SOURCE
+	$(Q)$(OBJDUMP) -S $$<
 endef
 
 GDBBAUD ?= $(BAUD)
