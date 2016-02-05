@@ -38,7 +38,9 @@ endef
 
 define INHERIT_ADD
 ifneq (,$$($(2).$(3)))
+ifeq (,$$(findstring $$($(2).$(3)),$$($(1).$(3))))
 $(1).$(3) := $$($(1).$(3)) $$($(2).$(3))
+endif
 endif
 endef
 
