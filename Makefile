@@ -1,11 +1,5 @@
 # Compiler
 COMPILER_NAME ?= xtensa-lx106-elf-
-GDBCMDS += \
-  -ex 'set remote hardware-breakpoint-limit 1' \
-  -ex 'set remote hardware-watchpoint-limit 1' \
-  -ex 'set debug xtensa 4' \
-  -ex 'set remotebaud $(GDBBAUD)' \
-  -ex 'target remote $(GDBPORT)'
 
 # Serial port setup
 PORT ?= /dev/ttyUSB0
@@ -28,6 +22,15 @@ firmware.CWARN ?= all extra no-pointer-sign undef pointer-arith error
 firmware.COPTS ?= no-tree-ccp optimize-register-move no-inline-functions function-sections data-sections
 firmware.CMACH ?= no-target-align no-serialize-volatile longcalls text-section-literals
 firmware.CDIRS ?= $(INCDIR)
+
+GDBBAUD ?= $(BAUD)
+GDBPORT ?= $(PORT)
+firmware.GDBOPTS += \
+  -ex 'set remote hardware-breakpoint-limit 1' \
+  -ex 'set remote hardware-watchpoint-limit 1' \
+  -ex 'set debug xtensa 4' \
+  -ex 'set remotebaud $(GDBBAUD)' \
+  -ex 'target remote $(GDBPORT)'
 
 loader.CSTD ?= $(firmware.CSTD)
 loader.COPT ?= $(firmware.COPT)

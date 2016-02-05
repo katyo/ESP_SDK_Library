@@ -153,6 +153,8 @@ $$(call INHERITS,$(1),ADD,UNDEFS)
 $$(call INHERITS,$(1),ADD,LDOPTS)
 $$(call INHERITS,$(1),ADD,DEPLIBS)
 $$(call INHERITS,$(1),ADD,LDLIBS)
+$$(call INHERITS,$(1),ADD,GDBOPTS)
+$$(call INHERITS,$(1),ADD,DUMPOPTS)
 
 $(1).LDFLAGS_EXPANDED := \
   $$(addprefix -m,$$($(1).CMACH) $$($(1).CMACH!)) \
@@ -191,21 +193,18 @@ clean.bin.$(1):
 	$(Q)rm -f $$($(1).BIN) $$($(1).MAP)
 
 debug.$(1):
-	@echo RUN GDB STUB
-	$(Q)$(GDB) -ex 'file $$($(1).BIN)' $$(GDBCMDS)
+	@echo RUN GDB $(1)
+	$(Q)$(GDB) -ex 'file $$($(1).BIN)' $$($(1).GDBOPTS)
 
 dump.sym.$(1): $$($(1).BIN)
 	@echo DUMP SYMBOLS $(1)
-	$(Q)$(OBJDUMP) -t $$<
+	$(Q)$(OBJDUMP) $$($(1).DUMPOPTS) -t $$<
 
 dump.asm.$(1): $$($(1).BIN)
 	@echo DUMP DISASSEMBLE $(1)
-	$(Q)$(OBJDUMP) -D $$<
+	$(Q)$(OBJDUMP) $$($(1).DUMPOPTS) -D $$<
 
 dump.src.$(1): $$($(1).BIN)
 	@echo DUMP SOURCE
-	$(Q)$(OBJDUMP) -S $$<
+	$(Q)$(OBJDUMP) $$($(1).DUMPOPTS) -S $$<
 endef
-
-GDBBAUD ?= $(BAUD)
-GDBPORT ?= $(PORT)
