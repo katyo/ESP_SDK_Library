@@ -320,14 +320,11 @@ esp_init_data_default.SRCS += $(SRCDIR)/bin/esp_init_data_default.c
 esp_init_data_default.ADDR ?= 0x7C000
 
 # Default SDK WiFi config
-# (don't used when NO_ESP_CONFIG is y)
-ifneq (y,$(NO_ESP_CONFIG))
-  TARGET.RDIS += blank
-  clear.IMGS += blank
-  blank.INHERIT = rawimg
-  blank.SRCS += $(SRCDIR)/bin/blank.c
-  blank.ADDR ?= 0x7E000
-endif
+TARGET.RDIS += blank
+clear.IMGS += blank
+blank.INHERIT = rawimg
+blank.SRCS += $(SRCDIR)/bin/blank.c
+blank.ADDR ?= 0x7E000
 
 # Provide rules
 $(foreach lib,$(TARGET.LIBS),$(eval $(call LIB_RULES,$(lib))))
