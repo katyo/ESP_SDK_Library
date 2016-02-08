@@ -212,3 +212,7 @@ open.tty:
 flash.clear:
 	@echo FLASH CLEAR SETTINGS
 	$(Q)$(ESPTOOL) $(ESPOPTION) write_flash $(IMG_OPTION) $(foreach img,$(clear.IMGS),$($(img).ADDR) $($(img).IMG))
+
+flash.run:
+	@echo FLASH RUN
+	$(Q)$(ESPTOOL) $(ESPOPTION) run
