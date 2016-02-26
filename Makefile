@@ -29,7 +29,7 @@ firmware.GDBOPTS += \
   -ex 'set remote hardware-breakpoint-limit 1' \
   -ex 'set remote hardware-watchpoint-limit 1' \
   -ex 'set debug xtensa 4' \
-  -ex 'set remotebaud $(GDBBAUD)' \
+  -ex 'set serial baud $(GDBBAUD)' \
   -ex 'target remote $(GDBPORT)'
 
 loader.CSTD ?= $(firmware.CSTD)
