@@ -130,6 +130,10 @@ clean.img.$(1):
 	$(Q)rm -f $$($(1).IMG) $$($(1).OBJ) $$($(1).DEP)
 
 flash.clear: $$($(1).IMG)
+
+read.img.$(1): $$($(1).IMG)
+	@echo TARGET $(1) READ IMG
+	$(Q)$(ESPTOOL) $(ESPOPTION) read_flash $$($(1).ADDR) $$(firstword $$(shell wc -c $$($(1).IMG))) $$($(1).IMG)~readed
 endef
 
 # Image rules
