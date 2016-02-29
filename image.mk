@@ -167,7 +167,7 @@ endif
 
 info.img.$(1): $$($(1).IMG)
 	@echo TARGET $(1) IMAGE INFO
-	$(Q)$(ESPTOOL) image_info $$^
+	$(Q)$(ESPTOOL) image_info $$<
 
 clean: clean.img.$(1)
 clean.img.$(1):
