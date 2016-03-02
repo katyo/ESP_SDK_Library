@@ -205,6 +205,31 @@ TARGET.LIBS += libaddwpa
 libaddwpa.INHERIT = libsdk
 libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
+TARGET.LIBS += libaxtls
+libaxtls.INHERIT = libsdk
+libaxtls.CDEFS += ESP8266 LWIP_RAW=1
+libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
+  $(addprefix crypto/, \
+    aes.c \
+    bigint.c \
+    md2.c \
+    rc4.c \
+    rsa.c \
+    misc.c) \
+  $(addprefix replacements/, \
+    time.c) \
+  $(addprefix ssl/, \
+    gen_cert.c \
+    loader.c \
+    os_port.c \
+    p12.c \
+    tls1.c \
+    tls1_clnt.c \
+    tls1_svr.c \
+    x509.c) \
+  $(addprefix compat/, \
+    lwipr_compat.c))
+
 ifeq (y,$(DEBUG))
   firmware.COPT ?= g
   firmware.CDBG ?= gdb3
@@ -243,6 +268,7 @@ libsdk.DEPLIBS += \
   libaddphy \
   libaddpp \
   libaddwpa \
+  libaxtls \
   $(addprefix esp/,$(libsdk.SDKLIBS))
 
 # Application
