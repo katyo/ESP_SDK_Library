@@ -12,16 +12,19 @@
  * See README and COPYING for more details.
  */
 
-#ifndef AES_H
-#define AES_H
+#ifndef _AES_DECRYPT_H_
+#  define _AES_DECRYPT_H_
 
-#define AES_BLOCK_SIZE 16
+#  include "c_types.h"
 
-void *aes_encrypt_init(const u8 *key, size_t len);
-void aes_encrypt(void *ctx, const u8 *plain, u8 *crypt);
-void aes_encrypt_deinit(void *ctx);
-void *aes_decrypt_init(const u8 *key, size_t len);
-void aes_decrypt(void *ctx, const u8 *crypt, u8 *plain);
+#  ifndef AES_BLOCK_SIZE
+#    define AES_BLOCK_SIZE 16
+#  endif
+
+int aes_unwrap(const uint8_t* kek, size_t kek_len, int n, const uint8_t *cipher, uint8_t* plain);
+
+void *aes_decrypt_init(const uint8_t *key, size_t len);
+void aes_decrypt(void *ctx, const uint8_t *crypt, uint8_t *plain);
 void aes_decrypt_deinit(void *ctx);
 
-#endif /* AES_H */
+#endif /* _AES_DECRYPT_H_ */

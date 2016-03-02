@@ -8,7 +8,9 @@
 #ifndef _INCLUDE_BIOS_H_
 #  define _INCLUDE_BIOS_H_
 #  include "bios/spiflash.h"
-#  include "bios/cha1.h"
+#  include "bios/md5.h"
+#  include "bios/sha1.h"
+#  include "bios/aes_decrypt.h"
 #  include "bios/ets.h"
 #  include "bios/gpio.h"
 #  include "bios/uart.h"
