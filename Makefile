@@ -154,7 +154,7 @@ libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
 TARGET.LIBS += libaxtls
 libaxtls.INHERIT = libsdk
-libaxtls.CDEFS += ESP8266 LWIP_RAW=1
+libsdk.CDEFS += ESP8266 LWIP_RAW=1
 libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
   $(addprefix crypto/, \
     aes.c \
