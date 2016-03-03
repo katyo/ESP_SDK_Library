@@ -15,6 +15,7 @@ LDDIR := $(BASEPATH)ld
 
 include $(BASEPATH)rules.mk
 include $(BASEPATH)image.mk
+include $(BASEPATH)option.mk
 -include config.mk
 
 firmware.CSTD ?= gnu90
@@ -40,76 +41,44 @@ loader.COPTS ?= $(firmware.COPTS)
 loader.CMACH ?= $(firmware.CMACH)
 loader.CDIRS ?= $(firmware.CDIRS)
 
-USE_LOADER ?= y
+firmware.OPTS += \
+  OPT:USE_LOADER:y \
+  OPT:USE_ESPCONN:n \
+  VAL:USE_MAX_IRAM:48 \
+  VAL:STARTUP_CPU_CLK:160 \
+  OPT:USE_OPEN_LWIP:y \
+  OPT:USE_OPEN_DHCPS:y \
+  OPT:USE_US_TIMER:y \
+  OPT:USE_OPTIMIZE_PRINTF:y \
+  VAL:DEBUG_UART:1 \
+  VAL:DEBUG_LEVEL:2 \
+  VAL:DEBUG_UART0_BAUD:230400 \
+  VAL:DEBUG_UART1_BAUD:230400 \
+  STR:SDK_NAME \
+  IP4:SOFTAP_GATEWAY \
+  IP4:SOFTAP_IP_ADDR \
+  IP4:SOFTAP_NETMASK \
+  OPT:NO_ESP_CONFIG:n
 
-USE_ESPCONN ?= n
-USE_MAX_IRAM ?= 48
-STARTUP_CPU_CLK ?= 160
-USE_OPEN_LWIP ?= y
-USE_OPEN_DHCPS ?= y
-USE_US_TIMER ?= y
-USE_OPTIMIZE_PRINTF ?= y
+TARGET.OPTS += firmware
+$(foreach grp,$(TARGET.OPTS),$(foreach opt,$($(grp).OPTS),$(eval $(call OPT_RULES,$(grp),$(opt)))))
 
-DEBUG_UART ?= 1
-DEBUG_LEVEL ?= 2
-UART0_BAUD ?= 230400
-UART1_BAUD ?= 230400
+show.config:
+$(foreach grp,$(TARGET.OPTS),$(foreach opt,$($(grp).OPTS),$(eval $(call OPT_SHOW,show.config,$(opt)))))
 
 WITH_EXAMPLES ?= y
 WITH_EX_DUMMY_APP ?= $(WITH_EXAMPLES)
 WITH_EX_MEM_USAGE ?= $(WITH_EXAMPLES)
 WITH_EX_TCP_ECHO ?= $(WITH_EXAMPLES)
 
-ifneq (,$(SDK_NAME))
-  firmware.CDEFS += SDK_NAME_STR='"$(SDK_NAME)"'
-endif
-
-ifneq (,$(DEBUG_UART))
-  firmware.CDEFS += DEBUG_UART=$(DEBUG_UART)
-endif
-
-ifneq (,$(DEBUG_LEVEL))
-  firmware.CDEFS += DEBUGSOO=$(DEBUG_LEVEL)
-endif
-
-ifneq (,$(UART0_BAUD))
-  firmware.CDEFS += DEBUG_UART0_BAUD=$(UART0_BAUD)
-endif
-
-ifneq (,$(UART1_BAUD))
-  firmware.CDEFS += DEBUG_UART1_BAUD=$(UART1_BAUD)
-endif
-
-ifeq (y,$(USE_ESPCONN))
-  firmware.CDEFS += USE_ESPCONN
-endif
-
-ifneq (,$(USE_MAX_IRAM))
-  firmware.CDEFS += USE_MAX_IRAM=$(USE_MAX_IRAM)
-endif
-
-ifneq (,$(STARTUP_CPU_CLK))
-  firmware.CDEFS += STARTUP_CPU_CLK=$(STARTUP_CPU_CLK)
-endif
-
-ifeq (y,$(USE_US_TIMER))
-  firmware.CDEFS += USE_US_TIMER
-endif
-
-ifeq (y,$(USE_OPTIMIZE_PRINTF))
-  firmware.CDEFS += USE_OPTIMIZE_PRINTF
-endif
-
-ifeq (y,$(USE_OPEN_LWIP))
+ifneq (,$(call OPT_OPT,USE_OPEN_LWIP))
   libsdk.DEPLIBS += liblwip
   firmware.CDEFS += \
-    USE_OPEN_LWIP \
     PBUF_RSV_FOR_WLAN \
     LWIP_OPEN_SRC \
     EBUF_LWIP
-  ifneq (,$(LWIP_DEBUG))
+  ifneq (,$(call OPT_OPT,LWIP_DEBUG))
     firmware.CDEFS += \
-      LWIP_DEBUG \
       LWIP_DBG_TYPES_ON='(LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH)' \
       $(patsubst %,%_DEBUG='(LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON)',$(LWIP_DEBUG))
   endif
@@ -119,33 +88,11 @@ else
     liblwip
 endif
 
-ifeq (y,$(USE_OPEN_DHCPS))
-  firmware.CDEFS += USE_OPEN_DHCPS
-else
+ifeq (,$(call OPT_OPT,USE_OPEN_DHCPS))
   libsdk.SDKLIBS += libdhcps
 endif
 
-POINT_CHAR := .
-COMMA_CHAR := ,
-IP4_ADDR = 'IP4_UINT($(subst $(POINT_CHAR),$(COMMA_CHAR),$(1)))'
-
-ifneq (,$(SOFTAP_GATEWAY))
-  firmware.CDEFS += SOFTAP_GATEWAY=$(call IP4_ADDR,$(SOFTAP_GATEWAY))
-endif
-
-ifneq (,$(SOFTAP_IP_ADDR))
-  firmware.CDEFS += SOFTAP_IP_ADDR=$(call IP4_ADDR,$(SOFTAP_IP_ADDR))
-endif
-
-ifneq (,$(SOFTAP_NETMASK))
-  firmware.CDEFS += SOFTAP_NETMASK=$(call IP4_ADDR,$(SOFTAP_NETMASK))
-endif
-
-ifeq (y,$(NO_ESP_CONFIG))
-  firmware.CDEFS += NO_ESP_CONFIG
-endif
-
-ifeq (y,$(USE_LOADER))
+ifneq (,$(call OPT_OPT,USE_LOADER))
   LOADER ?= rapid_loader
 endif
 
@@ -230,7 +177,7 @@ libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
   $(addprefix compat/, \
     lwipr_compat.c))
 
-ifeq (y,$(DEBUG))
+ifneq (,$(call OPT_OPT,DEBUG))
   firmware.COPT ?= g
   firmware.CDBG ?= gdb3
   firmware.CDEFS += USE_DEBUG
@@ -246,7 +193,7 @@ else
   firmware.CDBG ?= gdb
 endif
 
-ifeq (y,$(DEBUG_EXCEPT))
+ifneq (,$(call OPT_OPT,DEBUG_EXCEPT))
   CDEFS += DEBUG_EXCEPTION
 endif
 
@@ -259,7 +206,7 @@ libsdk.SDKLIBS += \
   libwpa \
   libnet80211
 
-ifneq (y,$(USE_STDLIBS))
+ifeq (,$(call OPT_OPT,USE_STDLIBS))
   libsdk.SDKLIBS += libgcc
 endif
 
@@ -286,7 +233,7 @@ loader.LDOPTS ?= -no-check-sections static
 loader.UNDEFS ?= call_user_start loader_flash_boot
 loader.LDFLAGS ?= -nostdlib
 
-ifeq (y,$(USE_STDLIBS))
+ifneq (,$(call OPT_OPT,USE_STDLIBS))
   firmware.LDLIBS += $(addprefix -l,c m gcc)
 endif
 
