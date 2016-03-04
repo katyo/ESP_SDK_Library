@@ -11,16 +11,23 @@
 /*
  * All those functions will run only if LWIP tcp raw mode is used
  */
-#if LWIP_RAW==1
+#if LWIP_RAW
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "lwip/tcp.h"
-#include "lwipr_platform.h"
+#include "ssl/lwipr_platform.h"
 #include "ssl/ssl.h"
 #include "ssl/tls1.h"
+
+#include "sdk/mem_manager.h"
+/* some functions to mutate the way these work */
+#define malloc port_malloc
+#define realloc port_realloc
+#define calloc port_calloc
+#define free port_free
 
 #define ERR_AXL_INVALID_SSL -101
 #define ERR_AXL_INVALID_TCP -102
@@ -91,6 +98,6 @@ void ax_fd_free(AxlTcpDataArray *vector);
 }
 #endif
 
-#endif /* LWIP_RAW==1 */
+#endif /* LWIP_RAW */
 
 #endif /* LWIPR_COMPAT_H */

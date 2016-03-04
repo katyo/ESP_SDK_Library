@@ -155,7 +155,7 @@ libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
 
 TARGET.LIBS += libaxtls
 libaxtls.INHERIT = libsdk
-libsdk.CDEFS += ESP8266 LWIP_RAW=1
+firmware.CDEFS += ESP8266 LWIP_RAW=1
 libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
   $(addprefix crypto/, \
     aes.c \
@@ -167,6 +167,7 @@ libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
   $(addprefix replacements/, \
     time.c) \
   $(addprefix ssl/, \
+    default.c \
     asn1.c \
     gen_cert.c \
     loader.c \
@@ -178,6 +179,15 @@ libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
     x509.c) \
   $(addprefix compat/, \
     lwipr_compat.c))
+AXTLS_CERT_PKEY_H := $(addprefix $(SRCDIR)/axtls/ssl/,cert.h private_key.h)
+$(SRCDIR)/axtls/ssl/default.c: $(AXTLS_CERT_PKEY_H)
+$(AXTLS_CERT_PKEY_H):
+	@echo GEN SSL CERT/PKEY
+	$(Q)$(SRCDIR)/axtls/tools/make_certs.sh
+clean: clean.ssl_certs
+clean.ssl_certs:
+	@echo CLEAN SSL CERT/PKEY
+	$(Q)rm -f $(AXTLS_CERT_PKEY_H)
 
 ifneq (,$(call OPT_OPT,DEBUG))
   firmware.COPT ?= g

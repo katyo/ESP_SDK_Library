@@ -59,6 +59,13 @@ extern "C" {
 
 #if defined(ESP8266)
 
+#include "sdk/mem_manager.h"
+/* some functions to mutate the way these work */
+#define malloc port_malloc
+#define realloc port_realloc
+#define calloc port_calloc
+#define free port_free
+
 struct timeval {
   time_t tv_sec;
   long   tv_usec;
@@ -71,13 +78,19 @@ int gettimeofday(struct timeval *tp, void *tzp);
 #ifdef putc
 #undef putc
 #endif
-  int ets_putc(int c);
+  void ets_putc(char c);
 #define putc(x, f)   ets_putc(x)
 #ifdef printf
 #undef printf
 #endif
   int ets_printf(const char *fmt, ...);
 #define printf(...)  ets_printf(__VA_ARGS__)
+#include <stdarg.h>
+  int ets_vprintf(void *, const char *format, va_list arg);
+#define vprintf(...) ets_vprintf(NULL, __VA_ARGS__)
+  int ets_sprintf(char *str, const char *format, ...);
+#define sprintf(...) ets_sprintf(__VA_ARGS__)
+#define abort() while(1)
 
   ssize_t ax_port_read(int fd, void *buf, size_t len);
 #define SOCKET_READ      ax_port_read
@@ -87,9 +100,6 @@ int gettimeofday(struct timeval *tp, void *tzp);
 #define SOCKET_CLOSE         ax_port_close
 #define get_file                ax_get_file
 #define EWOULDBLOCK EAGAIN
-
-#define hmac_sha1 ax_hmac_sha1
-#define hmac_md5 ax_hmac_md5
 
 #elif defined(WIN32)
 
@@ -177,21 +187,9 @@ EXP_FUNC int STDCALL getdomainname(char *buf, int buf_size);
 
 #endif  /* Not Win32 */
 
-/* some functions to mutate the way these work */
-#define malloc(A)       ax_port_malloc(A, __FILE__, __LINE__)
-#ifndef realloc
-#define realloc(A,B)    ax_port_realloc(A,B, __FILE__, __LINE__)
-#endif
-#define calloc(A,B)     ax_port_calloc(A,B, __FILE__, __LINE__)
-#define free(x)         ax_port_free(x)
-
-EXP_FUNC void * STDCALL ax_port_malloc(size_t s, const char*, int);
-EXP_FUNC void * STDCALL ax_port_realloc(void *y, size_t s, const char*, int);
-EXP_FUNC void * STDCALL ax_port_calloc(size_t n, size_t s, const char*, int);
-EXP_FUNC void * STDCALL ax_port_free(void*);
 EXP_FUNC int STDCALL ax_open(const char *pathname, int flags);
 
-inline uint32_t htonl(uint32_t n){
+static inline uint32_t htonl(uint32_t n){
   return ((n & 0xff) << 24) |
     ((n & 0xff00) << 8) |
     ((n & 0xff0000UL) >> 8) |
