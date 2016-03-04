@@ -237,6 +237,7 @@ end_utc_time:
  */
 int asn1_version(const uint8_t *cert, int *offset, X509_CTX *x509_ctx)
 {
+    (void)x509_ctx;
     int ret = X509_NOT_OK;
 
     (*offset) += 2;        /* get past explicit tag */

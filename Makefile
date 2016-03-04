@@ -166,6 +166,7 @@ libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
   $(addprefix replacements/, \
     time.c) \
   $(addprefix ssl/, \
+    asn1.c \
     gen_cert.c \
     loader.c \
     os_port.c \
