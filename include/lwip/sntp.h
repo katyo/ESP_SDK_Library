@@ -27,14 +27,14 @@ extern "C" {
 /** One server address/name can be defined as default if SNTP_SERVER_DNS == 1:
  * #define SNTP_SERVER_ADDRESS "pool.ntp.org"
  */
-  uint32_t sntp_get_current_timestamp();
+  u32_t sntp_get_current_timestamp(void);
   char *sntp_get_real_time(long t);
 
   void sntp_init(void);
   void sntp_stop(void);
 
-  int8_t sntp_get_timezone(void);
-  bool sntp_set_timezone(int8_t timezone);
+  s8_t sntp_get_timezone(void);
+  bool sntp_set_timezone(s8_t timezone);
   void sntp_setserver(u8_t idx, ip_addr_t * addr);
   ip_addr_t sntp_getserver(u8_t idx);
 

@@ -272,7 +272,7 @@ static void sntp_request(void *arg);
 /** The UDP pcb used by the SNTP client */
 static struct udp_pcb *sntp_pcb LWIP_DATA_IRAM_ATTR;
 
-sint8 time_zone = 8;
+s8_t time_zone = 8;
 
 /** Names/Addresses of servers */
 struct sntp_server {
@@ -320,9 +320,9 @@ static u32_t sntp_last_timestamp_sent[2] LWIP_DATA_IRAM_ATTR;
        /* SNTP_CHECK_RESPONSE >= 2 */
 typedef long time_t;
 
-/* uint32 current_stamp_1 = 0;
-   uint32 current_stamp_2 = 0; */
-uint32 realtime_stamp LWIP_DATA_IRAM_ATTR;	/* = 0; */
+/* u32_t current_stamp_1 = 0;
+   u32_t current_stamp_2 = 0; */
+u32_t realtime_stamp LWIP_DATA_IRAM_ATTR;	/* = 0; */
 LOCAL os_timer_t sntp_timer LWIP_DATA_IRAM_ATTR;
 
 /*****************************************/
@@ -614,7 +614,7 @@ sntp_asctime(struct tm *tim_p) {
   return sntp_asctime_r(tim_p, reult);
 }
 
-uint32
+u32_t
 sntp_get_current_timestamp() {
   if (realtime_stamp == 0) {
     os_printf("please start sntp first !\n");
@@ -632,7 +632,7 @@ sntp_get_real_time(time_t t) {
 /**
  * SNTP get time_zone default GMT + 8
  */
-sint8
+s8_t
 sntp_get_timezone(void) {
   return time_zone;
 }
@@ -642,7 +642,7 @@ sntp_get_timezone(void) {
  */
 
 bool
-sntp_set_timezone(sint8 timezone) {
+sntp_set_timezone(s8_t timezone) {
   if (timezone >= -11 || timezone <= 13) {
     time_zone = timezone;
     return true;

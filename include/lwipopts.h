@@ -47,7 +47,7 @@
 #    define LWIP_DATA_IRAM_ATTR
 #  endif
 
-#  define LWIP_SNTP 0
+#  define LWIP_SNTP 1
 
 /*
 	-----------------------------------------------
