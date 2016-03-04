@@ -70,6 +70,7 @@ WITH_EXAMPLES ?= y
 WITH_EX_DUMMY_APP ?= $(WITH_EXAMPLES)
 WITH_EX_MEM_USAGE ?= $(WITH_EXAMPLES)
 WITH_EX_TCP_ECHO ?= $(WITH_EXAMPLES)
+WITH_EX_SSL_ECHO ?= $(WITH_EXAMPLES)
 
 ifneq (,$(call OPT_OPT,USE_OPEN_LWIP))
   libsdk.DEPLIBS += liblwip
@@ -268,6 +269,16 @@ ifeq (y,$(WITH_EX_TCP_ECHO))
   TARGET.IMGS += tcp_echo
   tcp_echo.INHERIT = libtcp_echo
   tcp_echo.DEPLIBS += libsdk libtcp_echo
+endif
+
+ifeq (y,$(WITH_EX_SSL_ECHO))
+  TARGET.LIBS += libssl_echo
+  libssl_echo.INHERIT = example
+  libssl_echo.SRCS += $(wildcard $(EXDIR)/ssl_echo/*.c)
+
+  TARGET.IMGS += ssl_echo
+  ssl_echo.INHERIT = libssl_echo
+  ssl_echo.DEPLIBS += libsdk libssl_echo
 endif
 
 # Image
