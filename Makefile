@@ -12,10 +12,11 @@ INCDIR := $(BASEPATH)include
 SRCDIR := $(BASEPATH)src
 EXDIR := $(BASEPATH)example
 LDDIR := $(BASEPATH)ld
+MKDIR := $(BASEPATH)rules
 
-include $(BASEPATH)rules.mk
-include $(BASEPATH)image.mk
-include $(BASEPATH)option.mk
+include $(MKDIR)/rules.mk
+include $(MKDIR)/image.mk
+include $(MKDIR)/option.mk
 -include config.mk
 
 firmware.CSTD ?= gnu90
