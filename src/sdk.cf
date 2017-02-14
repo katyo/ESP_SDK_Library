@@ -109,8 +109,3 @@ info = Do not use native configuration
 type = def
 key = NO_ESP_CONFIG
 def = n
-
-[option "espsdk.with_examples"]
-info = Build examples
-type = set
-def = dummy_app mem_usage tcp_echo ssl_echo
