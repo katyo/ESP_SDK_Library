@@ -8,6 +8,8 @@
 
 #if DEF_SDK_VERSION >= 1300
 /* bit_popcount() используется из SDK libpp.a: if_hwctrl.o и trc.o */
+uint32_t bit_popcount(uint32_t x);
+
 uint32_t
 bit_popcount(uint32_t x) {
   uint32_t ret = 0;

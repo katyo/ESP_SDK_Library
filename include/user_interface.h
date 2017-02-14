@@ -55,7 +55,7 @@ void system_deep_sleep(uint32_t time_in_us);
 
 uint8_t system_upgrade_userbin_check(void);
 void system_upgrade_reboot(void);
-uint8_t system_upgrade_flag_check();
+uint8_t system_upgrade_flag_check(void);
 void system_upgrade_flag_set(uint8_t flag);
 
 void system_timer_reinit(void);
@@ -75,7 +75,7 @@ bool system_os_post(uint8_t prio, os_signal_t sig, os_param_t par);
 
 void system_print_meminfo(void);
 void system_set_os_print(uint8_t onoff);
-bool system_get_os_print();
+bool system_get_os_print(void);
 
 uint64_t system_mktime(uint32_t year, uint32_t mon, uint32_t day, uint32_t hour,
 		     uint32_t min, uint32_t sec);
@@ -318,7 +318,7 @@ bool wifi_set_channel(uint8_t channel);
 
 void wifi_status_led_install(uint8_t gpio_id, uint32_t gpio_name,
 			     uint8_t gpio_func);
-void wifi_status_led_uninstall();
+void wifi_status_led_uninstall(void);
 
 /** Get the absolute difference between 2 u32_t values (correcting overflows)
  * 'a' is expected to be 'higher' (without overflow) than 'b'. */

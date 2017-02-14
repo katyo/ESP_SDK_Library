@@ -7,7 +7,7 @@
  * License: ESPRESSIF MIT License
  *******************************************************************************/
 
-#  include "eagle_soc.h"
+#  include "hw/eagle_soc.h"
 #  include "c_types.h"
 #  include "gpio.h"
 #  include "xtensa/corebits.h"
@@ -885,7 +885,7 @@ install_uart_hdlr() {
 
 /* gdbstub initialization routine. */
 void ATTR_GDBINIT
-gdbstub_init() {
+__gdbstub_init(void) {
 #  if GDBSTUB_REDIRECT_CONSOLE_OUTPUT
   os_install_putc1(gdb_semihost_putchar1);
 #  endif

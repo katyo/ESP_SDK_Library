@@ -50,7 +50,7 @@ extern struct sdtm_params dtm_params;	/* 64 bytes */
 extern uint32_t rtc_claib;	/* ~ = 0x7073 */
 
 /* software_reset: Not work for any mode! */
-void software_reset(void);
+/* void software_reset(void); */
 void rtc_set_sleep_mode(uint32_t a, uint32_t t, uint32_t m);
 
 /*rtc_reset_reason: =1 - ch_pd,  =2 - reset, =4 - Wdt Reset ... > 7 unknown reset */
@@ -63,7 +63,7 @@ void dtm_params_init(void *sleep_func, void *int_func);
 void dtm_set_params(int mode, int time_ms_a3, int a4, int cycles, int a6);
 void rtc_intr_handler(void);
 void rtc_enter_sleep(void);
-void ets_rtc_int_register(void);
+/* void ets_rtc_int_register(void); */
 
 /* { ets_set_idle_cb(rtc_enter_sleep, 0); } */
 void ets_enter_sleep(void);

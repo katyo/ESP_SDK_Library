@@ -13,6 +13,6 @@ int __wrap_os_printf_plus(const char *format, ...);
 /* #define rom_printf __wrap_os_printf_plus
    int rom_printf(const char *format, ...); */
 void _sprintf_out(char c);
-int ets_sprintf(char *str, const char *format, ...);
+/* int ets_sprintf(char *str, const char *format, ...); */
 
 #endif /* _INCLUDE_OS_PRINTF_H_ */

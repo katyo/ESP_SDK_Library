@@ -20,17 +20,14 @@ extern uint8_t user_init_flag;
    ----------------------------------------------------------------------------- */
 void sflash_something(uint32_t flash_speed);
 void read_macaddr_from_otp(uint8_t * mac);
-void user_uart_wait_tx_fifo_empty(uint32_t n, uint32_t x);
-void
-startup(void)
-;
-     void read_wifi_config(void);
-     void init_wifi(uint8_t * init_data, uint8_t * mac);
-     void uart_wait_tx_fifo_empty(void);
-     void user_uart_wait_tx_fifo_empty(uint32_t uart_num, uint32_t x);
+void startup(void);
+void read_wifi_config(void);
+void init_wifi(uint8_t * init_data, uint8_t * mac);
+void uart_wait_tx_fifo_empty(void);
+void user_uart_wait_tx_fifo_empty(uint32_t uart_num, uint32_t x);
 
 /* ----------------------------------------------------------------------------- */
-     void uart1_write_char(char c);
-     void uart0_write_char(char c);
+void uart1_write_char(char c);
+void uart0_write_char(char c);
 
 #endif /* _INCLUDE_APP_MAIN_H_ */

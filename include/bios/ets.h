@@ -95,7 +95,7 @@ void est_reset_printf_buf_len(void);
 
 /* { *printf_pbuf++ = ch; printf_buf_len-- }
    printf_buf_len 0x3FFFDD58, printf_pbuf 0x3FFFDD5C */
-void _putc2_def(char ch);
+/* void _putc2_def(char ch); */
 
 /* { uart_tx_one_char(ch) } */
 void ets_putc(char ch);
@@ -232,8 +232,8 @@ void ets_isr_attach(uint32_t, void *, void *);
 void ets_isr_mask(uint32_t);
 void ets_isr_unmask(uint32_t);
 
-void ets_intr_lock();
-void ets_intr_unlock();
+void ets_intr_lock(void);
+void ets_intr_unlock(void);
 
 #  ifndef _ETS_SYS_H
 /* timer related */

@@ -18,11 +18,6 @@ struct s_info {
   uint8_t st_mac[6];		/* +1E */
 } __attribute__ ((packed, aligned(4)));
 
-extern struct s_info info;
-
-extern uint8_t *hostname;		/* wifi_station_get_hostname(), wlan_lwip_if.h */
-extern bool default_hostname;	/* eagle_lwip_if.c */
-
 #  if DEF_SDK_VERSION > 999	/* SDK > 0.9.6 b1 */
 /* uint32_t system_adc_read(void); // user_interface.h
    void system_deep_sleep(uint32_t time_in_us); // user_interface.h
@@ -34,15 +29,15 @@ uint32_t system_get_checksum(uint8_t * ptr, uint32_t len);
 /* uint32_t system_get_chip_id(void); // user_interface.h
    uint32_t system_get_cpu_freq(void); // user_interface.h // ets_get_cpu_frequency
    uint32_t system_get_free_heap_size(void); // user_interface.h */
-bool system_get_os_print(void);	/* return os_print_enable */
-uint32_t system_get_rtc_time(void);	/* return (uint32)(*((uint32*)0x6000071C)) */
+/* bool system_get_os_print(void); */ /* return os_print_enable */
+/* uint32_t system_get_rtc_time(void); */ /* return (uint32)(*((uint32*)0x6000071C)) */
 
 /* const uint8_t *system_get_sdk_version(void); // user_interface.h */
 uint32_t system_get_test_result(void);
 
 /* uint32_t system_get_time(void); // x1 us, return WdevTimOffSet + (uint32)(*((uint32*)0x3FF20C00)) // user_interface.h */
-uint32_t phy_get_mactime(void);	/* x1 us, return (uint32)(*((uint32*)0x3FF20C00)) */
-uint32_t system_get_userbin_addr(void);
+/* uint32_t phy_get_mactime(void); */ /* x1 us, return (uint32)(*((uint32*)0x3FF20C00)) */
+/* uint32_t system_get_userbin_addr(void); */
 
 /* uint32_t system_get_vdd33(void); // user_interface.h
    void system_init_done_cb(init_done_cb_t cb); typedef void (* init_done_cb_t)(void); // user_interface.h
@@ -80,7 +75,7 @@ bool system_upgrade_userbin_set(uint32_t flag);	/* system_get_boot_version(), st
 
 int atoi(const char *str);
 
-int os_printf_plus(const char *format, ...);
+/* int os_printf_plus(const char *format, ...); */
 int ets_sprintf(char *str, const char *format, ...);
 
 void wifi_softap_set_default_ssid(void);
@@ -91,7 +86,6 @@ void ets_timer_arm_new(ETSTimer * ptimer, uint32_t milliseconds,
 void sleep_reset_analog_rtcreg_8266(void);
 void wifi_softap_cacl_mac(uint8_t * mac_out,
                           uint8_t * mac_in);
-void user_init(void);
 int wifi_mode_set(int mode);
 int wifi_station_start(void);
 
@@ -127,8 +121,7 @@ int ram_get_fm_sar_dout(int);
 
 /* noise_init(), rom_get_noisefloor(), ram_set_noise_floor(), noise_check_loop(), ram_start_noisefloor()
    void sys_check_timeouts(void *timer_arg); // lwip */
-uint32_t system_get_checksum(uint8_t * ptr, uint32_t len);
-void read_macaddr_from_otp(uint8_t * mac);
+/* void read_macaddr_from_otp(uint8_t * mac); */
 
 void wifi_station_set_default_hostname(const uint8_t * mac);
 

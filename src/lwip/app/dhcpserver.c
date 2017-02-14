@@ -14,7 +14,6 @@
 #include "osapi.h"
 
 #ifdef USE_OPEN_DHCPS		/* (назначается в MakeFile) */
-
 #  include "lwip/app/dhcpserver.h"
 
 #  ifndef LWIP_OPEN_SRC
@@ -63,35 +62,35 @@ uint32_t dhcps_lease_time LWIP_DATA_IRAM_ATTR;	/* = DHCPS_LEASE_TIME_DEF;  //min
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void
+static void
 node_insert_to_list(list_node ** phead, list_node * pinsert) {
-  list_node *plist = NULL;
+  list_node *_plist = NULL;
   struct dhcps_pool *pdhcps_pool = NULL;
   struct dhcps_pool *pdhcps_node = NULL;
 
   if (*phead == NULL)
     *phead = pinsert;
   else {
-    plist = *phead;
+    _plist = *phead;
     pdhcps_node = pinsert->pnode;
-    pdhcps_pool = plist->pnode;
+    pdhcps_pool = _plist->pnode;
 
     if (pdhcps_node->ip.addr < pdhcps_pool->ip.addr) {
-      pinsert->pnext = plist;
+      pinsert->pnext = _plist;
       *phead = pinsert;
     } else {
-      while (plist->pnext != NULL) {
-	pdhcps_pool = plist->pnext->pnode;
+      while (_plist->pnext != NULL) {
+	pdhcps_pool = _plist->pnext->pnode;
 	if (pdhcps_node->ip.addr < pdhcps_pool->ip.addr) {
-	  pinsert->pnext = plist->pnext;
-	  plist->pnext = pinsert;
+	  pinsert->pnext = _plist->pnext;
+	  _plist->pnext = pinsert;
 	  break;
 	}
-	plist = plist->pnext;
+	_plist = _plist->pnext;
       }
 
-      if (plist->pnext == NULL) {
-	plist->pnext = pinsert;
+      if (_plist->pnext == NULL) {
+	_plist->pnext = pinsert;
       }
     }
   }
@@ -104,22 +103,22 @@ node_insert_to_list(list_node ** phead, list_node * pinsert) {
  * Parameters   : arg -- Additional argument to pass to the callback function
  * Returns      : none
  *******************************************************************************/
-void
+static void
 node_remove_from_list(list_node ** phead, list_node * pdelete) {
-  list_node *plist = NULL;
+  list_node *_plist = NULL;
 
-  plist = *phead;
-  if (plist == NULL) {
+  _plist = *phead;
+  if (_plist == NULL) {
     *phead = NULL;
   } else {
-    if (plist == pdelete) {
-      *phead = plist->pnext;
+    if (_plist == pdelete) {
+      *phead = _plist->pnext;
     } else {
-      while (plist != NULL) {
-	if (plist->pnext == pdelete) {
-	  plist->pnext = pdelete->pnext;
+      while (_plist != NULL) {
+	if (_plist->pnext == pdelete) {
+	  _plist->pnext = pdelete->pnext;
 	}
-	plist = plist->pnext;
+	_plist = _plist->pnext;
       }
     }
   }
@@ -945,7 +944,7 @@ wifi_softap_init_dhcps_lease(uint32_t ip) {
 
 /* ///////////////////////////////////////////////////////////////////////////////// */
 void
-dhcps_start(struct ip_info *info) {
+dhcps_start(struct ip_info *_info) {
   struct netif *apnetif = (struct netif *)eagle_lwip_getif(0x01);
 
   if (apnetif->dhcps_pcb != NULL) {
@@ -955,7 +954,7 @@ dhcps_start(struct ip_info *info) {
     dhcps_lease_time = DHCPS_LEASE_TIME_DEF;
 
   pcb_dhcps = udp_new();
-  if (pcb_dhcps == NULL || info == NULL) {
+  if (pcb_dhcps == NULL || _info == NULL) {
     os_printf("dhcps_start(): could not obtain pcb\n");
   }
 
@@ -963,7 +962,7 @@ dhcps_start(struct ip_info *info) {
 
   IP4_ADDR(&broadcast_dhcps, 255, 255, 255, 255);
 
-  server_address = info->ip;
+  server_address = _info->ip;
   wifi_softap_init_dhcps_lease(server_address.addr);
   client_address_plus.addr = dhcps_lease.start_ip.addr;
 
@@ -1063,6 +1062,8 @@ kill_oldest_dhcps_pool(void) {
   os_free(minp);
   minp = NULL;
 }
+
+void dhcps_coarse_tmr(void);
 
 void
 dhcps_coarse_tmr(void) {

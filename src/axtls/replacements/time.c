@@ -17,7 +17,7 @@
  */
 
 #include <time.h>
-#include <sntp.h>
+#include <lwip/sntp.h>
 
 extern uint32_t system_get_time(void);
 extern uint64_t system_mktime(uint32_t year, uint32_t mon, uint32_t day, uint32_t hour, uint32_t min, uint32_t sec);

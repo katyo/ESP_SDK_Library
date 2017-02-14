@@ -67,7 +67,7 @@ extern "C" {
 #define AES_BLOCKSIZE           16
 #define AES_IV_SIZE             16
 
-typedef struct aes_key_st 
+typedef struct aes_key_st
 {
     uint16_t rounds;
     uint16_t key_size;
