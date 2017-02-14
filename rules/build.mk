@@ -134,7 +134,7 @@ $$(eval $$(call CC_RULES,$(1),c))
 $$(eval $$(call CC_RULES,$(1),S))
 $$(eval $$(call PK_RULES,$(1),c S))
 
-$(1).OBJS += $$(foreach lib,$$($(1).DEPLIBS*),$$($$(lib).OBJS))
+$(1).OBJS += $$(foreach lib,$$(filter-out $(1),$$($(1).DEPLIBS*)),$$($$(lib).OBJS))
 $(1).OBJS += $$($(1).OBJ)
 
 $(1).LIB := $$(call LIB_P,$(1))
