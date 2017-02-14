@@ -14,14 +14,18 @@ EXDIR := $(BASEPATH)example
 LDDIR := $(BASEPATH)ld
 MKDIR := $(BASEPATH)rules
 
-include $(MKDIR)/rules.mk
+include $(MKDIR)/macro.mk
+include $(MKDIR)/build.mk
 include $(MKDIR)/image.mk
 include $(MKDIR)/option.mk
+include $(MKDIR)/stalin.mk
 -include config.mk
 
-firmware.CSTD ?= gnu90
-firmware.CWARN ?= all extra no-pointer-sign undef pointer-arith error
-firmware.COPTS ?= no-tree-ccp optimize-register-move no-inline-functions function-sections data-sections
+firmware.INHERIT := stalin
+#firmware.CSTD ?= gnu90
+#firmware.CWARN ?= all extra no-pointer-sign undef pointer-arith error
+#firmware.COPTS ?= function-sections data-sections no-inline-functions
+firmware.COPTS ?= no-tree-ccp optimize-register-move
 firmware.CMACH ?= no-target-align no-serialize-volatile longcalls text-section-literals
 firmware.CDIRS ?= $(INCDIR)
 
@@ -42,61 +46,26 @@ loader.COPTS ?= $(firmware.COPTS)
 loader.CMACH ?= $(firmware.CMACH)
 loader.CDIRS ?= $(firmware.CDIRS)
 
-firmware.OPTS += \
-  OPT:USE_LOADER:y \
-  OPT:USE_ESPCONN:n \
-  VAL:USE_MAX_IRAM:48 \
-  VAL:STARTUP_CPU_CLK:160 \
-  OPT:USE_OPEN_LWIP:y \
-  OPT:USE_OPEN_DHCPS:y \
-  OPT:USE_US_TIMER:y \
-  OPT:USE_OPTIMIZE_PRINTF:y \
-  VAL:DEBUG_UART:1 \
-  VAL:DEBUG_LEVEL:2 \
-  VAL:DEBUG_UART0_BAUD:230400 \
-  VAL:DEBUG_UART1_BAUD:230400 \
-  STR:SDK_NAME \
-  IP4:SOFTAP_GATEWAY \
-  IP4:SOFTAP_IP_ADDR \
-  IP4:SOFTAP_NETMASK \
-  OPT:NO_ESP_CONFIG:n
+TARGET.OPTS += libsdk
+libsdk.OPTS := $(SRCDIR)/sdk.cf
 
-TARGET.OPTS += firmware
-$(foreach grp,$(TARGET.OPTS),$(foreach opt,$($(grp).OPTS),$(eval $(call OPT_RULES,$(grp),$(opt)))))
+$(call ADDRULES,\
+OPT_RULES:TARGET.OPTS)
 
-show.config:
-$(foreach grp,$(TARGET.OPTS),$(foreach opt,$($(grp).OPTS),$(eval $(call OPT_SHOW,show.config,$(opt)))))
+firmware.CDEFS += \
+  ESP8266 \
+	LWIP_RAW=1 \
+  USE_OPEN_LWIP \
+  USE_OPEN_DHCPS \
+  USE_OPEN_DHCPC \
+  PBUF_RSV_FOR_WLAN \
+  LWIP_OPEN_SRC \
+  EBUF_LWIP \
+	$(if $(call option-true,$(espsdk.debug.lwip)), \
+  LWIP_DBG_TYPES_ON='(LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH)' \
+  $(patsubst %,%_DEBUG='(LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON)',$(espsdk.debug.lwip.parts)))
 
-WITH_EXAMPLES ?= y
-WITH_EX_DUMMY_APP ?= $(WITH_EXAMPLES)
-WITH_EX_MEM_USAGE ?= $(WITH_EXAMPLES)
-WITH_EX_TCP_ECHO ?= $(WITH_EXAMPLES)
-WITH_EX_SSL_ECHO ?= $(WITH_EXAMPLES)
-
-ifneq (,$(call OPT_OPT,USE_OPEN_LWIP))
-  libsdk.DEPLIBS += liblwip
-  firmware.CDEFS += \
-    PBUF_RSV_FOR_WLAN \
-    LWIP_OPEN_SRC \
-    EBUF_LWIP
-  ifneq (,$(call OPT_OPT,LWIP_DEBUG))
-    firmware.CDEFS += \
-      LWIP_DBG_TYPES_ON='(LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH)' \
-      $(patsubst %,%_DEBUG='(LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON)',$(LWIP_DEBUG))
-  endif
-else
-  libsdk.SDKLIBS += \
-    liblwipif \
-    liblwip
-endif
-
-ifeq (,$(call OPT_OPT,USE_OPEN_DHCPS))
-  libsdk.SDKLIBS += libdhcps
-endif
-
-ifneq (,$(call OPT_OPT,USE_LOADER))
-  LOADER ?= rapid_loader
-endif
+LOADER ?= $(if $(call option-true,$(espsdk.use_loader)),rapid_loader)
 
 TARGET.LIBS += librapid_loader
 librapid_loader.INHERIT = loader
@@ -131,32 +100,40 @@ liblwipnetif.SRCS = $(wildcard $(SRCDIR)/lwip/netif/*.c)
 
 TARGET.LIBS += liblwip
 liblwip.INHERIT = libsdk
-liblwip.DEPLIBS += \
+liblwip.DEPLIBS* += \
   liblwipapi \
   liblwipapp \
   liblwipcore \
   liblwipipv4 \
   liblwipnetif
 
-TARGET.LIBS += libaddphy
-libaddphy.INHERIT = libsdk
-libaddphy.SRCS = $(wildcard $(SRCDIR)/phy/*.c)
+TARGET.LIBS += libphy
+libphy.INHERIT = libsdk
+libphy.SRCS = $(wildcard $(SRCDIR)/phy/*.c)
+libphy.OBJS = $(wildcard $(SRCDIR)/phy/blob/*.o)
 
-TARGET.LIBS += libaddpp
-libaddpp.INHERIT = libsdk
-libaddpp.SRCS = $(wildcard $(SRCDIR)/pp/*.c)
+TARGET.LIBS += libpp
+libpp.INHERIT = libsdk
+libpp.SRCS = $(wildcard $(SRCDIR)/pp/*.c)
+libpp.OBJS = $(wildcard $(SRCDIR)/pp/blob/*.o)
 
-TARGET.LIBS += libaddmain
-libaddmain.INHERIT = libsdk
-libaddmain.SRCS = $(wildcard $(addprefix $(SRCDIR)/,system/*.c bin/esp_init_data_default.c))
+TARGET.LIBS += libmain
+libmain.INHERIT = libsdk
+libmain.SRCS = $(wildcard $(addprefix $(SRCDIR)/,system/*.c bin/esp_init_data_default.c))
+libmain.OBJS = $(wildcard $(SRCDIR)/system/blob/*.o)
 
-TARGET.LIBS += libaddwpa
-libaddwpa.INHERIT = libsdk
-libaddwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
+TARGET.LIBS += libwpa
+libwpa.INHERIT = libsdk
+libwpa.SRCS = $(wildcard $(SRCDIR)/wpa/*.c)
+libwpa.OBJS = $(wildcard $(SRCDIR)/wpa/blob/*.o)
+
+TARGET.LIBS += libnet80211
+libnet80211.INHERIT = libsdk
+libnet80211.SRCS = $(wildcard $(SRCDIR)/net80211/*.c)
+libnet80211.OBJS = $(wildcard $(SRCDIR)/net80211/blob/*.o)
 
 TARGET.LIBS += libaxtls
 libaxtls.INHERIT = libsdk
-firmware.CDEFS += ESP8266 LWIP_RAW=1
 libaxtls.SRCS += $(addprefix $(SRCDIR)/axtls/, \
   $(addprefix crypto/, \
     aes.c \
@@ -190,53 +167,27 @@ clean.ssl_certs:
 	@echo CLEAN SSL CERT/PKEY
 	$(Q)rm -f $(AXTLS_CERT_PKEY_H)
 
-ifneq (,$(call OPT_OPT,DEBUG))
-  firmware.COPT ?= g
-  firmware.CDBG ?= gdb3
-  firmware.CDEFS += USE_DEBUG
-  ifeq (y,$(DEBUG_BREAK))
-    firmware.CDEFS += GDBSTUB_BREAK_ON_INIT=1
-  endif
-  libsdk.DEPLIBS += libgdbstub
-  TARGET.LIBS += libgdbstub
-  libgdbstub.INHERIT = libsdk
-  libgdbstub.SRCS += $(wildcard $(addprefix $(SRCDIR)/gdbstub/*.,c S))
-else
-  firmware.COPT ?= s
-  firmware.CDBG ?= gdb
-endif
-
-ifneq (,$(call OPT_OPT,DEBUG_EXCEPT))
-  CDEFS += DEBUG_EXCEPTION
-endif
+TARGET.LIBS += libgdbstub
+libgdbstub.INHERIT = libsdk
+libgdbstub.SRCS += $(wildcard $(addprefix $(SRCDIR)/gdbstub/*.,c S))
 
 TARGET.LIBS += libsdk
 libsdk.INHERIT = firmware
-libsdk.SDKLIBS += \
+libsdk.DEPLIBS* += \
   libmain \
   libphy \
   libpp \
   libwpa \
-  libnet80211
-
-ifeq (,$(call OPT_OPT,USE_STDLIBS))
-  libsdk.SDKLIBS += libgcc
-endif
-
-libsdk.DEPLIBS += \
-  libaddmain \
-  libaddphy \
-  libaddpp \
-  libaddwpa \
+  libnet80211 \
+  liblwip \
   libaxtls \
-  $(addprefix esp/,$(libsdk.SDKLIBS))
+  libgdbstub
 
 # Application
 firmware.LDDIRS += $(LDDIR)
 firmware.LDSCRIPT ?= $(LDDIR)/eagle.app.v6.ld
 firmware.LDSCRIPTS ?= $(firmware.LDSCRIPT) $(LDDIR)/eagle.rom.addr.v6.ld
 firmware.LDOPTS ?= EL -gc-sections -no-check-sections -wrap=os_printf_plus static
-firmware.UNDEFS ?= call_user_start
 firmware.LDFLAGS += -nostartfiles -nodefaultlibs -nostdlib
 
 loader.LDDIRS += $(firmware.LDDIRS)
@@ -246,51 +197,24 @@ loader.LDOPTS ?= -no-check-sections static
 loader.UNDEFS ?= call_user_start loader_flash_boot
 loader.LDFLAGS ?= -nostdlib
 
-ifneq (,$(call OPT_OPT,USE_STDLIBS))
-  firmware.LDLIBS += $(addprefix -l,c m gcc)
-endif
+#ifneq (,$(call option-true,$(espsdk.use_stdlibs)))
+firmware.LDLIBS += $(addprefix -l,c m gcc)
+#endif
 
 example.INHERIT = firmware
 
-ifeq (y,$(WITH_EX_DUMMY_APP))
-  TARGET.LIBS += libdummy_app
-  libdummy_app.INHERIT = example
-  libdummy_app.SRCS += $(wildcard $(EXDIR)/dummy_app/*.c)
+define EXAMPLE_RULES
+TARGET.LIBS += example/lib$(1)
+example/lib$(1).INHERIT = example
+example/lib$(1).SRCS += $$(wildcard $(EXDIR)/$(1)/*.c)
 
-  TARGET.IMGS += dummy_app
-  dummy_app.INHERIT = libdummy_app
-  dummy_app.DEPLIBS += libsdk libdummy_app
-endif
+TARGET.IMGS += example/$(1)
+example/$(1).INHERIT = example/lib$(1)
+example/$(1).DEPLIBS = example/lib$(1)
+example/$(1).DEPLIBS* = libsdk
+endef
 
-ifeq (y,$(WITH_EX_MEM_USAGE))
-  TARGET.LIBS += libmem_usage
-  libmem_usage.INHERIT = example
-  libmem_usage.SRCS += $(wildcard $(EXDIR)/mem_usage/*.c)
-
-  TARGET.IMGS += mem_usage
-  mem_usage.INHERIT = libmem_usage
-  mem_usage.DEPLIBS += libsdk libmem_usage
-endif
-
-ifeq (y,$(WITH_EX_TCP_ECHO))
-  TARGET.LIBS += libtcp_echo
-  libtcp_echo.INHERIT = example
-  libtcp_echo.SRCS += $(wildcard $(EXDIR)/tcp_echo/*.c)
-
-  TARGET.IMGS += tcp_echo
-  tcp_echo.INHERIT = libtcp_echo
-  tcp_echo.DEPLIBS += libsdk libtcp_echo
-endif
-
-ifeq (y,$(WITH_EX_SSL_ECHO))
-  TARGET.LIBS += libssl_echo
-  libssl_echo.INHERIT = example
-  libssl_echo.SRCS += $(wildcard $(EXDIR)/ssl_echo/*.c)
-
-  TARGET.IMGS += ssl_echo
-  ssl_echo.INHERIT = libssl_echo
-  ssl_echo.DEPLIBS += libsdk libssl_echo
-endif
+$(foreach e,$(espsdk.with_examples),$(eval $(call EXAMPLE_RULES,$(e))))
 
 # Image
 rawimg.INHERIT = firmware
@@ -323,7 +247,8 @@ blank.SRCS += $(SRCDIR)/bin/blank.c
 blank.ADDR ?= 0x7E000
 
 # Provide rules
-$(foreach lib,$(TARGET.LIBS),$(eval $(call LIB_RULES,$(lib))))
-$(foreach rdi,$(TARGET.RDIS),$(eval $(call RDI_RULES,$(rdi))))
-$(foreach ldr,$(TARGET.LDRS),$(eval $(call LDR_RULES,$(ldr))))
-$(foreach img,$(TARGET.IMGS),$(eval $(call IMG_RULES,$(img))))
+$(call ADDRULES,\
+LIB_RULES:TARGET.LIBS\
+RDI_RULES:TARGET.RDIS\
+LDR_RULES:TARGET.LDRS\
+IMG_RULES:TARGET.IMGS)

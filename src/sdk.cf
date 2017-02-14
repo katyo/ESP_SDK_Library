@@ -1,0 +1,116 @@
+[option "espsdk.use_loader"]
+info = Use loader
+type = def
+key = USE_LOADER
+def = y
+
+[option "espsdk.max_iram"]
+info = Use maximum iram
+type = val
+key = USE_MAX_IRAM
+def = 48
+
+[option "espsdk.startup_cpu_clk"]
+info = CPU clock freqiency (in MHz)
+type = val
+key = STARTUP_CPU_CLK
+def = 160
+
+[option "espsdk.debug.lwip"]
+info = Debug lwip
+type = def
+def = y
+
+[option "espsdk.debug.lwip.parts"]
+info = Debug lwip parts
+type = val
+def = 
+
+[option "espsdk.use_us_timer"]
+info = Use microseconds timer
+type = def
+key = USE_US_TIMER
+def = y
+
+[option "espsdk.optimize_printf"]
+info = Use optimized printf
+type = def
+key = USE_OPTIMIZE_PRINTF
+def = y
+
+[option "espsdk.debug.uart"]
+info = UART interface for debug log
+type = val
+key = DEBUG_UART
+def = 1
+
+[option "espsdk.debug.level"]
+info = Default debug level
+type = val
+key = DEBUG_LEVEL
+def = 2
+
+[option "espsdk.debug.except"]
+info = Debug exceptions
+type = def
+key = DEBUG_EXCEPTION
+def = n
+
+[option "espsdk.debug.stub"]
+info = Use gdbstub for debug
+type = def
+key = DEBUG_GDBSTUB
+def = n
+
+[option "espsdk.debug.break"]
+info = Break to debugger on start
+type = def
+key = GDBSTUB_BREAK_ON_INIT
+def = n
+
+[option "espsdk.uart0.baud"]
+info = Baudrate for UART0
+type = val
+key = DEBUG_UART0_BAUD
+def = 230400
+
+[option "espsdk.uart1.baud"]
+info = Baudrate for UART1
+type = val
+key = DEBUG_UART1_BAUD
+def = 230400
+
+[option "espsdk.name"]
+info = Default name of SDK
+type = str
+key = SDK_NAME
+def = sdklib
+
+[option "espsdk.softap.gateway"]
+info = Default soft-ap gateway
+type = ipv4
+key = SOFTAP_GATEWAY
+def = 192.168.0.1
+
+[option "espsdk.softap.ip_addr"]
+info = Default soft-ap IP address
+type = ipv4
+key = SOFTAP_IP_ADDR
+def = $(espsdk.softap.gateway)
+
+[option "espsdk.softap.netmask"]
+info = Default soft-ap netmask
+type = ipv4
+key = SOFTAP_NETMASK
+def = 255.255.255.0
+
+[option "espsdk.no_esp_config"]
+info = Do not use native configuration
+type = def
+key = NO_ESP_CONFIG
+def = n
+
+[option "espsdk.with_examples"]
+info = Build examples
+type = set
+def = dummy_app mem_usage tcp_echo ssl_echo

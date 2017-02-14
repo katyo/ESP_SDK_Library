@@ -161,7 +161,7 @@ build.img.$(1): $$($(1).IMG)
 $$($(1).IMG): $$($(1).BIN) $$($(1).LOADER.LDR)
 	@echo TARGET $(1) IMAGE
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(ESPTOOL) elf2image -o $$(dir $$(firstword $$($(1).IMG)))$(1)- $(IMG_OPTION) $$($(1).BIN)
+	$(Q)$(ESPTOOL) elf2image -o $$(dir $$(firstword $$($(1).IMG)))$(notdir $(1))- $(IMG_OPTION) $$($(1).BIN)
 ifneq (,$$($(1).LOADER))
 	@echo TARGET $(1) ADD LOADER
 	$(Q)mv -f $$($(1).IMG1.IMG) $$($(1).IMG1.IMG)~orig

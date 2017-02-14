@@ -1,0 +1,9 @@
+[option "stalin.mode"]
+type = val
+info = The build mode [debug|release]
+def = release
+
+[option "stalin.role"]
+type = val
+info = The compiler strictness [gentle|tyrant]
+def = tyrant
