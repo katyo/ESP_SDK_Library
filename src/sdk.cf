@@ -21,7 +21,7 @@ info = Debug lwip
 type = def
 def = y
 
-[option "espsdk.debug.lwip.parts"]
+[option "espsdk.lwip.debug"]
 info = Debug lwip parts
 type = val
 def = 

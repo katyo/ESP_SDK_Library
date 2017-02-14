@@ -10,7 +10,7 @@
 #  include "hw/eagle_soc.h"
 #  include "c_types.h"
 #  include "gpio.h"
-#  include "xtensa/corebits.h"
+#  include "hw/corebits.h"
 
 #  include "gdbstub/gdbstub.h"
 #  include "gdbstub/gdbstub_entry.h"
@@ -56,7 +56,7 @@ void os_install_putc1(void (*p) (char c));
 
 #    define os_printf(...) printf(__VA_ARGS__)
 #    define os_memcpy(a,b,c) memcpy(a,b,c)
-typedef void wdtfntype();
+typedef void wdtfntype(void);
 static wdtfntype *ets_wdt_disable = (wdtfntype *) 0x400030f0;
 static wdtfntype *ets_wdt_enable = (wdtfntype *) 0x40002fa0;
 
@@ -122,7 +122,7 @@ static int obufpos = 0;         /* Current position in the buffer */
    due to a watchdog timeout while reading a command. */
 #  if GDBSTUB_FREERTOS
 static void ATTR_GDBFN
-keepWDTalive() {
+keepWDTalive(void) {
   uint64_t *wdtval = (uint64_t *) 0x3ff21048;
   uint64_t *wdtovf = (uint64_t *) 0x3ff210cc;
   int *wdtctl = (int *)0x3ff210c8;
@@ -138,7 +138,7 @@ keepWDTalive() {
 
 /* Receive a char from the uart. Uses polling and feeds the watchdog. */
 static int ATTR_GDBFN
-gdbRecvChar() {
+gdbRecvChar(void) {
   int i;
 
   while (((READ_PERI_REG(UART_STATUS(0)) >> UART_RXFIFO_CNT_S) &
@@ -159,7 +159,7 @@ gdbSendChar(char c) {
 
 /* Send the start of a packet; reset checksum calculation. */
 static void ATTR_GDBFN
-gdbPacketStart() {
+gdbPacketStart(void) {
   chsum = 0;
   gdbSendChar('$');
 }
@@ -199,7 +199,7 @@ gdbPacketHex(int val, int bits) {
 
 /* Finish sending a packet. */
 static void ATTR_GDBFN
-gdbPacketEnd() {
+gdbPacketEnd(void) {
   gdbSendChar('#');
   gdbPacketHex(chsum, 8);
 }
@@ -327,7 +327,7 @@ struct regfile {
 
 /* Send the reason execution is stopped to GDB. */
 static void ATTR_GDBFN
-sendReason() {
+sendReason(void) {
 #  if 0
   char *reason = "";            /* default */
 #  endif
@@ -539,7 +539,7 @@ gdbHandleCommand(unsigned char *cmd, int len) {
    character if it is received instead of the GDB packet
    start char. */
 static int ATTR_GDBFN
-gdbReadCommand() {
+gdbReadCommand(void) {
   unsigned char c;
   unsigned char chsum = 0, rchsum;
   unsigned char sentchs[2];
@@ -613,7 +613,7 @@ setaregval(int reg, unsigned int val) {
 
 /* Emulate the l32i/s32i instruction we're stopped at. */
 static void ATTR_GDBFN
-emulLdSt() {
+emulLdSt(void) {
   unsigned char i0 = readbyte(gdbstub_savedRegs.pc);
   unsigned char i1 = readbyte(gdbstub_savedRegs.pc + 1);
   unsigned char i2 = readbyte(gdbstub_savedRegs.pc + 2);
@@ -648,7 +648,7 @@ emulLdSt() {
 /* We just caught a debug exception and need to handle it. This is called from an assembly
    routine in gdbstub-entry.S */
 void ATTR_GDBFN
-gdbstub_handle_debug_exception() {
+gdbstub_handle_debug_exception(void) {
 
   system_soft_wdt_stop();       /*    ets_wdt_disable(); */
   sendReason();
@@ -682,7 +682,7 @@ gdbstub_handle_debug_exception() {
 #  if GDBSTUB_FREERTOS
 /* Freetos exception. This routine is called by an assembly routine in gdbstub-entry.S */
 void ATTR_GDBFN
-gdbstub_handle_user_exception() {
+gdbstub_handle_user_exception(void) {
   ets_wdt_disable();
   gdbstub_savedRegs.reason |= 0x80;     /* mark as an exception reason */
   sendReason();
@@ -737,7 +737,7 @@ gdb_semihost_putchar1(char c) {
 /* The OS-less SDK uses the Xtensa HAL to handle exceptions. We can use those functions to catch any
    fatal exceptions and invoke the debugger when this happens. */
 static void ATTR_GDBINIT
-install_exceptions() {
+install_exceptions(void) {
   unsigned int i;
 
   int exno[] = {
@@ -758,11 +758,11 @@ install_exceptions() {
 /* FreeRTOS doesn't use the Xtensa HAL for exceptions, but uses its own fatal exception handler.
    We use a small hack to replace that with a jump to our own handler, which then has the task of
    decyphering and re-instating the registers the FreeRTOS code left. */
-extern void user_fatal_exception_handler();
-extern void gdbstub_user_exception_entry();
+extern void user_fatal_exception_handler(void);
+extern void gdbstub_user_exception_entry(void);
 
 static void ATTR_GDBINIT
-install_exceptions() {
+install_exceptions(void) {
   /* Replace the user_fatal_exception_handler by a jump to our own code */
   int *ufe = (int *)user_fatal_exception_handler;
 
@@ -816,8 +816,7 @@ uart_hdlr(void *arg, void *frame) {
 }
 
 static void ATTR_GDBINIT
-install_uart_hdlr() {
-
+install_uart_hdlr(void) {
   ets_isr_attach(ETS_UART_INUM, uart_hdlr, NULL);
   SET_PERI_REG_MASK(UART_INT_ENA(0),
                     UART_RXFIFO_FULL_INT_ENA | UART_RXFIFO_TOUT_INT_ENA);
@@ -870,7 +869,7 @@ gdbstub_handle_uart_int(struct XTensa_rtos_int_frame_s *frame) {
 }
 
 static void ATTR_GDBINIT
-install_uart_hdlr() {
+install_uart_hdlr(void) {
   _xt_isr_attach(ETS_UART_INUM, gdbstub_uart_entry);
   SET_PERI_REG_MASK(UART_INT_ENA(0),
                     UART_RXFIFO_FULL_INT_ENA | UART_RXFIFO_TOUT_INT_ENA);

@@ -9,9 +9,9 @@
 
 #include "gdbstub/gdbstub_config.h"
 
-#include <xtensa/config/specreg.h>
-#include <xtensa/config/core-isa.h>
-#include <xtensa/corebits.h>
+#include "hw/specreg.h"
+#include "hw/core-isa.h"
+#include "hw/corebits.h"
 
 #define DEBUG_PC	(EPC + XCHAL_DEBUGLEVEL)
 #define DEBUG_EXCSAVE	(EXCSAVE + XCHAL_DEBUGLEVEL)
