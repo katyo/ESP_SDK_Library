@@ -499,11 +499,9 @@ startup(void) {
   read_macaddr_from_otp(info.st_mac);
   wifi_softap_cacl_mac(info.ap_mac, info.st_mac);
   /* начальный IP, mask, gw для AP */
-#define _ IP4_UINT
   info.ap_gw = SOFTAP_GATEWAY;
   info.ap_ip = SOFTAP_IP_ADDR;
   info.ap_mask = SOFTAP_NETMASK;
-#undef _
   ets_timer_init();
   lwip_init();
   /*      espconn_init(); // данный баг не используется */

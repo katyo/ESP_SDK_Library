@@ -22,12 +22,15 @@ option-put.def = $(if $(call option-true,$(2)),-D$(1))
 option-put.opt = -D$(1)=$(if $(call option-true,$(2)),1,0)
 option-put.val = -D$(1)='$(2)'
 option-put.str = -D$(1)='"$(2)"'
-option-put.ver = -D$(1)='_($(subst .,$(strip ,),$(2)))' -D$(1)_NUM='{$(subst .,$(strip ,),$(2))}' -D$(1)_STR='"$(2)"'
+option-wrap.ver = _($(1))
+option-put.ver = -D$(1)='$(call option-wrap.ver,$(subst .,$(strip ,),$(2)))' -D$(1)_NUM='{$(subst .,$(strip ,),$(2))}' -D$(1)_STR='"$(2)"'
 option-put.sym = -D$(1)='$(2)' -D$(1)_STR='"$(2)"'
 option-put.set = -D$(1)='$(subst $(strip) ,,$(patsubst %,_(%),$(2)))'
 
-option-put.ipv4 = -D$(1)='_($(subst .,$(strip ,),$(2)))'
-option-put.mac = -D$(1)='_(0x$(subst :,$(strip ,0x),$(2)))'
+option-wrap.ipv4 = _($(1))
+option-put.ipv4 = -D$(1)='$(call option-wrap.ipv4,$(subst .,$(strip ,),$(2)))'
+option-wrap.mac = _($(1))
+option-put.mac = -D$(1)='$(call option-wrap.mac,0x$(subst :,$(strip ,0x),$(2)))'
 
 # <style> <text>
 option-pretty = $(option-style-$(1))$(2)\e[0m\e[39m\e[49m
