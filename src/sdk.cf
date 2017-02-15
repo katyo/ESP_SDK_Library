@@ -69,16 +69,16 @@ key = GDBSTUB_BREAK_ON_INIT
 def = n
 
 [option "espsdk.uart0.baud"]
-info = Baudrate for UART0
+info = Primary UART baud rate
 type = val
 key = DEBUG_UART0_BAUD
-def = 230400
+def = 115200
 
 [option "espsdk.uart1.baud"]
-info = Baudrate for UART1
+info = Secondary UART baud rate
 type = val
 key = DEBUG_UART1_BAUD
-def = 230400
+def = 115200
 
 [option "espsdk.name"]
 info = Default name of SDK
