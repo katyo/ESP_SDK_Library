@@ -1,5 +1,8 @@
 OPT_P = gen/opt/$(call FIXPATH,$(1)).mk
 
+# <path>
+option-pure = $(notdir $(basename $(1)))
+
 # <owner>
 option-list = $($(1).option)
 # <owner> <option> <field>
@@ -39,11 +42,11 @@ option-style-default = \e[2m\e[97m
 option-style-custom = \e[93m
 option-style-info = \e[37m
 
-# <owner> <option>
+# <owner> <option> <target>
 define OPT_PROC
 $(2) ?= $$(call option-read,$(1),$(2),def)
 ifneq (,$$(call option-read,$(1),$(2),key))
-$(1).CFLAGS += $$(call option-put.$$(call option-read,$(1),$(2),type),$$(call option-read,$(1),$(2),key),$$(strip $$($(2))))
+$(3).CFLAGS += $$(call option-put.$$(call option-read,$(1),$(2),type),$$(call option-read,$(1),$(2),key),$$(strip $$($(2))))
 endif
 show.option.$(1).$(2):
 	@echo -e '$$(call option-pretty,type,$$(call option-read,$(1),$(2),type)) $$(call option-pretty,name,$(2)) = $$(call option-pretty,value,$$($(2))) \
@@ -54,7 +57,7 @@ info.option.$(1).$(2): show.option.$(1).$(2)
 .PHONY: show.option.$(1).$(2) info.option.$(1).$(2)
 endef
 
-# <owner> <def-file>
+# <owner> <def-file> <target>
 define OPT_MAKE
 $(call OPT_P,$(2)): $(2)
 	@echo OPT PARSE $(1) FROM $(2)
@@ -63,7 +66,7 @@ $(call OPT_P,$(2)): $(2)
 	$(Q)git config -f '$$<' --list | sed 's/^\([^=]*\)$$$$/\1=/g' >>'$$@'
 	$(Q)sed -i 's/^/$(subst /,\/,$(1))./g' '$$@'
 -include $(call OPT_P,$(2))
-$$(foreach o,$$(call option-list,$(1)),$$(eval $$(call OPT_PROC,$(1),$$(o))))
+$$(foreach o,$$(call option-list,$(1)),$$(eval $$(call OPT_PROC,$(1),$$(o),$(3))))
 show.option: show.option.$(1)
 info.option: info.option.$(1)
 show.option.$(1): $$(addprefix show.option.$(1).,$$(call option-list,$(1)))
@@ -73,10 +76,23 @@ endef
 
 .PHONY: show.option info.option
 
+define OPT_APPLY
+ifneq (,$(strip $(2)))
+ifndef $(1).$(call option-pure,$(firstword $(2))).option
+#$$(info undefined $(1).$(firstword $(2)).option)
+$(1).$(call option-pure,$(firstword $(2))).option := 1
+#$$(info $($(1).$(firstword $(2)).option))
+$$(eval $$(call OPT_MAKE,$(1).$(call option-pure,$(firstword $(2))),$(firstword $(2)),$(1)))
+$$(eval $$(call OPT_RULES,$(1)))
+else
+#$$(info 2:$(2))
+$$(eval $$(call OPT_APPLY,$(1),$(wordlist 2,$(words $(2)),$(2))))
+endif
+endif
+endef
+
 define OPT_RULES
 ifdef $(1).OPTS
-ifndef $(1).option
-$$(eval $$(call OPT_MAKE,$(1),$$($(1).OPTS)))
-endif
+$$(eval $$(call OPT_APPLY,$(1),$$($(1).OPTS)))
 endif
 endef
