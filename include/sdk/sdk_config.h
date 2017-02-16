@@ -25,10 +25,10 @@
 #  endif
 
 #  define IP4_UINT(a, b, c, d) \
-  (((a) & 0xff) |              \
-   (((b) & 0xff) << 8) |       \
-   (((c) & 0xff) << 16) |      \
-   (((d) & 0xff) << 24))
+  ((uint32_t)((a) & 0xff) |              \
+   ((uint32_t)((b) & 0xff) << 8) |       \
+   ((uint32_t)((c) & 0xff) << 16) |      \
+   ((uint32_t)((d) & 0xff) << 24))
 
 #  ifndef SOFTAP_GATEWAY
 #    define SOFTAP_GATEWAY IP4_UINT(192, 168, 4, 1)

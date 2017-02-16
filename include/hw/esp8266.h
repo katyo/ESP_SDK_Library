@@ -626,7 +626,7 @@ typedef enum {
 /* таблица (по 4 бита на номер пина) адресов IO_MUX в соответствии с номерами GPIOn */
 #  define _IO_MUX_GPIO ((uint64_t)0x3210BA9876FE4D5Cull)
 /* получить адрес IO_MUX в соответствии с номером GPIOn */
-#  define GPIOx_MUX(PIN_NUM) iomux_[1 + (uint32)((_IO_MUX_GPIO>>((PIN_NUM)<<2)) & 0x0F)]
+#  define GPIOx_MUX(PIN_NUM) iomux_[1 + (uint32_t)((_IO_MUX_GPIO>>((PIN_NUM)<<2)) & 0x0F)]
 
 /* таблица (по 2 бита на номер пина) номеров функций пинов для установки в режим GPIO */
 #  define _FUN_IO_PORT  ((uint32_t)0xFFFFF0CCul)

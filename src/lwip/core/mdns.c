@@ -183,7 +183,7 @@ PACK_STRUCT_END
 
 PACK_STRUCT_END
 #  define SIZEOF_MDNS_SERVICE 6
-  uint16 PUCK_PORT;
+  uint16_t PUCK_PORT;
 os_timer_t mdns_timer LWIP_DATA_IRAM_ATTR;
 
 /* forward declarations */
@@ -204,8 +204,8 @@ static struct udp_pcb *mdns_pcb LWIP_DATA_IRAM_ATTR;
 
 static struct ip_addr multicast_addr;
 static struct ip_addr host_addr;
-static uint8 register_flag = 0;
-static uint8 mdns_flag = 0;
+static uint8_t register_flag = 0;
+static uint8_t mdns_flag = 0;
 
 /* #if (DNS_USES_STATIC_BUF == 1)
    static u8_t mdns_payload[DNS_MSG_SIZE];
@@ -1059,7 +1059,7 @@ mdns_server_register(void) {
 void
 mdns_reg(struct mdns_info *info) {
 
-  static uint8 i = 0;
+  static uint8_t i = 0;
 
   if (i <= 3) {
     mdns_send_service(info, 0);

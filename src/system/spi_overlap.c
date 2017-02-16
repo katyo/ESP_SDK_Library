@@ -65,7 +65,7 @@ overlap_hspi_read_data(SpiFlashChip * fchip, uint32_t faddr, void *des,
     return SPI_FLASH_RESULT_ERR;
   if (size < 1)
     return SPI_FLASH_RESULT_ERR;
-  uint32_t blksize = (uint32) des & 3;
+  uint32_t blksize = (uint32_t) des & 3;
 
   if (blksize) {
     blksize = 4 - blksize;

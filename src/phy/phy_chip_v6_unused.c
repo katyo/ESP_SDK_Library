@@ -53,7 +53,7 @@ chip_v6_unset_chanfreq(void) {
    os_printf_plus("slop_test\n");
    CLK_PRE_PORT |= 1;
    i2c_writeReg_Mask(106, 2, 8, 4, 0, 0);
-   uint32 x = IOREG(0x3FF20C00);
+   uint32_t x = IOREG(0x3FF20C00);
    RFChannelSel(14);
    int i;
    for(i=0; i<200; i++) {
@@ -72,7 +72,7 @@ chip_v6_unset_chanfreq(void) {
 
    voidwd_reset_cnt(void)
    {
-   uint32 x = rtc_get_reset_reason();
+   uint32_t x = rtc_get_reset_reason();
    if(x == 4)	os_printf("wd_reset %d\n", RTC_RAM_BASE[0xFC>>2]);
    else if(x == 2 || x != 1) {
     RTC_RAM_BASE[0xFC>>2] = 0;

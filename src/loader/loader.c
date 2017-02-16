@@ -40,7 +40,7 @@ void __attribute__ ((noreturn)) call_user_start(void) {
   Cache_Read_Enable(0, 0, 0);
   /* Переход в область кеширования flash,
    * Запускаем загрузку SDK с указателем на заголовок SPIFlashHeader (находится за данным загручиком по адресу с align 16) */
-/*		((loader_call)((uint32)(&loader_flash_boot) + FLASH_BASE - IRAM_BASE + 0x10))((struct SPIFlashHeader *)(((uint32)(&_text_end) + FLASH_BASE - IRAM_BASE + 0x17) & (~15))); */
+/*		((loader_call)((uint32_t)(&loader_flash_boot) + FLASH_BASE - IRAM_BASE + 0x10))((struct SPIFlashHeader *)(((uint32_t)(&_text_end) + FLASH_BASE - IRAM_BASE + 0x17) & (~15))); */
   ((loader_call) (loader_flash_boot_addr))
     ((struct SPIFlashHeader*)(next_flash_header_addr));
 
