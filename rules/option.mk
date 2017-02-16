@@ -1,4 +1,4 @@
-OPT_P = gen/opt/$(call FIXPATH,$(1)).mk
+OPT_P = gen/option/$(call FIXPATH,$(1)).mk
 
 # <path>
 option-pure = $(notdir $(basename $(1)))
@@ -65,8 +65,8 @@ define OPT_MAKE
 $(call OPT_P,$(2)): $(2)
 	@echo OPT PARSE $(1) FROM $(2)
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)echo option=$$(call uniq,$$(patsubst option.%,%,$$(shell git config -f '$$<' --list | sed 's/^\([^=]*\)$$$$/\1=/g' | sed 's/^\([^=]*\)\.[^=]*=.*/\1/g'))) >'$$@'
-	$(Q)git config -f '$$<' --list | sed 's/^\([^=]*\)$$$$/\1=/g' >>'$$@'
+	$(Q)echo option=$$(call uniq,$$(patsubst option.%,%,$$(shell git config -f '$$<' --list | grep '^option\.' | sed 's/^\([^=]*\)$$$$/\1=/g' | sed 's/^\([^=]*\)\.[^=]*=.*/\1/g'))) >'$$@'
+	$(Q)git config -f '$$<' --list | grep '^option\.' | sed 's/^\([^=]*\)$$$$/\1=/g' >>'$$@'
 	$(Q)sed -i 's/^/$(subst /,\/,$(1))./g' '$$@'
 -include $(call OPT_P,$(2))
 $$(foreach o,$$(call option-list,$(1)),$$(eval $$(call OPT_PROC,$(1),$$(o),$(3))))
