@@ -1,7 +1,7 @@
-firmware.INHERIT := stalin
-#firmware.CSTD ?= gnu90
-#firmware.CWARN ?= all extra no-pointer-sign undef pointer-arith error
-#firmware.COPTS ?= function-sections data-sections no-inline-functions
+xtensa.INHERIT := stalin
+$(call use_toolchain,xtensa,xtensa-lx106-elf-)
+
+firmware.INHERIT := xtensa
 firmware.COPTS ?= no-tree-ccp optimize-register-move
 firmware.CMACH ?= no-target-align no-serialize-volatile longcalls text-section-literals
 firmware.CDIRS ?= $(libsdk.INCDIR)
@@ -17,13 +17,7 @@ firmware.GDBOPTS += \
 
 LOADER ?= $(if $(call option-true,$(espsdk.use_loader)),rapid_loader)
 
-loader.CSTD ?= $(firmware.CSTD)
-loader.COPT ?= $(firmware.COPT)
-loader.CDBG ?= $(firmware.CDBG)
-loader.CWARN ?= $(firmware.CWARN)
-loader.COPTS ?= $(firmware.COPTS)
-loader.CMACH ?= $(firmware.CMACH)
-loader.CDIRS ?= $(firmware.CDIRS)
+loader.INHERIT := firmware
 
 firmware.CDEFS += \
   ESP8266 \
@@ -43,9 +37,9 @@ firmware.LDDIRS += $(libsdk.LDDIR)
 firmware.LDSCRIPT ?= $(libsdk.LDDIR)/eagle.app.v6.ld
 firmware.LDSCRIPTS ?= $(firmware.LDSCRIPT) $(libsdk.LDDIR)/eagle.rom.addr.v6.ld
 firmware.LDOPTS ?= EL -gc-sections -no-check-sections -wrap=os_printf_plus static
+loader.UNDEFS ?= call_user_start
 firmware.LDFLAGS += -nostartfiles -nodefaultlibs -nostdlib
 
-loader.LDDIRS += $(firmware.LDDIRS)
 loader.LDSCRIPT ?= $(libsdk.LDDIR)/eagle.app.v6-loader.ld
 loader.LDSCRIPTS ?= $(loader.LDSCRIPT) $(libsdk.LDDIR)/eagle.rom.addr.v6.ld
 loader.LDOPTS ?= -no-check-sections static
@@ -55,7 +49,7 @@ loader.LDFLAGS ?= -nostdlib
 firmware.LDLIBS += $(addprefix -l,c m gcc)
 
 # Image
-rawimg.INHERIT = firmware
+rawimg.INHERIT := firmware
 
 # Program codes IRAM/RAM
 IMG1.ADDR ?= 0x00000

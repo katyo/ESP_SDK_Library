@@ -122,7 +122,7 @@ build.img.$(1): $$($(1).IMG)
 $$($(1).IMG): $$($(1).OBJ)
 	@echo TARGET $(1) RDI
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$(OBJCOPY) -O binary -j .irom0.rodata $$^ $$@
+	$(Q)$$($(1).OBJCOPY) -O binary -j .irom0.rodata $$^ $$@
 
 clean: clean.img.$(1)
 clean.img.$(1):
@@ -199,7 +199,7 @@ build: build.ldr.$(1)
 build.ldr.$(1): $$($(1).LDR)
 $$($(1).LDR): $$($(1).IMG)
 	@echo TARGET $(1) MAKE LOADER
-	$(Q)$(OBJCOPY) -O binary -j .lit4 $$($(1).BIN) $$($(1).BIN)~addld
+	$(Q)$$($(1).OBJCOPY) -O binary -j .lit4 $$($(1).BIN) $$($(1).BIN)~addld
 	$(Q)cat $$($(1).IMG1.IMG) $$($(1).BIN)~addld >$$($(1).LDR)
 	$(Q)rm -f $$($(1).BIN)~addld
 

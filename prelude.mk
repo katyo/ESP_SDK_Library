@@ -1,6 +1,3 @@
-# Compiler
-COMPILER_NAME ?= xtensa-lx106-elf-
-
 # Serial port setup
 PORT ?= /dev/ttyUSB0
 BAUD ?= 230400
