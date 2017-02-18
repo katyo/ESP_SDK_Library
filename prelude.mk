@@ -16,6 +16,7 @@ include $(libsdk.MKDIR)/build.mk
 include $(libsdk.MKDIR)/image.mk
 include $(libsdk.MKDIR)/option.mk
 include $(libsdk.MKDIR)/stalin.mk
+include $(libsdk.MKDIR)/ssl.mk
 -include config.mk
 
 option-wrap.ipv4 = IP4_UINT($(1))

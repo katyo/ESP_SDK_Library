@@ -436,7 +436,7 @@ int load_key_certs(SSL_CTX *ssl_ctx)
     else if (!(options & SSL_NO_DEFAULT_KEY))
     {
 #if defined(CONFIG_SSL_USE_DEFAULT_KEY) || defined(CONFIG_SSL_SKELETON_MODE)
-        extern const unsigned char* default_private_key;
+        extern const unsigned char default_private_key[];
         extern const unsigned int default_private_key_len;
         if (default_private_key != NULL && default_private_key_len > 0)
             ssl_obj_memory_load(ssl_ctx, SSL_OBJ_RSA_KEY, default_private_key,
@@ -464,7 +464,7 @@ int load_key_certs(SSL_CTX *ssl_ctx)
     else if (!(options & SSL_NO_DEFAULT_KEY))
     {
 #if defined(CONFIG_SSL_USE_DEFAULT_KEY) || defined(CONFIG_SSL_SKELETON_MODE)
-        extern const unsigned char* default_certificate;
+        extern const unsigned char default_certificate[];
         extern const unsigned int default_certificate_len;
         if (default_certificate != NULL && default_certificate_len > 0)
             ssl_obj_memory_load(ssl_ctx, SSL_OBJ_X509_CERT,

@@ -76,7 +76,6 @@ libaxtls.SRCS += $(addprefix $(libsdk.SRCDIR)/axtls/, \
   $(addprefix replacements/, \
     time.c) \
   $(addprefix ssl/, \
-    default.c \
     asn1.c \
     gen_cert.c \
     loader.c \
@@ -88,15 +87,7 @@ libaxtls.SRCS += $(addprefix $(libsdk.SRCDIR)/axtls/, \
     x509.c) \
   $(addprefix compat/, \
     lwipr_compat.c))
-AXTLS_CERT_PKEY_H := $(addprefix $(libsdk.SRCDIR)/axtls/ssl/,cert.h private_key.h)
-$(libsdk.SRCDIR)/axtls/ssl/default.c: $(AXTLS_CERT_PKEY_H)
-$(AXTLS_CERT_PKEY_H):
-	@echo GEN SSL CERT/PKEY
-	$(Q)$(libsdk.SRCDIR)/axtls/tools/make_certs.sh
-clean: clean.ssl_certs
-clean.ssl_certs:
-	@echo CLEAN SSL CERT/PKEY
-	$(Q)rm -f $(AXTLS_CERT_PKEY_H)
+$(eval $(call SSL_RULES,libaxtls))
 
 TARGET.LIBS += libgdbstub
 libgdbstub.INHERIT = libsdk
