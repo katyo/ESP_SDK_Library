@@ -62,6 +62,7 @@ FILTER_SOURCES = $(foreach f,$(2),$(if $(filter $(1),$(call CC_GET_SOURCE,$(f)))
 
 define CPP_RULE # <library> <c|S> <orig-source> <source> <source-args> <rest-rules>
 $(1).DEP += $(call GEN_P,$(1),$(3),,d)
+$(1).TMP += $(call GEN_P,$(1),$(3),e)
 $(call GEN_P,$(1),$(3),e): $(4)
 	@echo TARGET $(1) CPP $(2) $$< $(5)
 	$(Q)mkdir -p $$(dir $$@)
@@ -99,9 +100,13 @@ check-syntax-$(3): $$(patsubst %.$(2),%_flymake.$(2),$(call CC_GET_SOURCE,$(3)))
 endif
 endef
 
+UNIQ_FILE_EXTS = $(sort $(foreach f,$(1),$(patsubst $(basename $(f)).%,%,$(f))))
+
 # Compilation rules
-define CC_RULES # <library> <c|S>
-$$(foreach f,$$(call FILTER_SOURCES,%.$(2),$$($(1).SRCS)),$$(eval $$(call CC_RULE,$(1),$(2),$$(f))))
+define CC_RULES # <library>
+$$(foreach e,$$(call UNIQ_FILE_EXTS,$$($(1).SRCS)),\
+$$(foreach f,$$(call FILTER_SOURCES,%.$$(e),$$($(1).SRCS)),\
+$$(eval $$(call CC_RULE,$(1),$$(e),$$(f)))))
 endef
 
 # Blob packing rules
@@ -149,10 +154,7 @@ endef
 # Library rules
 define LIB_RULES
 $$(eval $$(call CFLAGS_EXPAND,$(1)))
-
-$$(eval $$(call CC_RULES,$(1),c))
-$$(eval $$(call CC_RULES,$(1),S))
-$$(eval $$(call PK_RULES,$(1),c S))
+$$(eval $$(call CC_RULES,$(1)))
 
 -include $$($(1).DEP)
 
@@ -174,7 +176,7 @@ $$($(1).LIB): $$($(1).OBJS)
 clean: clean.lib.$(1)
 clean.lib.$(1):
 	@echo TARGET $(1) LIB CLEAN
-	$(Q)rm -f $$($(1).LIB) $$($(1).OBJ) $$($(1).DEP)
+	$(Q)rm -f $$($(1).LIB) $$($(1).OBJ) $$($(1).DEP) $$($(1).TMP)
 
 $$(eval $$(call ANALYZE_RULES,$(1),$$($(1).LIB)))
 endef

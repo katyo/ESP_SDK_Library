@@ -62,6 +62,8 @@ endef
 
 # <owner> <def-file> <target>
 define OPT_MAKE
+ifndef $(call OPT_P,$(2))
+$(call OPT_P,$(2)) := p
 $(call OPT_P,$(2)): $(2)
 	@echo OPT PARSE $(1) FROM $(2)
 	$(Q)mkdir -p $$(dir $$@)
@@ -69,6 +71,7 @@ $(call OPT_P,$(2)): $(2)
 	$(Q)git config -f '$$<' --list | grep '^option\.' | sed 's/^\([^=]*\)$$$$/\1=/g' >>'$$@'
 	$(Q)sed -i 's/^/$(subst /,\/,$(1))./g' '$$@'
 -include $(call OPT_P,$(2))
+endif
 $$(foreach o,$$(call option-list,$(1)),$$(eval $$(call OPT_PROC,$(1),$$(o),$(3))))
 show.option: show.option.$(1)
 info.option: info.option.$(1)
