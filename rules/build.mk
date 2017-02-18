@@ -96,7 +96,7 @@ $(call GEN_P,$(1),$(3),,S): symbol_prefix=$(or $(call CC_GET_VALUE,symbol,$(5)),
 $(call GEN_P,$(1),$(3),,S): $(4)
 	@echo TARGET $(1) GEN BLOB $$(notdir $$<)
 	$(Q)mkdir -p $$(dir $$@)
-	$(Q)echo '  .section $(or $(call CC_GET_VALUE,section,$(5)),.rodata)' > $$@
+	$(Q)echo '  .section $$(or $(call CC_GET_VALUE,section,$(5)),$$($(1).RODATA),.rodata)' > $$@
 	$(Q)echo '  .align $(or $(call CC_GET_VALUE,align,$(5)),4)' >> $$@
 	$(Q)echo '  /* pointer to data array */' >> $$@
 	$(Q)echo '  /* const unsigned char $$(symbol_prefix)[]; */' >> $$@
@@ -149,7 +149,8 @@ endef
 
 COMMON_CCARGS := ADD:SPECS ADD:CFLAGS ADD:CDIRS ADD:CDEFS \
   SET:CSTD ADD:CWARN SET:COPT SET:CDBG ADD:COPTS ADD:CMACH \
-  SET:CCPIPE SET:CCPIPE.c SET:CCPIPE.S ADD:CCARGS ADD:DUMPOPTS
+  SET:CCPIPE SET:CCPIPE.c SET:CCPIPE.S ADD:CCARGS ADD:DUMPOPTS \
+  SET:RODATA
 
 INHERITS_ARGS = $(foreach g,$(COMMON_TCARGS) $(COMMON_$(2)) $($(1).$(2)),\
 $(call INHERITS,$(1),$(firstword $(subst :, ,$(g))),$(lastword $(subst :, ,$(g)))))
