@@ -92,10 +92,4 @@
 #    define ets_run ets_run_new
 #  endif
 
-#  ifdef USE_DEBUG
-#    include "gdbstub/gdbstub.h"
-#  else
-#    define gdbstub_init()
-#  endif
-
 #endif /* _sdk_config_h_ */
