@@ -57,6 +57,7 @@ NEXT_RULE = $(if $(6),$(call $(firstword $(6)),$(1),$(2),$(3),$(4),$(5),$(wordli
 
 CC_GET_SOURCE = $(word 1,$(subst ?, ,$(1)))
 CC_GET_PARAMS = $(word 2,$(subst ?, ,$(1)))
+CC_GET_VALUE = $(strip $(foreach p,$(subst &, ,$(2)),$(if $(filter $(1),$(word 1,$(subst =, ,$(p)))),$(word 2,$(subst =, ,$(p))))))
 PARAMS_TO_DEFS = $(addprefix -D,$(subst &, ,$(1)))
 FILTER_SOURCES = $(foreach f,$(2),$(if $(filter $(1),$(call CC_GET_SOURCE,$(f))),$(f)))
 
@@ -86,12 +87,49 @@ $(call GEN_P,$(1),$(3),,o): $(4)
 $(call NEXT_RULE,$(1),$(2),$(3),$(call GEN_P,$(1),$(3),,o),$(5),$(6))
 endef
 
+CC_BLOB_NAME = $(subst .,_,$(notdir $(1)))
+
+define CCPRE_RULE # <library> <c|S> <orig-source> <source> <source-args> <rest-rules>
+ifeq (,$(filter c S,$(2)))
+$(1).TMP += $(call GEN_P,$(1),$(3),,S)
+$(call GEN_P,$(1),$(3),,S): symbol_prefix=$(or $(call CC_GET_VALUE,symbol,$(5)),$(call CC_BLOB_NAME,$(3)))
+$(call GEN_P,$(1),$(3),,S): $(4)
+	@echo TARGET $(1) GEN BLOB $$(notdir $$<)
+	$(Q)mkdir -p $$(dir $$@)
+	$(Q)echo '  .section $(or $(call CC_GET_VALUE,section,$(5)),.rodata)' > $$@
+	$(Q)echo '  .align $(or $(call CC_GET_VALUE,align,$(5)),4)' >> $$@
+	$(Q)echo '  /* pointer to data array */' >> $$@
+	$(Q)echo '  /* const unsigned char $$(symbol_prefix)[]; */' >> $$@
+	$(Q)echo '  .global $$(symbol_prefix)' >> $$@
+	$(Q)echo '  /* size of data array */' >> $$@
+	$(Q)echo '  /* const unsigned int $$(symbol_prefix)_len; */' >> $$@
+	$(Q)echo '  .global $$(symbol_prefix)_len' >> $$@
+	$(Q)echo '  .global $$(symbol_prefix)_size' >> $$@
+	$(Q)echo '  /* pointer to beginning of data */' >> $$@
+	$(Q)echo '  /* const unsigned char $$(symbol_prefix)_start[]; */' >> $$@
+	$(Q)echo '  .global $$(symbol_prefix)_start' >> $$@
+	$(Q)echo '  /* pointer to end of data */' >> $$@
+	$(Q)echo '  /* const unsigned char $$(symbol_prefix)_end[]; */' >> $$@
+	$(Q)echo '  .global $$(symbol_prefix)_end' >> $$@
+	$(Q)echo '$$(symbol_prefix):' >> $$@
+	$(Q)echo '$$(symbol_prefix)_start:' >> $$@
+	$(Q)echo '  .incbin "$$<"' >> $$@
+	$(Q)echo '$$(symbol_prefix)_end:' >> $$@
+	$(Q)echo '$$(symbol_prefix)_len:' >> $$@
+	$(Q)echo '$$(symbol_prefix)_size:' >> $$@
+	$(Q)echo '  .word $$(symbol_prefix)_end - $$(symbol_prefix)_start' >> $$@
+$(call NEXT_RULE,$(1),$(2),$(3),$(call GEN_P,$(1),$(3),,S),$(5),$(6))
+else
+$(call NEXT_RULE,$(1),$(2),$(3),$(4),$(5),$(6))
+endif
+endef
+
 define CCEND_RULE # <library> <c|S> <orig-source> <source> <source-args> <rest-rules>
 $(1).OBJ += $(4)
 endef
 
 define CC_RULE # <library> <c|S> <source>
-$$(eval $$(call NEXT_RULE,$(1),$(2),$(call CC_GET_SOURCE,$(3)),$(call CC_GET_SOURCE,$(3)),$(call CC_GET_PARAMS,$(3)),$$(or $$($(1).CCPIPE.$(2)),$$($(1).CCPIPE),CPPOBJ_RULE) CCEND_RULE))
+$$(eval $$(call NEXT_RULE,$(1),$(2),$(call CC_GET_SOURCE,$(3)),$(call CC_GET_SOURCE,$(3)),$(call CC_GET_PARAMS,$(3)),$$(or $$($(1).CCPIPE.$(2)),$$($(1).CCPIPE),CCPRE_RULE CPPOBJ_RULE) CCEND_RULE))
 # flymake support
 ifneq (,$$(filter $$(patsubst %.$(2),%_flymake.$(2),$(3)),$$(CHK_SOURCES)))
 check-syntax: check-syntax-$(3)
@@ -100,27 +138,13 @@ check-syntax-$(3): $$(patsubst %.$(2),%_flymake.$(2),$(call CC_GET_SOURCE,$(3)))
 endif
 endef
 
-UNIQ_FILE_EXTS = $(sort $(foreach f,$(1),$(patsubst $(basename $(f)).%,%,$(f))))
+UNIQ_FILE_EXTS = $(sort $(foreach f,$(1),$(patsubst $(basename $(call CC_GET_SOURCE,$(f))).%,%,$(call CC_GET_SOURCE,$(f)))))
 
 # Compilation rules
 define CC_RULES # <library>
 $$(foreach e,$$(call UNIQ_FILE_EXTS,$$($(1).SRCS)),\
 $$(foreach f,$$(call FILTER_SOURCES,%.$$(e),$$($(1).SRCS)),\
 $$(eval $$(call CC_RULE,$(1),$$(e),$$(f)))))
-endef
-
-# Blob packing rules
-define PK_RULES
-$(1).SRC.PK += $$(filter-out $$(addprefix %.,$(2)),$$($(1).SRCS))
-$(1).SRC += $$($(1).SRC.PK)
-
-$(1).OBJ.PK := $$(patsubst %,$$(call OBJ_P,$(1)/%),$$($(1).SRC.PK))
-$(1).OBJ += $$($(1).OBJ.PK)
-
-$$(call OBJ_P,$(1)/%): %
-	@echo TARGET $(1) PK $$<
-	$(Q)mkdir -p $$(dir $$@)
-	$(Q)$$($(1).OBJCOPY) -I binary -O $$(firstword $$(OBJECT_ARCH)) -B $$(lastword $$(OBJECT_ARCH)) $$< $$@
 endef
 
 COMMON_CCARGS := ADD:SPECS ADD:CFLAGS ADD:CDIRS ADD:CDEFS \
