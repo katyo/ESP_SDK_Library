@@ -4,6 +4,12 @@ type = def
 key = USE_LOADER
 def = y
 
+[option "espsdk.loader.gpio0_clk_off"]
+info = Disable clk output to GPIO0
+type = def
+key = GPIO0_CLK_OFF
+def = n
+
 [option "espsdk.max_iram"]
 info = Use maximum iram
 type = val

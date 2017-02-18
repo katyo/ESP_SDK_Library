@@ -28,7 +28,9 @@ typedef void (*loader_call) (void *) __attribute__ ((noreturn));
 void __attribute__ ((noreturn)) call_user_start(void) {
 /*		Cache_Read_Disable(); */
   IO_RTC_4 = 0;			/* Отключить блок WiFi (уменьшение потребления на время загрузки) */
+#ifdef GPIO0_CLK_OFF
   GPIO0_MUX = VAL_MUX_GPIO0_SDK_DEF; // Отключить вывод CLK на GPIO0
+#endif
   SPI0_USER |= SPI_CS_SETUP;	/* +1 такт перед CS = 0x80000064 */
 #if FQSPI == 80			/* xSPI на 80 MHz */
   GPIO_MUX_CFG |= BIT(MUX_SPI0_CLK_BIT);	/* QSPI = 80 MHz */
