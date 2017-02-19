@@ -6,6 +6,7 @@ firmware.COPTS ?= no-tree-ccp optimize-register-move
 firmware.CMACH ?= no-target-align no-serialize-volatile longcalls text-section-literals
 firmware.CDIRS ?= $(libsdk.INCDIR)
 firmware.ALIGN := 4
+firmware.SIZEB := 4
 firmware.RODATA ?= .irom0.rodata
 
 GDBBAUD ?= $(BAUD)

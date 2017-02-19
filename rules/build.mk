@@ -94,6 +94,7 @@ ifeq (,$(filter c S,$(2)))
 $(1).TMP += $(call GEN_P,$(1),$(3),,S)
 $(call GEN_P,$(1),$(3),,S): symbol_prefix=$(or $(call CC_GET_VALUE,symbol,$(5)),$(call CC_BLOB_NAME,$(3)))
 $(call GEN_P,$(1),$(3),,S): align=$$(or $(call CC_GET_VALUE,align,$(5)),$$($(1).ALIGN))
+$(call GEN_P,$(1),$(3),,S): sizeb=$$(or $(call CC_GET_VALUE,sizeb,$(5)),$$($(1).SIZEB))
 $(call GEN_P,$(1),$(3),,S): $(4)
 	@echo TARGET $(1) GEN BLOB $$(notdir $$<)
 	$(Q)mkdir -p $$(dir $$@)
@@ -119,7 +120,7 @@ $(call GEN_P,$(1),$(3),,S): $(4)
 	$$(if $$(align),$(Q)echo '  .align $$(align)' >> $$@)
 	$(Q)echo '$$(symbol_prefix)_len:' >> $$@
 	$(Q)echo '$$(symbol_prefix)_size:' >> $$@
-	$(Q)echo '  .word $$(symbol_prefix)_end - $$(symbol_prefix)_start' >> $$@
+	$(Q)echo '  .$$(sizeb)byte $$(symbol_prefix)_end - $$(symbol_prefix)_start' >> $$@
 $(call NEXT_RULE,$(1),$(2),$(3),$(call GEN_P,$(1),$(3),,S),$(5),$(6))
 else
 $(call NEXT_RULE,$(1),$(2),$(3),$(4),$(5),$(6))
@@ -152,7 +153,7 @@ endef
 COMMON_CCARGS := ADD:SPECS ADD:CFLAGS ADD:CDIRS ADD:CDEFS \
   SET:CSTD ADD:CWARN SET:COPT SET:CDBG ADD:COPTS ADD:CMACH \
   SET:CCPIPE SET:CCPIPE.c SET:CCPIPE.S ADD:CCARGS ADD:DUMPOPTS \
-  SET:RODATA SET:ALIGN
+  SET:RODATA SET:ALIGN SET:SIZEB
 
 INHERITS_ARGS = $(foreach g,$(COMMON_TCARGS) $(COMMON_$(2)) $($(1).$(2)),\
 $(call INHERITS,$(1),$(firstword $(subst :, ,$(g))),$(lastword $(subst :, ,$(g)))))
