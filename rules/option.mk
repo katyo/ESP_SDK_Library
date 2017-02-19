@@ -27,9 +27,9 @@ option-put.ver = -D$(1)='$(call option-wrap.ver,$(subst .,$(strip ,),$(2)))' -D$
 option-put.sym = -D$(1)='$(2)' -D$(1)_STR='"$(2)"'
 option-put.set = -D$(1)='$(subst $(strip) ,,$(patsubst %,_(%),$(2)))'
 
-option-wrap.ipv4 = _($(1))
+option-wrap.ipv4 = $(1)
 option-put.ipv4 = -D$(1)='$(call option-wrap.ipv4,$(subst .,$(strip ,),$(2)))'
-option-wrap.mac = _($(1))
+option-wrap.mac = $(1)
 option-put.mac = -D$(1)='$(call option-wrap.mac,0x$(subst :,$(strip ,0x),$(2)))'
 
 # <style> <text>

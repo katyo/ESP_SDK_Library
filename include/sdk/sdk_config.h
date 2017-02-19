@@ -24,14 +24,15 @@
 #    define DEBUG_UART1_BAUD 230400
 #  endif
 
-#  define IP4_UINT(a, b, c, d) \
+#  define _IP4_UINT(a, b, c, d) \
   ((uint32_t)((a) & 0xff) |              \
    ((uint32_t)((b) & 0xff) << 8) |       \
    ((uint32_t)((c) & 0xff) << 16) |      \
    ((uint32_t)((d) & 0xff) << 24))
+#  define IP4_UINT(...) _IP4_UINT(__VA_ARGS__)
 
 #  ifndef SOFTAP_GATEWAY
-#    define SOFTAP_GATEWAY IP4_UINT(192, 168, 4, 1)
+#    define SOFTAP_GATEWAY 192,168,4,1
 #  endif
 
 #  ifndef SOFTAP_IP_ADDR
@@ -39,7 +40,7 @@
 #  endif
 
 #  ifndef SOFTAP_NETMASK
-#    define SOFTAP_NETMASK IP4_UINT(255, 255, 255, 0)
+#    define SOFTAP_NETMASK 255,255,255,0
 #  endif
 
 #  define STARTUP_CPU_CLK 160
