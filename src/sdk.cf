@@ -23,14 +23,21 @@ key = STARTUP_CPU_CLK
 def = 160
 
 [option "espsdk.debug.lwip"]
-info = Debug lwip
+info = Enable debug lwip
 type = def
-def = y
+key = LWIP_DEBUG
+def = n
 
 [option "espsdk.lwip.debug"]
 info = Debug lwip parts
 type = val
-def = 
+def =
+
+[option "espsdk.debug.ssl"]
+info = Enable debug ssl
+type = def
+key = SSL_DEBUG
+def = n
 
 [option "espsdk.use_us_timer"]
 info = Use microseconds timer
@@ -44,17 +51,17 @@ type = def
 key = USE_OPTIMIZE_PRINTF
 def = y
 
-[option "espsdk.debug.uart"]
-info = UART interface for debug log
-type = val
-key = DEBUG_UART
-def = 1
-
 [option "espsdk.debug.level"]
 info = Default debug level
 type = val
 key = DEBUG_LEVEL
-def = 2
+def = error
+
+[option "espsdk.debug.output"]
+info = Debug output destination (none|uart0|uart1)
+type = val
+key = DEBUG_OUTPUT
+def = uart1
 
 [option "espsdk.debug.except"]
 info = Debug exceptions
@@ -74,17 +81,65 @@ type = def
 key = GDBSTUB_BREAK_ON_INIT
 def = n
 
-[option "espsdk.uart0.baud"]
+[option "espsdk.uart0.setup"]
+info = Configure primary UART on startup
+type = def
+key = UART0_SETUP
+def = y
+
+[option "espsdk.uart0.baud_rate"]
 info = Primary UART baud rate
 type = val
-key = DEBUG_UART0_BAUD
+key = UART0_BAUD_RATE
 def = 115200
 
-[option "espsdk.uart1.baud"]
+[option "espsdk.uart0.data_bits"]
+info = Primary UART data bits (5|6|7|8)
+type = val
+key = UART0_DATA_BITS
+def = 8
+
+[option "espsdk.uart0.stop_bits"]
+info = Primary UART stop bits (1|1.5|2)
+type = val
+key = UART0_STOP_BITS
+def = 1
+
+[option "espsdk.uart0.force_crlf"]
+info = Force cariage return before line feed for primary UART
+type = def
+key = UART0_FORCE_CRLF
+def = y
+
+[option "espsdk.uart1.setup"]
+info = Configure secondary UART on startup
+type = def
+key = UART1_SETUP
+def = y
+
+[option "espsdk.uart1.baud_rate"]
 info = Secondary UART baud rate
 type = val
-key = DEBUG_UART1_BAUD
+key = UART1_BAUD_RATE
 def = 115200
+
+[option "espsdk.uart1.data_bits"]
+info = Secondary UART data bits (5|6|7|8)
+type = val
+key = UART1_DATA_BITS
+def = 8
+
+[option "espsdk.uart1.stop_bits"]
+info = Secondary UART stop bits (1|1.5|2)
+type = val
+key = UART1_STOP_BITS
+def = 1
+
+[option "espsdk.uart1.force_crlf"]
+info = Force cariage return before line feed for secondary UART
+type = def
+key = UART1_FORCE_CRLF
+def = y
 
 [option "espsdk.name"]
 info = Default name of SDK

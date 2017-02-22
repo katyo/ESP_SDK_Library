@@ -171,16 +171,19 @@ uart0_write_char(char c) {
   if (c != '\r') {
     do {
       MEMW();
-      if (((UART0_STATUS >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT) <= 125)
+      if (UART_TXFIFO_CNT_GET(UART0_STATUS) <= 125)
 	break;
-    }
-    while (1);
-    if (c != '\n')
+    } while (1);
+#ifdef UART0_FORCE_CRLF
+    if (c != '\n') {
+#endif
       UART0_FIFO = c;
-    else {
+#ifdef UART0_FORCE_CRLF
+    } else {
       UART0_FIFO = '\r';
       UART0_FIFO = '\n';
     }
+#endif
   }
 }
 
@@ -192,16 +195,20 @@ uart1_write_char(char c) {
   if (c != '\r') {
     do {
       MEMW();
-      if (((UART1_STATUS >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT) <= 125)
+      if (UART_TXFIFO_CNT_GET(UART1_STATUS) <= 125)
 	break;
     }
     while (1);
-    if (c != '\n')
+#ifdef UART1_FORCE_CRLF
+    if (c != '\n') {
+#endif
       UART1_FIFO = c;
-    else {
+#ifdef UART1_FORCE_CRLF
+    } else {
       UART1_FIFO = '\r';
       UART1_FIFO = '\n';
     }
+#endif
   }
 }
 
@@ -403,28 +410,72 @@ read_wifi_config(void) {
 #endif
 }
 
-#ifdef DEBUG_UART
 void
 startup_uart_init(void) {
   ets_isr_mask(1 << ETS_UART_INUM);
+  
+#ifdef UART0_SETUP
   UART0_INT_ENA = 0;
-  UART1_INT_ENA = 0;
-  UART0_INT_CLR = 0xFFFFFFFF;
-  UART1_INT_CLR = 0xFFFFFFFF;
-  UART0_CONF0 = 0x000001C;
-  UART1_CONF0 = 0x000001C;
-  UART0_CONF1 = 0x01707070;
-  UART1_CONF1 = 0x01707070;
-  uart_div_modify(0, UART_CLK_FREQ / DEBUG_UART0_BAUD);
-  uart_div_modify(1, UART_CLK_FREQ / DEBUG_UART1_BAUD);
-#  if DEBUG_UART==1
-  GPIO2_MUX = (1 << GPIO_MUX_FUN_BIT1);
-  ets_install_putc1(uart1_write_char);
-#  else
-  ets_install_putc1(uart0_write_char);
-#  endif
-}
+  UART0_INT_CLR = 0 /* 0xffffffff */
+    | UART_RXFIFO_FULL_INT_CLR
+    | UART_TXFIFO_EMPTY_INT_CLR
+    | UART_PARITY_ERR_INT_CLR
+    | UART_FRM_ERR_INT_CLR
+    | UART_RXFIFO_OVF_INT_CLR
+    | UART_DSR_CHG_INT_CLR
+    | UART_CTS_CHG_INT_CLR
+    | UART_BRK_DET_INT_CLR
+    | UART_RXFIFO_TOUT_INT_CLR
+    ;
+  UART0_CONF0 = 0 /* 0x1c */
+    | UART_STOP_BITS(UART0_STOP_BITS)
+    | UART_DATA_BITS(UART0_DATA_BITS)
+    ;
+  UART0_CONF1 = 0 /* 0x01707070 */
+    | UART_RXFIFO_FULL_THRHD_CAST(112)
+    | UART_TXFIFO_EMPTY_THRHD_CAST(112)
+    | UART_RX_FLOW_THRHD_CAST(112)
+    | UART_RX_TOUT_THRHD_CAST(1)
+    ;
+  UART0_CLKDIV = UART_CLKDIV_BAUD(UART0_BAUD_RATE);
 #endif
+
+#ifdef UART1_SETUP
+  UART1_INT_ENA = 0;
+  UART1_INT_CLR = 0 /* 0xffffffff */
+    | UART_RXFIFO_FULL_INT_CLR
+    | UART_TXFIFO_EMPTY_INT_CLR
+    | UART_PARITY_ERR_INT_CLR
+    | UART_FRM_ERR_INT_CLR
+    | UART_RXFIFO_OVF_INT_CLR
+    | UART_DSR_CHG_INT_CLR
+    | UART_CTS_CHG_INT_CLR
+    | UART_BRK_DET_INT_CLR
+    | UART_RXFIFO_TOUT_INT_CLR
+    ;
+  UART1_CONF0 = 0 /* 0x1c */
+    | UART_STOP_BITS(UART1_STOP_BITS)
+    | UART_DATA_BITS(UART1_DATA_BITS)
+    ;
+  UART1_CONF1 = 0 /* 0x01707070 */
+    | UART_RXFIFO_FULL_THRHD_CAST(112)
+    | UART_TXFIFO_EMPTY_THRHD_CAST(112)
+    | UART_RX_FLOW_THRHD_CAST(112)
+    | UART_RX_TOUT_THRHD_CAST(1)
+    ;
+  UART1_CLKDIV = UART_CLKDIV_BAUD(UART1_BAUD_RATE);
+  GPIO2_MUX = (1 << GPIO_MUX_FUN_BIT1);
+#endif
+
+#if DEBUG_OUTPUT_IS(uart1)
+  ets_install_putc1(uart1_write_char);
+#endif
+
+#if DEBUG_OUTPUT_IS(uart0)
+  ets_install_putc1(uart0_write_char);
+#endif
+}
+
 /* =============================================================================
    startup()
    ----------------------------------------------------------------------------- */

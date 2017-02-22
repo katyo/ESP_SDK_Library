@@ -58,6 +58,8 @@
 #  define UART_CLKDIV( i )    (REG_UART_BASE( i ) + 0x14)
 #  define UART_CLKDIV_CNT       0x000FFFFF
 #  define UART_CLKDIV_S       0	/* BAUDRATE = UART_CLK_FREQ / UART_CLKDIV */
+#  define UART_CLKDIV_CAST(D)      (((D)&UART_CLKDIV_CNT)<<UART_CLKDIV_S)
+#  define UART_CLKDIV_BAUD(B) UART_CLKDIV_CAST(UART_CLK_FREQ/(B))
 
 #  define UART_AUTOBAUD( i )    (REG_UART_BASE( i ) + 0x18)
 #  define UART_GLITCH_FILT      0x000000FF
@@ -70,6 +72,7 @@
 #  define UART_DTRN         (BIT(29))	/* The level of uart dtr pin */
 #  define UART_TXFIFO_CNT       0x000000FF
 #  define UART_TXFIFO_CNT_S     16	/* Number of data in UART TX fifo (0..127) */
+#  define UART_TXFIFO_CNT_GET(S) (((S)>>UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT)
 #  define UART_RXD          (BIT(15))	/* The level of uart rxd pin */
 #  define UART_CTSN         (BIT(14))	/* The level of uart cts pin */
 #  define UART_DSRN         (BIT(13))	/* The level of uart dsr pin */
@@ -100,27 +103,42 @@
 #  define UART_TXD_BRK        (BIT(8))	/* Set this bit to send a tx break signal(need fifo reset first) */
 #  define UART_SW_DTR         (BIT(7))	/* sw dtr */
 #  define UART_SW_RTS         (BIT(6))	/* sw rts */
+#  define UART_STOP_BITS_1    (BIT(4))  /* 1 stop bit */
+#  define UART_STOP_BITS_1P5  (BIT(5))  /* 1.5 stop bits */
+#  define UART_STOP_BITS_2    (BIT(5)|BIT(4)) /* 2 stop bits */
+#  define UART_STOP_BITS(B)   ((B)==1?UART_STOP_BITS_1:(B)==2?UART_STOP_BITS_2:UART_STOP_BITS_1P5)
 #  define UART_STOP_BIT_NUM     0x00000003
-#  define UART_STOP_BIT_NUM_S     4	/* Set stop bit: 1:1bit  2:1.5bits  3:2bits */
+#  define UART_STOP_BIT_NUM_S 4     /* Set stop bit: 1:1bit  2:1.5bits  3:2bits */
+#  define UART_DATA_BITS_5    (0)       /* 5 data bits */
+#  define UART_DATA_BITS_6    (BIT(2))  /* 6 data bits */
+#  define UART_DATA_BITS_7    (BIT(3))  /* 7 data bits */
+#  define UART_DATA_BITS_8    (BIT(3)|BIT(2)) /* 8 data bits */
+#  define UART_DATA_BITS(B)   ((B)==8?UART_DATA_BITS_8:(B)==7?UART_DATA_BITS_7:(B)==6?UART_DATA_BITS_6:UART_DATA_BITS_5)
 #  define UART_BIT_NUM        0x00000003
-#  define UART_BIT_NUM_S        2
+#  define UART_BIT_NUM_S      2
 				/* Set bit num:  0:5bits 1:6bits 2:7bits 3:8bits */
-#  define UART_PARITY_EN        (BIT(1))/* Set this bit to enable uart parity check */
+#  define UART_PARITY_EN      (BIT(1))/* Set this bit to enable uart parity check */
 #  define UART_PARITY         (BIT(0))	/* Set parity check:  0:even 1:odd */
+#  define UART_PARITY_EVEN    (0)
+#  define UART_PARITY_ODD     UART_PARITY
 
 #  define UART_CONF1( i )     (REG_UART_BASE( i ) + 0x24)
-#  define UART_RX_TOUT_EN       (BIT(31))
+#  define UART_RX_TOUT_EN     (BIT(31))
 					/* Set this bit to enable rx time-out function */
 #  define UART_RX_TOUT_THRHD      0x0000007F
 #  define UART_RX_TOUT_THRHD_S    24	/* The config bits for for rx time-out threshold, 0-127 */
+#  define UART_RX_TOUT_THRHD_CAST(T)   (((T)&UART_RX_TOUT_THRHD)<<UART_RX_TOUT_THRHD_S)
 #  define UART_RX_FLOW_EN       (BIT(23))
 					/* Set this bit to enable rx flow control threshold */
 #  define UART_RX_FLOW_THRHD      0x0000007F
 #  define UART_RX_FLOW_THRHD_S    16	/* The config bits for rx flow control threshold, 0-127 */
+#  define UART_RX_FLOW_THRHD_CAST(T)   (((T)&UART_RX_FLOW_THRHD)<<UART_RX_FLOW_THRHD_S)
 #  define UART_TXFIFO_EMPTY_THRHD   0x0000007F
 #  define UART_TXFIFO_EMPTY_THRHD_S 8	/* The config bits for tx fifo empty threshold, 0-127 */
+#  define UART_TXFIFO_EMPTY_THRHD_CAST(T) (((T)&UART_TXFIFO_EMPTY_THRHD)<<UART_TXFIFO_EMPTY_THRHD_S)
 #  define UART_RXFIFO_FULL_THRHD    0x0000007F
 #  define UART_RXFIFO_FULL_THRHD_S  0	/* The config bits for rx fifo full threshold, 0-127 */
+#  define UART_RXFIFO_FULL_THRHD_CAST(T) (((T)&UART_RXFIFO_FULL_THRHD)<<UART_RXFIFO_FULL_THRHD_S)
 
 #  define UART_LOWPULSE( i )    (REG_UART_BASE( i ) + 0x28)
 #  define UART_LOWPULSE_MIN_CNT   0x000FFFFF
