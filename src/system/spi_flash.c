@@ -58,9 +58,7 @@ Cache_Read_Enable_New(void) {
 #define SPI_FBLK 32
 SpiFlashOpResult ICACHE_IRAM_ATTR
 spi_flash_read(uint32_t faddr, void *des, uint32_t size) {
-#if DEBUGSOO > 5
-  ets_printf("fread:%p<-%p[%u]\n", des, faddr, size);
-#endif
+  debug_printf(debug/*>5*/, "fread:%p<-%p[%u]\n", des, faddr, size);
   if (des == NULL)
     return SPI_FLASH_RESULT_ERR;
 #ifdef USE_OVERLAP_MODE
@@ -77,9 +75,7 @@ spi_flash_read(uint32_t faddr, void *des, uint32_t size) {
 
       if (blksize) {
 	blksize = 4 - blksize;
-#if DEBUGSOO > 4
-	ets_printf("fr1:%p<-%p[%u]\n", des, faddr, blksize);
-#endif
+	debug_printf(debug/*>4*/, "fr1:%p<-%p[%u]\n", des, faddr, blksize);
 	if (size < blksize)
 	  blksize = size;
 	SPI0_ADDR = faddr | (blksize << 24);
@@ -100,9 +96,7 @@ spi_flash_read(uint32_t faddr, void *des, uint32_t size) {
 	  blksize = size;
 	else
 	  blksize = SPI_FBLK;
-#if DEBUGSOO > 5
-	ets_printf("fr2:%p<-%p[%u]\n", des, faddr, blksize);
-#endif
+	debug_printf(debug/*>5*/, "fr2:%p<-%p[%u]\n", des, faddr, blksize);
 	SPI0_ADDR = faddr | (blksize << 24);
 	SPI0_CMD = SPI_READ;
 	size -= blksize;
@@ -119,9 +113,7 @@ spi_flash_read(uint32_t faddr, void *des, uint32_t size) {
 	  blksize -= 4;
 	}
 	if (blksize) {
-#if DEBUGSOO > 4
-	  ets_printf("fr3:%p<-%p[%u]\n", des, faddr, blksize);
-#endif
+	  debug_printf(debug/*>4*/, "fr3:%p<-%p[%u]\n", des, faddr, blksize);
 	  uint32_t data_buf = *srcdw;
 
 	  do {

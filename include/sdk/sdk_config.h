@@ -8,20 +8,51 @@
 #  define DEF_SDK_VERSION 1410	/* 1302 // ver 1.3.0 + patch (lib_1.3.0_deep_sleep_plus_freq_offset_plus_freedom_callback_02.zip SDK ver: 1.3.0 compiled @ Aug 19 2015 17:50:07) */
 #  define SDK_VERSION_STR "1.4.1"
 
-#  ifndef DEBUGSOO
-#    define DEBUGSOO 2		/* 0 - откл вывода, 1 - минимум, 2 - норма, >3 - текушая отладка, >4 - удалить что найдется :) */
+#  define DEBUG_CAT2_(P, S) P##S
+#  define DEBUG_CAT2(P, S) DEBUG_CAT2_(P, S)
+
+#  define DEBUG_LEVEL_none 0
+#  define DEBUG_LEVEL_error 1
+#  define DEBUG_LEVEL_info 2
+#  define DEBUG_LEVEL_debug 3
+#  define DEBUG_LEVEL_all 5
+
+#  define DEBUG_LEVEL_IS(L) (DEBUG_CAT2(DEBUG_LEVEL_, DEBUG_LEVEL) >= DEBUG_CAT2(DEBUG_LEVEL_, L))
+
+#  ifndef DEBUG_LEVEL
+#    define DEBUG_LEVEL none
 #  endif
 
-#  ifndef DEBUG_UART
-#    define DEBUG_UART 1	/* включить вывод в загрузчике сообщений, номер UART */
+#  define DEBUG_LOG(level, format, ...) os_printf("[" #level "]: " format, ##__VA_ARGS__)
+
+#  if DEBUG_LEVEL_IS(error)
+#    define DEBUG_LOG_error(format, ...) DEBUG_LOG(error, format, ##__VA_ARGS__)
+#  else
+#    define DEBUG_LOG_error(format, ...) 
 #  endif
 
-#  ifndef DEBUG_UART0_BAUD
-#    define DEBUG_UART0_BAUD 115200
+#  if DEBUG_LEVEL_IS(debug)
+#    define DEBUG_LOG_debug(format, ...) DEBUG_LOG(debug, format, ##__VA_ARGS__)
+#  else
+#    define DEBUG_LOG_debug(format, ...) 
 #  endif
 
-#  ifndef DEBUG_UART0_BAUD
-#    define DEBUG_UART1_BAUD 230400
+#  if DEBUG_LEVEL_IS(info)
+#    define DEBUG_LOG_info(format, ...) DEBUG_LOG(info, format, ##__VA_ARGS__)
+#  else
+#    define DEBUG_LOG_info(format, ...) 
+#  endif
+
+#  define debug_printf(level, format, ...) DEBUG_CAT2(DEBUG_LOG_, level)(format, ##__VA_ARGS__)
+
+#  define DEBUG_OUTPUT_none 0
+#  define DEBUG_OUTPUT_uart0 3
+#  define DEBUG_OUTPUT_uart1 4
+
+#  define DEBUG_OUTPUT_IS(S) (DEBUG_CAT2(DEBUG_OUTPUT_, DEBUG_OUTPUT) == DEBUG_CAT2(DEBUG_OUTPUT_, S))
+
+#  ifndef DEBUG_OUTPUT
+#    define DEBUG_OUTPUT none
 #  endif
 
 #  define _IP4_UINT(a, b, c, d) \

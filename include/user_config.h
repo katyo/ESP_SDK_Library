@@ -11,7 +11,7 @@
 
 #  define USE_TCP2UART 12345	/* включить в трансялцию драйвер TCP2UART, номер порта по умолчанию (=0 - отключен) */
 
-#  if DEBUGSOO > 0
+#  if DEBUG_LEVEL_IS(error)
 #    ifndef USE_TCP2UART
 /* #define USE_GDBSTUB // UDK пока не поддерживает GDB */
 #    endif
