@@ -1,13 +1,13 @@
-example.INHERIT = firmware
+example.INHERIT = espsdk firmware
 
 define EXAMPLE_RULES
 TARGET.LIBS += example/lib$(1)
 example/lib$(1).INHERIT = example
-example/lib$(1).SRCS += $$(wildcard $(libsdk.EXAMPLEDIR)/$(1)/*.c)
+example/lib$(1).SRCS += $$(wildcard $(espsdk.EXAMPLEDIR)/$(1)/*.c)
 
 TARGET.IMGS += example/$(1)
 example/$(1).INHERIT = example/lib$(1)
-example/$(1).DEPLIBS& = libsdk example/lib$(1)
+example/$(1).DEPLIBS& = libespsdk example/lib$(1)
 endef
 
 EXAMPLES ?= dummy_app mem_usage tcp_echo ssl_echo

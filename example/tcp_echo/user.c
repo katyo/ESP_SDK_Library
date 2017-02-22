@@ -4,9 +4,6 @@
  *******************************************************************************/
 
 #include "user_config.h"
-#include "bios.h"
-#include "sdk/add_func.h"
-#include "hw/esp8266.h"
 #include "user_interface.h"
 #include "sdk/rom2ram.h"
 #include "echo.h"
@@ -17,7 +14,7 @@
  * Parameters   : none
  * Returns      : none
  *******************************************************************************/
-void wifi_handle_event_cb(System_Event_t *evt) {
+static void wifi_handle_event_cb(System_Event_t *evt) {
   int i;
   os_printf("WiFi event %x\n", evt->event);
   switch (evt->event) {
@@ -65,7 +62,7 @@ void wifi_handle_event_cb(System_Event_t *evt) {
  * Parameters   : none
  * Returns      : none
  *******************************************************************************/
-void init_done_cb(void) {
+static void init_done_cb(void) {
   os_printf("\nSDK Init - Ok\nCurrent 'heap' size: %d bytes\n", system_get_free_heap_size());
   os_printf("Set CPU CLK: %u MHz\n", ets_get_cpu_frequency());
 
