@@ -2,9 +2,9 @@ xtensa.INHERIT := stalin
 $(call use_toolchain,xtensa,xtensa-lx106-elf-)
 
 firmware.INHERIT := xtensa
+firmware.CDIRS += $(espsdk.INCDIR)
 firmware.COPTS ?= no-tree-ccp optimize-register-move
 firmware.CMACH ?= no-target-align no-serialize-volatile longcalls text-section-literals
-firmware.CDIRS ?= $(libsdk.INCDIR)
 firmware.ALIGN := 4
 firmware.SIZEB := 4
 firmware.RODATA ?= .irom0.rodata
@@ -23,15 +23,15 @@ LOADER ?= $(if $(call option-true,$(espsdk.use_loader)),rapid_loader)
 loader.INHERIT := firmware
 
 # Application
-firmware.LDDIRS += $(libsdk.LDDIR)
-firmware.LDSCRIPT ?= $(libsdk.LDDIR)/eagle.app.v6.ld
-firmware.LDSCRIPTS ?= $(firmware.LDSCRIPT) $(libsdk.LDDIR)/eagle.rom.addr.v6.ld
+firmware.LDDIRS += $(espsdk.LDDIR)
+firmware.LDSCRIPT ?= $(espsdk.LDDIR)/eagle.app.v6.ld
+firmware.LDSCRIPTS ?= $(firmware.LDSCRIPT) $(espsdk.LDDIR)/eagle.rom.addr.v6.ld
 firmware.LDOPTS ?= EL -gc-sections -no-check-sections -wrap=os_printf_plus static
 loader.UNDEFS ?= call_user_start
 firmware.LDFLAGS += -nostartfiles -nodefaultlibs -nostdlib
 
-loader.LDSCRIPT ?= $(libsdk.LDDIR)/eagle.app.v6-loader.ld
-loader.LDSCRIPTS ?= $(loader.LDSCRIPT) $(libsdk.LDDIR)/eagle.rom.addr.v6.ld
+loader.LDSCRIPT ?= $(espsdk.LDDIR)/eagle.app.v6-loader.ld
+loader.LDSCRIPTS ?= $(loader.LDSCRIPT) $(espsdk.LDDIR)/eagle.rom.addr.v6.ld
 loader.LDOPTS ?= -no-check-sections static
 loader.UNDEFS ?= call_user_start loader_flash_boot
 loader.LDFLAGS ?= -nostdlib

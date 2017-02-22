@@ -3,18 +3,18 @@ PORT ?= /dev/ttyUSB0
 BAUD ?= 230400
 
 # Base path to build root
-libsdk.BASEPATH := $(subst $(dir $(abspath $(CURDIR)/xyz)),,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+espsdk.BASEPATH := $(subst $(dir $(abspath $(CURDIR)/xyz)),,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
-libsdk.INCDIR := $(libsdk.BASEPATH)include
-libsdk.SRCDIR := $(libsdk.BASEPATH)src
-libsdk.LDDIR := $(libsdk.BASEPATH)ld
-libsdk.MKDIR := $(libsdk.BASEPATH)rules
-libsdk.EXAMPLEDIR := $(libsdk.BASEPATH)example
+espsdk.INCDIR := $(espsdk.BASEPATH)include
+espsdk.SRCDIR := $(espsdk.BASEPATH)src
+espsdk.LDDIR := $(espsdk.BASEPATH)ld
+espsdk.MKDIR := $(espsdk.BASEPATH)rules
+espsdk.EXAMPLEDIR := $(espsdk.BASEPATH)example
 
-include $(libsdk.MKDIR)/macro.mk
-include $(libsdk.MKDIR)/build.mk
-include $(libsdk.MKDIR)/image.mk
-include $(libsdk.MKDIR)/option.mk
-include $(libsdk.MKDIR)/stalin.mk
-include $(libsdk.MKDIR)/ssl.mk
+include $(espsdk.MKDIR)/macro.mk
+include $(espsdk.MKDIR)/build.mk
+include $(espsdk.MKDIR)/image.mk
+include $(espsdk.MKDIR)/option.mk
+include $(espsdk.MKDIR)/stalin.mk
+include $(espsdk.MKDIR)/ssl.mk
 -include config.mk
