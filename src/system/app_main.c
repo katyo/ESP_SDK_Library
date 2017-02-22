@@ -503,22 +503,27 @@ startup(void) {
     *ptr++ = 0;
 /*      user_init_flag = false; // итак всё равно false из-за обнуления данных в сегменте
  */
-  _xtos_set_exception_handler(EXCCAUSE_UNALIGNED, default_exception_handler);
-  _xtos_set_exception_handler(EXCCAUSE_ILLEGAL, default_exception_handler);
-  _xtos_set_exception_handler(EXCCAUSE_INSTR_ERROR,
-			      default_exception_handler);
+  const int exno[] = {
+    EXCCAUSE_UNALIGNED,
+    EXCCAUSE_ILLEGAL,
+    EXCCAUSE_INSTR_ERROR,
+    EXCCAUSE_LOAD_STORE_ERROR,
+    EXCCAUSE_LOAD_PROHIBITED,
+    EXCCAUSE_STORE_PROHIBITED,
+    EXCCAUSE_PRIVILEGED
+  };
+  
+  unsigned int i;
+  
+  for (i = 0; i < (sizeof(exno) / sizeof(exno[0])); i++) {
+    _xtos_set_exception_handler(exno[i], (_xtos_handler)default_exception_handler);
+  }
+  
 #ifdef USE_READ_ALIGN_ISR
   _xtos_set_exception_handler(EXCCAUSE_LOAD_STORE_ERROR,
-			      read_align_exception_handler);
-#else
-  _xtos_set_exception_handler(EXCCAUSE_LOAD_STORE_ERROR,
-			      default_exception_handler);
+                              (_xtos_handler)read_align_exception_handler);
 #endif
-  _xtos_set_exception_handler(EXCCAUSE_LOAD_PROHIBITED,
-			      default_exception_handler);
-  _xtos_set_exception_handler(EXCCAUSE_STORE_PROHIBITED,
-			      default_exception_handler);
-  _xtos_set_exception_handler(EXCCAUSE_PRIVILEGED, default_exception_handler);
+  
   /* Тест системных данных в RTС
    * if(rtc_get_reset_reason()==2) {}; */
 #if DEF_SDK_VERSION < 1400
