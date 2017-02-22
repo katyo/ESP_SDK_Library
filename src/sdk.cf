@@ -170,3 +170,64 @@ info = Do not use native configuration
 type = def
 key = NO_ESP_CONFIG
 def = n
+
+[option "espsdk.spi.flash_freq"]
+info = The SPI flash speed in MHz (40|80)
+type = val
+key = USE_FIX_QSPI_FLASH
+def = 80
+
+[option "esptool.name"]
+info = The esp8266 flashing tool
+type = val
+def = esptool.py
+
+[option "esptool.port"]
+info = The port for flashing
+type = val
+def = $(wildcard /dev/ttyUSB*)
+
+[option "esptool.baud"]
+info = The baud rate for flashing
+type = val
+def = 115200
+
+[option "esptool.extra"]
+info = The extra options for flashing tool
+type = val
+def = 
+
+[option "esptool.flash.freq"]
+info = The SPI flashing speed in MHz (20|26|40|80)
+type = val
+def = 80
+
+[option "esptool.flash.mode"]
+info = The SPI flashing mode (qio|dio|qout|dout, where d-dual, q-quad, io-input and output, out-output only)
+type = val
+def = qio
+
+[option "esptool.flash.size"]
+info = The SPI flash size in KBytes
+type = val
+def = 512
+
+[option "ttytool.name"]
+info = The serial debugging tool to use
+type = val
+def = $(firstword $(foreach tool,$(TTYTOOLS),$(if $(shell which $(tool)),$(tool),)))
+
+[option "ttytool.port"]
+info = The port for serial debugging
+type = val
+def = $(wildcard /dev/ttyUSB*)
+
+[option "ttytool.baud"]
+info = The baud rate for serial debugging
+type = val
+def = 115200
+
+[option "ttytool.extra"]
+info = The extra options for serial debugging tool
+type = val
+def =

@@ -2,107 +2,29 @@
 IMG_P = bin/$(1).bin
 
 # ESP tool
-ESPTOOL ?= esptool.py
-ESPPORT ?= $(PORT)
-ESPBAUD ?= $(BAUD)
-ESPOPTION ?= $(if $(ESPBAUD),-b $(ESPBAUD)) $(if $(ESPPORT),-p $(ESPPORT))
-ESPOPTION += $(ESPEXTRA)
+ESPTOOL = $(esptool.name)
+ESPOPTION = $(if $(esptool.baud),-b $(esptool.baud)) $(if $(esptool.port),-p $(esptool.port)) $(esptool.extra)
 
 # Serial terminal tool
-TTYTOOLS ?= minicom picocom miniterm miniterm.py
-TTYTOOL ?= $(firstword $(foreach tool,$(TTYTOOLS),$(if $(shell which $(tool)),$(tool),)))
-TTYPORT ?= $(PORT)
-TTYBAUD ?= $(BAUD)
+TTYTOOLS := minicom picocom miniterm miniterm.py
 
-ifeq (minicom,$(notdir $(TTYTOOL)))
-  TTYOPTION ?= $(if $(TTYBAUD),-b $(TTYBAUD)) $(if $(TTYPORT),-D $(TTYPORT))
-endif
+TTYOPTION.minicom = $(if $(ttytool.baud),-b $(ttytool.baud)) $(if $(ttytool.port),-D $(ttytool.port))
+TTYOPTION.picocom = $(if $(ttytool.baud),-b $(ttytool.baud)) $(ttytool.port))
+TTYOPTION.miniterm = $(if $(ttytool.baud),-b $(ttytool.baud)) $(if $(ttytool.port),-p $(ttytool.port))
+TTYOPTION.miniterm.py = $(TTYOPTION.miniterm)
 
-ifeq (picocom,$(notdir $(TTYTOOL)))
-  TTYOPTION ?= $(if $(TTYBAUD),-b $(TTYBAUD)) $(TTYPORT)
-endif
+TTYTOOL = $(ttytool.name)
+TTYOPTION = $(TTYOPTION.$(ttytool.name)) $(ttytool.extra)
 
-ifeq (miniterm,$(basename $(notdir $(TTYTOOL))))
-  TTYOPTION ?= $(if $(TTYBAUD),-b $(TTYBAUD)) $(if $(TTYPORT),-p $(TTYPORT))
-endif
+# <size> <id> <user_kb> <mbits>
+FLASH_SIZE_CONFIGS := 256:1:256:2 512:0:512:4 1024:2:1024:8 2048:3:1024:16 4096:4:1024:32
+# field number
+flash_size_query = $(strip $(foreach c,$(FLASH_SIZE_CONFIGS),$(if $(filter $(2),$(word 1,$(subst :, ,$(c)))),$(word $(1),$(subst :, ,$(c))))))
+#flash_size_id = $(call flash_size_query,2,$(1))
+#flash_size_user_kb = $(call flash_size_query,3,$(1))
+flash_size_mbits = $(call flash_size_query,4,$(1))
 
-TTYOPTION += $(TTYEXTRA)
-
-# 40 or 80 [MHz]
-FLASH_SPEED_MHZ ?= 80
-# QIO, DIO, QOUT, DOUT
-FLASH_MODE ?= QIO
-# Use 512 for all size Flash (512 kbytes .. 16 Mbytes Flash autodetect)
-FLASH_SIZE_KB ?= 512
-
-ifeq ($(FLASH_SPEED_MHZ),26.7)
-  FLASH_FREQ_DIV := 1
-  FLASH_FREQ := 26
-else
-  ifeq ($(FLASH_SPEED_MHZ),20)
-    FLASH_FREQ_DIV := 2
-    FLASH_FREQ := 20
-  else
-    ifeq ($(FLASH_SPEED_MHZ),80)
-      FLASH_FREQ_DIV := 15
-      FLASH_FREQ := 80
-    else
-      FLASH_FREQ_DIV := 0
-      FLASH_FREQ := 40
-    endif
-  endif
-endif
-
-ifeq ($(FLASH_MODE),QOUT)
-  FLASH_MODE_ID := 1
-  FLASH_MODE_NAME := qout
-else
-  ifeq ($(FLASH_MODE),DIO)
-    FLASH_MODE_ID := 2
-    FLASH_MODE_NAME := dio
-  else
-    ifeq ($(FLASH_MODE),DOUT)
-      FLASH_MODE_ID := 3
-      FLASH_MODE_NAME := dout
-    else
-      FLASH_MODE_ID := 0
-      FLASH_MODE_NAME := qio
-    endif
-  endif
-endif
-
-# flash larger than 1024KB only use 1024KB to storage user1.bin and user2.bin
-ifeq ($(FLASH_SIZE_KB),256)
-  FLASH_SIZE_ID := 1
-  FLASH_SIZE_USER_KB := 256
-  FLASH_SIZE_MBITS := 2
-else
-  ifeq ($(FLASH_SIZE_KB),1024)
-    FLASH_SIZE_ID := 2
-    FLASH_SIZE_USER_KB := 1024
-    FLASH_SIZE_MBITS := 8
-  else
-    ifeq ($(FLASH_SIZE_KB),2048)
-      FLASH_SIZE_ID := 3
-      FLASH_SIZE_USER_KB := 1024
-      FLASH_SIZE_MBITS := 16
-    else
-      ifeq ($(FLASH_SIZE_KB),4096)
-        FLASH_SIZE_ID := 4
-        FLASH_SIZE_USER_KB := 1024
-        FLASH_SIZE_MBITS := 32
-      else
-        FLASH_SIZE_ID := 0
-        FLASH_SIZE_USER_KB := 512
-        FLASH_SIZE_MBITS := 4
-      endif
-    endif
-  endif
-endif
-
-firmware.CDEFS += USE_FIX_QSPI_FLASH=$(FLASH_SPEED_MHZ)
-
-IMG_OPTION ?= -ff $(FLASH_FREQ)m -fm $(FLASH_MODE_NAME) -fs $(FLASH_SIZE_MBITS)m
+IMG_OPTION = -ff $(esptool.flash.freq)m -fm $(esptool.flash.mode) -fs $(call flash_size_mbits,$(esptool.flash.size))m
 
 # Raw-data image rules
 define RDI_RULES
