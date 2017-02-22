@@ -399,9 +399,7 @@ read_wifi_config(void) {
       || system_get_checksum((uint8_t *) wifi_config,
 			     hbuf.xx[(hbuf.bank) ? 1 : 0]) !=
       hbuf.chk[(hbuf.bank) ? 1 : 0]) {
-#ifdef DEBUG_UART
-    os_printf("\nError wifi_config! Clear.\n");
-#endif
+    debug_printf(error, "\nError wifi_config! Clear.\n");
     ets_memset(wifi_config, 0xff, wifi_config_size);
   }
 #else
@@ -528,9 +526,7 @@ startup(void) {
    * if(rtc_get_reset_reason()==2) {}; */
 #if DEF_SDK_VERSION < 1400
   if ((RTC_RAM_BASE[0x60 >> 2] >> 16) > 4) {	/* проверка опции phy_rfoption = deep_sleep_option */
-#  ifdef DEBUG_UART
-    os_printf("\nError phy_rfoption! Set default = 0.\n");
-#  endif
+    debug_printf(error, "\nError phy_rfoption! Set default = 0.\n");
     RTC_RAM_BASE[0x60 >> 2] &= 0xFFFF;
     RTC_RAM_BASE[0x78 >> 2] = 0;	/* обнулить Espressif OR контрольку области 0..0x78 RTC_RAM */
   }
@@ -604,19 +600,15 @@ startup(void) {
 #endif
   /*  */
   if (buf[0] != 5) {		/* первый байт esp_init_data_default.bin не равен 5 ? - бардак! */
-#ifdef DEBUG_UART
-    os_printf("\nError esp_init_data! Set default.\n");
-#endif
+    debug_printf(error, "\nError esp_init_data! Set default.\n");
     ets_memcpy(buf, &esp_init_data_default, sizeof(esp_init_data_t));
   }
 /*      system_restoreclock(); // STARTUP_CPU_CLK */
   init_wifi(buf, info.st_mac);	/* инициализация оборудования WiFi */
 #if DEF_SDK_VERSION >= 1400
   if (buf[0xf8] == 1 || phy_rx_gain_dc_flag == 1) {	/* сохранить новые калибровки RF/VCC33 ? */
-#  ifdef DEBUG_UART
-    os_printf("\nSave rx_gain_dc table (%u, %u)\n", buf[0xf8],
-	      phy_rx_gain_dc_flag);
-#  endif
+    debug_printf(error, "\nSave rx_gain_dc table (%u, %u)\n",
+                 buf[0xf8], phy_rx_gain_dc_flag);
     wifi_param_save_protect_with_check(esp_init_data_default_sec,
 				       flashchip_sector_size, buf,
 				       SIZE_SAVE_SYS_CONST);
@@ -645,18 +637,15 @@ startup(void) {
   }
 #endif
 
-#ifdef DEBUG_UART
-  /*  */
   os_print_reset_error();	/* вывод фатальных ошибок, вызвавших рестарт. см. в модуле wdt */
-  /*  */
-#endif
+
 /*      DPORT_BASE[0] = (DPORT_BASE[0] & 0x60) | 0x0F; // ?? */
 #if DEF_SDK_VERSION >= 1119	/* (SDK 1.1.1) */
   wdt_init(1);
 #else
   wdt_init();
 #endif
-#ifdef DEBUG_UART
+#if DEBUG_OUTPUT_IS(uart0) || DEBUG_OUTPUT_IS(uart1)
   uart_wait_tx_fifo_empty();
 #endif
   user_init();
