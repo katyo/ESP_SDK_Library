@@ -76,7 +76,6 @@ static wdtfntype *ets_wdt_enable = (wdtfntype *) 0x40002fa0;
 
 #  define EXCEPTION_GDB_SP_OFFSET 0x100
 
-
 /* We need some UART register defines. */
 #  define ETS_UART_INUM 5
 #  define REG_UART_BASE( i )  (0x60000000+(i)*0xf00)
@@ -92,9 +91,6 @@ static wdtfntype *ets_wdt_enable = (wdtfntype *) 0x40002fa0;
 #  define UART_RXFIFO_FULL_INT_ENA            (BIT(0))
 #  define UART_RXFIFO_TOUT_INT_CLR            (BIT(8))
 #  define UART_RXFIFO_FULL_INT_CLR            (BIT(0))
-
-
-
 
 /* Length of buffer used to reserve GDB commands. Has to be at least able to fit the G command, which
    implies a minimum size of about 190 bytes. */
@@ -751,7 +747,7 @@ install_exceptions(void) {
   };
   
   for (i = 0; i < (sizeof(exno) / sizeof(exno[0])); i++) {
-    _xtos_set_exception_handler(exno[i], gdb_exception_handler);
+    _xtos_set_exception_handler(exno[i], (_xtos_handler)gdb_exception_handler);
   }
 }
 #  else
