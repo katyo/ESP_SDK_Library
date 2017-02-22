@@ -32,6 +32,7 @@ uint32_t flash_size DATA_IRAM_ATTR;
  * FunctionName : Cache_Read_Enable_New
  * Returns      : none
  *******************************************************************************/
+void Cache_Read_Enable_New(void);
 void ICACHE_IRAM_ATTR
 Cache_Read_Enable_New(void) {
 #ifdef USE_OVERLAP_MODE

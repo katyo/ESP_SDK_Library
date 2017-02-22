@@ -48,6 +48,7 @@
 
 #include "user_config.h"
 #include "lwip/sntp.h"
+#include "sntp.h"
 #include "osapi.h"
 #include "os_type.h"
 #include "lwip/opt.h"
@@ -318,7 +319,6 @@ static ip_addr_t sntp_last_server_address;
 static u32_t sntp_last_timestamp_sent[2] LWIP_DATA_IRAM_ATTR;
 #    endif
        /* SNTP_CHECK_RESPONSE >= 2 */
-typedef long time_t;
 
 /* u32_t current_stamp_1 = 0;
    u32_t current_stamp_2 = 0; */
@@ -357,28 +357,7 @@ static const int year_lengths[2] = {
   366
 };
 
-struct tm {
-  int tm_sec;
-  int tm_min;
-  int tm_hour;
-  int tm_mday;
-  int tm_mon;
-  int tm_year;
-  int tm_wday;
-  int tm_yday;
-  int tm_isdst;
-};
-
 struct tm res_buf;
-typedef struct __tzrule_struct {
-  char ch;
-  int m;
-  int n;
-  int d;
-  int s;
-  time_t change;
-  int offset;
-} __tzrule_type;
 
 __tzrule_type sntp__tzrule[2];
 struct tm *
@@ -534,7 +513,6 @@ sntp_localtime(const time_t * tim_p) {
   return sntp_localtime_r(tim_p, &res_buf);
 }
 
-
 int
 sntp__tzcalc_limits(int year) {
   int days, year_days, years;
@@ -592,7 +570,7 @@ sntp__tzcalc_limits(int year) {
 }
 
 char *
-sntp_asctime_r(struct tm *tim_p, char *result) {
+sntp_asctime_r(const struct tm *tim_p, char *result) {
   static const char day_name[7][4] = {
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
   };
@@ -609,15 +587,14 @@ sntp_asctime_r(struct tm *tim_p, char *result) {
 }
 
 char *
-sntp_asctime(struct tm *tim_p) {
-
+sntp_asctime(const struct tm *tim_p) {
   return sntp_asctime_r(tim_p, reult);
 }
 
 u32_t
 sntp_get_current_timestamp() {
   if (realtime_stamp == 0) {
-    os_printf("please start sntp first !\n");
+    debug_printf(error, "please start sntp first !\n");
     return 0;
   } else {
     return realtime_stamp;
@@ -652,7 +629,7 @@ sntp_set_timezone(s8_t timezone) {
 
 }
 
-void
+static void
 sntp_time_inc(void) {
   realtime_stamp++;
 }
@@ -686,7 +663,7 @@ sntp_process(u32_t * receive_timestamp) {
   os_timer_disarm(&sntp_timer);
   os_timer_setfn(&sntp_timer, (os_timer_func_t *) sntp_time_inc, NULL);
   os_timer_arm(&sntp_timer, 1000, 1);
-  os_printf("%s\n", sntp_asctime(sntp_localtime(&t)));
+  debug_printf(debug, "sntp time: %s\n", sntp_asctime(sntp_localtime(&t)));
 /*  os_printf("%s\n",ctime(&t));
     LWIP_DEBUGF(SNTP_DEBUG_TRACE, ("sntp_process: %s", ctime(&t))); */
 #    endif

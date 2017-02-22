@@ -157,6 +157,8 @@ eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8_t * macaddr,
   return myif;
 }
 
+void eagle_lwip_if_free(struct ieee80211_conn *conn);
+
 void
 eagle_lwip_if_free(struct ieee80211_conn *conn) {
   if (conn->dhcps_if == 0) {	/* SDK 1.4.0 +200 */

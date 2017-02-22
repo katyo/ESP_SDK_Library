@@ -90,19 +90,6 @@ extern chunk * free_list;
 extern char * sbrk_start;
 extern struct mallinfo current_mallinfo;
 
-/* Forward function declarations */
-extern void * nano_malloc(RARG malloc_size_t);
-extern void nano_free (RARG void * free_p);
-extern void nano_cfree(RARG void * ptr);
-extern void * nano_calloc(RARG malloc_size_t n, malloc_size_t elem);
-extern struct mallinfo nano_mallinfo(RONEARG);
-extern void nano_malloc_stats(RONEARG);
-extern malloc_size_t nano_malloc_usable_size(RARG void * ptr);
-extern void * nano_realloc(RARG void * ptr, malloc_size_t size);
-extern void * nano_memalign(RARG size_t align, size_t s);
-extern int nano_mallopt(RARG int parameter_number, int parameter_value);
-extern void * nano_zalloc(RARG size_t s);
-
 static inline chunk * ICACHE_IRAM_ATTR
 get_chunk_from_ptr(void * ptr) {
   chunk * c = (chunk *)((char *)ptr - CHUNK_OFFSET);

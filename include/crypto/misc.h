@@ -140,8 +140,10 @@ int asn1_public_key(const uint8_t *cert, int *offset, X509_CTX *x509_ctx);
 int asn1_signature(const uint8_t *cert, int *offset, X509_CTX *x509_ctx);
 int asn1_find_subjectaltname(const uint8_t* cert, int offset);
 int asn1_compare_dn(char * const dn1[], char * const dn2[]);
+int asn1_find_oid(const uint8_t* cert, int* offset,
+                  const uint8_t* oid, int oid_length);
 #endif /* CONFIG_SSL_CERT_VERIFICATION */
-int asn1_signature_type(const uint8_t *cert, 
+int asn1_signature_type(const uint8_t *cert,
                         int *offset, X509_CTX *x509_ctx);
 
 /**************************************************************************

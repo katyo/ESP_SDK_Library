@@ -8,6 +8,7 @@
 #include "sdk/sdk_config.h"
 #include "sdk/rom2ram.h"
 #include "sdk/os_printf.h"
+#include "sdk/add_func.h"
 
 extern char *_sprintf_buf;	/* 0x3FFFE360 */
 extern char print_mem_buf[1024];	/* 0x3FFFE364..0x3FFFEA80 max 1820 bytes */

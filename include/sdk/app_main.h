@@ -30,4 +30,7 @@ void user_uart_wait_tx_fifo_empty(uint32_t uart_num, uint32_t x);
 void uart1_write_char(char c);
 void uart0_write_char(char c);
 
+void call_user_start(void);
+void call_user_start1(void);
+
 #endif /* _INCLUDE_APP_MAIN_H_ */

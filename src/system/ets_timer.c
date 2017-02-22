@@ -5,6 +5,7 @@
 ******************************************************************************/
 #include "bios.h"
 #include "sdk/sdk_config.h"
+#include "sdk/add_func.h"
 #include "hw/eagle_soc.h"
 #include "hw/esp8266.h"
 

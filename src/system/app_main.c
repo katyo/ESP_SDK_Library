@@ -65,7 +65,6 @@ extern bool default_hostname;	/* in eagle_lwip_if.c */
    =============================================================================
    IRAM code
    ----------------------------------------------------------------------------- */
-void call_user_start(void);
 
 /* =============================================================================
    ROM-BIOS запускает код с адреса 0x40100000
@@ -337,7 +336,7 @@ read_macaddr_from_otp(uint8_t * mac) {
 /* -----------------------------------------------------------------------------
    Тест конфигурации для WiFi (будет переделан)
    ----------------------------------------------------------------------------- */
-void
+static void
 tst_cfg_wifi(void) {
   struct s_wifi_store *wifi_config = &g_ic.g.wifi_store;
 
@@ -410,7 +409,7 @@ read_wifi_config(void) {
 #endif
 }
 
-void
+static void
 startup_uart_init(void) {
   ets_isr_mask(1 << ETS_UART_INUM);
   
@@ -493,10 +492,10 @@ startup(void) {
 #if STARTUP_CPU_CLK == 160
   system_overclock();		/* set CPU CLK 160 MHz */
 #endif
-#ifdef DEBUG_UART
+
   startup_uart_init();
-  os_printf("\n\n" SDK_NAME_STR " " SDK_VERSION_STR "\n");
-#endif
+  debug_printf(info, "\n\n" SDK_NAME_STR " " SDK_VERSION_STR "\n");
+  
   /* Очистка сегмента bss //       mem_clr_bss(); */
   uint8_t *ptr = &_bss_start;
 
@@ -708,8 +707,8 @@ startup(void) {
 }
 
 /* ----------------------------------------------------------------------------- */
-#ifdef DEBUG_UART
-void
+#if DEBUG_OUTPUT_IS(uart0) || DEBUG_OUTPUT_IS(uart1)
+static void
 puts_buf(uint8_t ch) {
   if (UartDev.trx_buff.TrxBuffSize < (TX_BUFF_SIZE - 1)) {
     UartDev.trx_buff.pTrxBuff[UartDev.trx_buff.TrxBuffSize++] = ch;
@@ -723,7 +722,7 @@ puts_buf(uint8_t ch) {
 const char aFATAL_ERR_R6PHY[] ICACHE_RODATA_ATTR = "register_chipv6_phy";
 void
 init_wifi(uint8_t * init_data, uint8_t * mac) {
-#ifdef DEBUG_UART
+#if DEBUG_OUTPUT_IS(uart0) || DEBUG_OUTPUT_IS(uart1)
   uart_wait_tx_fifo_empty();
   UartDev.trx_buff.TrxBuffSize = 0;
   ets_install_putc1(puts_buf);
@@ -731,12 +730,12 @@ init_wifi(uint8_t * init_data, uint8_t * mac) {
   if (register_chipv6_phy(init_data)) {
     fatal_error(FATAL_ERR_R6PHY, init_wifi, (void *)aFATAL_ERR_R6PHY);
   }
-#ifdef DEBUG_UART
+  
   startup_uart_init();
   if (UartDev.trx_buff.TrxBuffSize)
     os_printf_plus(UartDev.trx_buff.pTrxBuff);
   UartDev.trx_buff.TrxBuffSize = TX_BUFF_SIZE;
-#endif
+  
   phy_disable_agc();
   ieee80211_phy_init(g_ic.g.wifi_store.phy_mode);	/* phy_mode */
   lmacInit();

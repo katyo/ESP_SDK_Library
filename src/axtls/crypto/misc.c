@@ -44,7 +44,6 @@
 
 #ifdef ESP8266
 #define CONFIG_SSL_SKELETON_MODE 1
-uint32_t phy_get_rand();
 #endif
 
 #if defined(CONFIG_USE_DEV_URANDOM)

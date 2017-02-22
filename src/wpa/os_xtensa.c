@@ -6,6 +6,7 @@
 
 #include "user_config.h"
 #include "bios.h"
+#include "osapi.h"
 
 /*
    char *ets_strdup(char * s)
@@ -25,6 +26,8 @@ os_get_time(void) {
   return 0;
 }
 
+#if 0
+
 extern uint32_t phy_get_rand(void);	/* return *((uint32_t *)(&g_phyFuns+0x290)) ^ *((uint32_t *)0x3FF20E44); */
 
 uint32_t
@@ -37,6 +40,8 @@ os_random(void) {
   return phy_get_rand();
 }
 
+#endif
+
 /* os_get_random - Get cryptographically strong pseudo random data :
  * Buffer for pseudo random data :
  * Length of the buffer Returns:
@@ -48,8 +53,8 @@ os_get_random(unsigned char *buf, size_t len) {
       uint32_t z = phy_get_rand();
 
       do {
-	*buf++ = (char)z;
-	z >>= 8;
+        *buf++ = (char)z;
+        z >>= 8;
       } while (--len & 3);
     }
   }
@@ -65,7 +70,7 @@ os_get_random(unsigned char *buf, size_t len) {
    front).
    For example,
          strrchr ("hello, world", 'l')
-              "ld"	*/
+         "ld"	*/
 char *
 ets_strrchr(const char *string, int c) {
   char *pret = NULL;
@@ -76,7 +81,7 @@ ets_strrchr(const char *string, int c) {
     do {
       ch = *string;
       if (ch == c)
-	pret = (char *)string;
+        pret = (char *)string;
       string++;
     } while (ch != 0);
   }

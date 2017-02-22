@@ -77,6 +77,8 @@ int axl_free(struct tcp_pcb *tcp);
 #define axl_ssl_write(A, B, C) ssl_write(A, B, C)
 int axl_ssl_read(SSL *sslObj, uint8_t **in_data, struct tcp_pcb *tcp, struct pbuf *p);
 
+int ax_get_file(const char *filename, uint8_t **buf);
+
 /*
  * Lower Level Socket Functions - used internally from axTLS
  */
@@ -94,7 +96,6 @@ int ax_fd_getfd(AxlTcpDataArray *vector, struct tcp_pcb *tcp);
 void ax_fd_set(AxlTcpDataArray *vector, int index, struct tcp_pcb *tcp);
 void ax_fd_double_capacity_if_full(AxlTcpDataArray *vector);
 void ax_fd_free(AxlTcpDataArray *vector);
-
 
 #ifdef __cplusplus
 }

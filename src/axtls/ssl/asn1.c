@@ -450,6 +450,7 @@ static int asn1_compare_dn_comp(const char *dn1, const char *dn2)
 /**
  * Clean up all of the CA certificates.
  */
+void remove_ca_certs(CA_CERT_CTX *ca_cert_ctx);
 void remove_ca_certs(CA_CERT_CTX *ca_cert_ctx)
 {
     int i = 0;
@@ -484,7 +485,7 @@ int asn1_compare_dn(char * const dn1[], char * const dn2[])
 }
 
 int asn1_find_oid(const uint8_t* cert, int* offset, 
-                    const uint8_t* oid, int oid_length)
+                  const uint8_t* oid, int oid_length)
 {
     int seqlen;
     if ((seqlen = asn1_next_obj(cert, offset, ASN1_SEQUENCE))> 0)

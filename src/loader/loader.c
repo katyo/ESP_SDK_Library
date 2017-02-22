@@ -25,6 +25,7 @@ typedef void (*loader_call) (void *) __attribute__ ((noreturn));
    call_user_start() - вызов из заголовка, загрузчиком
    ENTRY(call_user_start) in eagle.app.v6.ld
    ----------------------------------------------------------------------------- */
+void call_user_start(void);
 void __attribute__ ((noreturn)) call_user_start(void) {
 /*		Cache_Read_Disable(); */
   IO_RTC_4 = 0;			/* Отключить блок WiFi (уменьшение потребления на время загрузки) */

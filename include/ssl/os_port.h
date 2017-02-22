@@ -59,6 +59,11 @@ extern "C" {
 
 #if defined(ESP8266)
 
+#include <sys/time.h>
+#include "bios/ets.h"
+#include "sdk/add_func.h"
+#include "osapi.h"
+
 #include "sdk/mem_manager.h"
 /* some functions to mutate the way these work */
 #define malloc port_malloc
@@ -66,31 +71,30 @@ extern "C" {
 #define calloc port_calloc
 #define free port_free
 
-struct timeval {
-  time_t tv_sec;
-  long   tv_usec;
-};
-int gettimeofday(struct timeval *tp, void *tzp);
-
 #include <errno.h>
 // #define alloca(size) __builtin_alloca(size)
 #define TTY_FLUSH()
+  
 #ifdef putc
 #undef putc
 #endif
-  void ets_putc(char c);
+  
 #define putc(x, f)   ets_putc(x)
+
 #ifdef printf
 #undef printf
 #endif
-  int ets_printf(const char *fmt, ...);
+  
 #define printf(...)  ets_printf(__VA_ARGS__)
 #include <stdarg.h>
-  int ets_vprintf(void *, const char *format, va_list arg);
+
 #define vprintf(...) ets_vprintf(NULL, __VA_ARGS__)
-  int ets_sprintf(char *str, const char *format, ...);
+
 #define sprintf(...) ets_sprintf(__VA_ARGS__)
 #define abort() while(1)
+
+  void configTime(int timezone, int daylightOffset_sec, const char* server1, const char* server2, const char* server3);
+  int clock_gettime(clockid_t unused, struct timespec *tp);
 
   ssize_t ax_port_read(int fd, void *buf, size_t len);
 #define SOCKET_READ      ax_port_read
@@ -189,14 +193,18 @@ EXP_FUNC int STDCALL getdomainname(char *buf, int buf_size);
 
 EXP_FUNC int STDCALL ax_open(const char *pathname, int flags);
 
+#ifndef htonl
 static inline uint32_t htonl(uint32_t n){
   return ((n & 0xff) << 24) |
     ((n & 0xff00) << 8) |
     ((n & 0xff0000UL) >> 8) |
     ((n & 0xff000000UL) >> 24);
 }
+#endif
 
-#define ntohl htonl
+#ifndef ntohl
+#  define ntohl htonl
+#endif
 
 #ifdef CONFIG_PLATFORM_LINUX
 void exit_now(const char *format, ...) __attribute((noreturn));

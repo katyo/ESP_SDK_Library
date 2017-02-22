@@ -27,6 +27,7 @@
 /* #define os_strcat strcat */
 #  define os_strchr rom_strchr
 #  define os_strrchr ets_strrchr
+extern char *ets_strrchr(const char *string, int c);
 #  define os_strcmp ets_strcmp
 #  define os_strcpy ets_strcpy
 #  define os_strlen ets_strlen
@@ -35,6 +36,9 @@
 #  define os_strstr ets_strstr
 #  define os_random phy_get_rand
 extern uint32_t phy_get_rand(void);
+
+uint32_t os_get_time(void);
+int os_get_random(unsigned char *buf, size_t len);
 
 #  ifdef USE_US_TIMER
 #    define os_timer_arm_us(a, b, c) ets_timer_arm_new(a, b, c, 0)

@@ -18,6 +18,8 @@
 
 #include <time.h>
 #include <lwip/sntp.h>
+#include "ssl/os_port.h"
+#include "sntp.h"
 
 extern uint32_t system_get_time(void);
 extern uint64_t system_mktime(uint32_t year, uint32_t mon, uint32_t day, uint32_t hour, uint32_t min, uint32_t sec);
@@ -29,26 +31,13 @@ int* __errno(void) {
     return &errno_var;
 }
 
-unsigned long millis(void)
-{
+static unsigned long millis(void) {
 	return system_get_time() / 1000UL;
 }
 
-unsigned long micros(void)
-{
+static unsigned long micros(void) {
 	return system_get_time();
 }
-
-#ifndef _TIMEVAL_DEFINED
-#define _TIMEVAL_DEFINED
-struct timeval {
-  time_t      tv_sec;
-  suseconds_t tv_usec;
-};
-#endif
-
-extern char* sntp_asctime(const struct tm *t);
-extern struct tm* sntp_localtime(const time_t *clock);
 
 // time gap in seconds from 01.01.1900 (NTP time) to 01.01.1970 (UNIX time)
 #define DIFF1900TO1970 2208988800UL
@@ -58,92 +47,77 @@ static long s_timezone_sec = 0;
 static time_t s_bootTime = 0;
 
 // calculate offset used in gettimeofday
-static void ensureBootTimeIsSet()
-{
-    if (!s_bootTime)
-    {
-        time_t now = sntp_get_current_timestamp();
-        if (now)
-        {
-            s_bootTime =  now - millis() / 1000;
-        }
+static void ensureBootTimeIsSet(void) {
+  if (!s_bootTime) {
+    time_t now = sntp_get_current_timestamp();
+    if (now) {
+      s_bootTime =  now - millis() / 1000;
     }
+  }
 }
 
-static void setServer(int id, const char* name_or_ip)
-{
-    if (name_or_ip)
-    {
-        //TODO: check whether server is given by name or IP
-        sntp_setservername(id, (char*) name_or_ip);
-    }
+static void setServer(int id, const char* name_or_ip) {
+  if (name_or_ip) {
+    //TODO: check whether server is given by name or IP
+    sntp_setservername(id, (char*) name_or_ip);
+  }
 }
 
-void configTime(int timezone, int daylightOffset_sec, const char* server1, const char* server2, const char* server3)
-{
-    sntp_stop();
-
-    setServer(0, server1);
-    setServer(1, server2);
-    setServer(2, server3);
-
-    s_timezone_sec = timezone;
-    s_daylightOffset_sec = daylightOffset_sec;
-    sntp_set_timezone(timezone/3600);
-    sntp_init();
+void configTime(int timezone, int daylightOffset_sec, const char* server1, const char* server2, const char* server3) {
+  sntp_stop();
+  
+  setServer(0, server1);
+  setServer(1, server2);
+  setServer(2, server3);
+  
+  s_timezone_sec = timezone;
+  s_daylightOffset_sec = daylightOffset_sec;
+  sntp_set_timezone(timezone/3600);
+  sntp_init();
 }
 
-int clock_gettime(clockid_t unused, struct timespec *tp)
-{
-    (void)unused;
-    tp->tv_sec  = millis() / 1000;
-    tp->tv_nsec = micros() * 1000;
-    return 0;
+int clock_gettime(clockid_t unused, struct timespec *tp) {
+  (void)unused;
+  tp->tv_sec  = millis() / 1000;
+  tp->tv_nsec = micros() * 1000;
+  return 0;
 }
 
 // seconds since 1970
-time_t mktime(struct tm *t)
-{
-    // system_mktime expects month in range 1..12
-    #define START_MONTH 1
-    return DIFF1900TO1970 + system_mktime(t->tm_year, t->tm_mon + START_MONTH, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
+time_t mktime(struct tm *t) {
+  // system_mktime expects month in range 1..12
+#define START_MONTH 1
+  return DIFF1900TO1970 + system_mktime(t->tm_year, t->tm_mon + START_MONTH, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
 }
 
-time_t time(time_t * t)
-{
-    time_t seconds = sntp_get_current_timestamp();
-    if (t)
-    {
-        *t = seconds;
-    }
-    return seconds;
+time_t time(time_t * t) {
+  time_t seconds = sntp_get_current_timestamp();
+  if (t) {
+    *t = seconds;
+  }
+  return seconds;
 }
 
-char* asctime(const struct tm *t)
-{
-    return sntp_asctime(t);
+char* asctime(const struct tm *t) {
+  return sntp_asctime(t);
 }
 
-struct tm* localtime(const time_t *clock)
-{
-    return sntp_localtime(clock);
+struct tm* localtime(const time_t *clock) {
+  return sntp_localtime(clock);
 }
 
-char* ctime(const time_t *t)
-{
-    struct tm* p_tm = localtime(t);
-    char* result = asctime(p_tm);
-    return result;
+char* ctime(const time_t *t) {
+  struct tm* p_tm = localtime(t);
+  char* result = asctime(p_tm);
+  return result;
 }
 
-int gettimeofday(struct timeval *tp, void *tzp)
-{
-    (void)tzp;
-    if (tp)
-    {
-        ensureBootTimeIsSet();
-        tp->tv_sec  = (s_bootTime + millis()) / 1000;
-        tp->tv_usec = micros() * 1000;
-    }
-    return 0;
+int gettimeofday(struct timeval *tp, void *tzp) {
+  (void)tzp;
+  if (tp) {
+    ensureBootTimeIsSet();
+    tp->tv_sec  = (s_bootTime + millis()) / 1000;
+    tp->tv_usec = micros() * 1000;
+  }
+  return 0;
 }

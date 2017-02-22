@@ -6,6 +6,9 @@
 #include "user_config.h"
 #include "bios.h"
 
+unsigned int eloop_cancel_timeout(void);
+unsigned int eloop_register_timeout(void);
+
 unsigned int
 eloop_cancel_timeout(void) {
   return 0;
