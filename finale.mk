@@ -22,19 +22,6 @@ LOADER ?= $(if $(call option-true,$(espsdk.use_loader)),rapid_loader)
 
 loader.INHERIT := firmware
 
-firmware.CDEFS += \
-  ESP8266 \
-	LWIP_RAW=1 \
-  USE_OPEN_LWIP \
-  USE_OPEN_DHCPS \
-  USE_OPEN_DHCPC \
-  PBUF_RSV_FOR_WLAN \
-  LWIP_OPEN_SRC \
-  EBUF_LWIP \
-	$(if $(call option-true,$(espsdk.debug.lwip)), \
-  LWIP_DBG_TYPES_ON='(LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH)' \
-  $(patsubst %,%_DEBUG='(LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON)',$(espsdk.lwip.debug)))
-
 # Application
 firmware.LDDIRS += $(libsdk.LDDIR)
 firmware.LDSCRIPT ?= $(libsdk.LDDIR)/eagle.app.v6.ld

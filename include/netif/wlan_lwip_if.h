@@ -9,18 +9,15 @@
 #  define LWIP_IF0_PRIO   28
 #  define LWIP_IF1_PRIO   29
 
-#  ifdef USE_OPEN_LWIP
-
 struct ieee80211_conn {
   struct netif *myif;		/* +0 */
-#    if DEF_SDK_VERSION >= 1400	/* (SDK 1.4.0) */
+#  if DEF_SDK_VERSION >= 1400	/* (SDK 1.4.0) */
   uint32_t padding[(200 - 4) >> 2];	/* +4 (SDK 1.4.0) */
-#    else
+#  else
   uint32_t padding[(176 - 4) >> 2];	/* +4 */
-#    endif
+#  endif
   uint32_t dhcps_if;		/* +176 // + 0xB0 // +200 SDK 1.4.0 */
 };
-#  endif
 
 enum {
   SIG_LWIP_RX = 0,

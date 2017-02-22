@@ -57,10 +57,8 @@ const uint8_t SDK_VERSION[] ICACHE_RODATA_ATTR = {
 uint16_t lwip_timer_interval;
 #endif
 
-
-#ifdef USE_OPEN_LWIP
 extern bool default_hostname;	/* in eagle_lwip_if.c */
-#endif
+
 /* =============================================================================
    extern funcs
    -----------------------------------------------------------------------------
@@ -489,9 +487,7 @@ startup(void) {
   /*  */
   read_wifi_config();		/* чтение последних установок wifi (последние 3 сектора flash) */
   /*  */
-#ifdef USE_OPEN_LWIP
   default_hostname = true;	/* используется default_hostname */
-#endif
   /*  */
   /* IO_RTC_4 = 0xfe000000; */
   sleep_reset_analog_rtcreg_8266();

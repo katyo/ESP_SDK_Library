@@ -7,11 +7,7 @@
 #  define __USER_INTERFACE_H__
 
 #  include "os_type.h"
-#  ifdef LWIP_OPEN_SRC
-#    include "lwip/ip_addr.h"
-#  else
-#    include "ip_addr.h"
-#  endif
+#  include "lwip/ip_addr.h"
 
 #  include "queue.h"
 #  include "user_config.h"

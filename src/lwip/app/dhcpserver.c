@@ -13,12 +13,8 @@
 #include "lwip/mem.h"
 #include "osapi.h"
 
-#ifdef USE_OPEN_DHCPS		/* (назначается в MakeFile) */
 #  include "lwip/app/dhcpserver.h"
 
-#  ifndef LWIP_OPEN_SRC
-#    include "net80211/ieee80211_var.h"
-#  endif
 #  include "netif/wlan_lwip_if.h"
 #  include "user_interface.h"
 #  include "sdk/flash.h"
@@ -1155,5 +1151,3 @@ uint32_t
 wifi_softap_get_dhcps_lease_time(void) {	/* minute */
   return dhcps_lease_time;
 }
-
-#endif /* USE_OPEN_DHCPS */

@@ -808,9 +808,7 @@
 	dhcp.c
 */
 #  ifndef LWIP_DHCP_NTP
-#    ifdef USE_OPEN_DHCPS
-#      define LWIP_DHCP_NTP 1
-#    endif
+#    define LWIP_DHCP_NTP 1
 #  endif
 /** The maximum of NTP servers */
 #  ifndef NTP_MAX_SERVERS

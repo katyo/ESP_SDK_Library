@@ -8,6 +8,8 @@
 #ifndef LWIPR_COMPAT_H
 #define LWIPR_COMPAT_H
 
+#include "lwip/opt.h"
+
 /*
  * All those functions will run only if LWIP tcp raw mode is used
  */

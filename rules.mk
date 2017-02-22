@@ -19,6 +19,7 @@ liblwipapp.SRCS = $(wildcard $(libsdk.SRCDIR)/lwip/app/*.c)
 
 TARGET.LIBS += liblwipcore
 liblwipcore.INHERIT = liblwip
+liblwipcore.CDEFS! += PBUF_RSV_FOR_WLAN
 liblwipcore.SRCS = $(wildcard $(libsdk.SRCDIR)/lwip/core/*.c)
 
 TARGET.LIBS += liblwipipv4
@@ -31,6 +32,10 @@ liblwipnetif.SRCS = $(wildcard $(libsdk.SRCDIR)/lwip/netif/*.c)
 
 TARGET.LIBS += liblwip
 liblwip.INHERIT = libsdk
+liblwip.CDEFS += EBUF_LWIP
+liblwip.CDEFS += $(if $(call option-true,$(espsdk.debug.lwip)), \
+  LWIP_DBG_TYPES_ON='(LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH)' \
+  $(patsubst %,%_DEBUG='(LWIP_DBG_LEVEL_ALL|LWIP_DBG_ON)',$(espsdk.lwip.debug)))
 liblwip.DEPLIBS* += \
   liblwipapi \
   liblwipapp \
@@ -95,6 +100,7 @@ libgdbstub.SRCS += $(wildcard $(addprefix $(libsdk.SRCDIR)/gdbstub/*.,c S))
 
 TARGET.LIBS += libsdk
 libsdk.INHERIT = firmware
+libsdk.CDEFS += ESP8266
 libsdk.DEPLIBS* += \
   libmain \
   libphy \

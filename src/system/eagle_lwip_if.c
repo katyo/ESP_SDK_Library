@@ -6,28 +6,26 @@
 
 #include "user_config.h"
 
-#ifdef USE_OPEN_LWIP
+#include "user_interface.h"
+#include "sdk/add_func.h"
+#include "bios.h"
+#include "hw/esp8266.h"
+#include "ets_sys.h"
+#include "lwip/pbuf.h"
+#include "lwip/netif.h"
+#include "netif/etharp.h"
+#include "lwip/app/dhcpserver.h"
+#include "sdk/libmain.h"
+#include "lwip/pbuf.h"
+#include "lwip/ip_addr.h"
+#include "netif/wlan_lwip_if.h"
 
-#  include "user_interface.h"
-#  include "sdk/add_func.h"
-#  include "bios.h"
-#  include "hw/esp8266.h"
-#  include "ets_sys.h"
-#  include "lwip/pbuf.h"
-#  include "lwip/netif.h"
-#  include "netif/etharp.h"
-#  include "lwip/app/dhcpserver.h"
-#  include "sdk/libmain.h"
-#  include "lwip/pbuf.h"
-#  include "lwip/ip_addr.h"
-#  include "netif/wlan_lwip_if.h"
-
-#  define QUEUE_LEN 10
-#  ifdef IP_FRAG_MAX_MTU
-#    define DEFAULT_MTU IP_FRAG_MAX_MTU	/* (TCP_MSS+40) ? */
-#  else
-#    define DEFAULT_MTU 1500
-#  endif
+#define QUEUE_LEN 10
+#ifdef IP_FRAG_MAX_MTU
+#  define DEFAULT_MTU IP_FRAG_MAX_MTU	/* (TCP_MSS+40) ? */
+#else
+#  define DEFAULT_MTU 1500
+#endif
 
 extern uint8_t dhcps_flag;
 extern void ppRecycleRxPkt(void *esf_buf);	/* struct pbuf -> eb */
@@ -138,9 +136,9 @@ eagle_lwip_if_alloc(struct ieee80211_conn *conn, const uint8_t * macaddr,
 		IP2STR(&ipinfo->gw));
     }
   } else {
-#  if DEF_SDK_VERSION >= 1400	/* (SDK 1.4.0) */
+#if DEF_SDK_VERSION >= 1400	/* (SDK 1.4.0) */
     myif->dhcp_event = wifi_station_dhcpc_event;	/* + */
-#  endif
+#endif
     lwip_if_queues[0] = queue;
     ets_task(task_if0, LWIP_IF0_PRIO, (ETSEvent *) lwip_if_queues[0],
 	     QUEUE_LEN);
@@ -177,5 +175,3 @@ eagle_lwip_if_free(struct ieee80211_conn *conn) {
     conn->myif = NULL;
   }
 }
-
-#endif

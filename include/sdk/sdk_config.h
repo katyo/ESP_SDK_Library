@@ -61,9 +61,6 @@
 #    define ICACHE_IRAM_ATTR __attribute__((section(".iram0.text")))
 #  endif
 
-/* #define USE_OPEN_LWIP 140 // использовать OpenLwIP 1.4.0 (назначается в app/MakeFile #USE_OPEN_LWIP = 140)
- #define USE_OPEN_DHCPS 1	 // использовать исходник или либу из SDK (назначается в app/MakeFile #USE_OPEN_DHCP = 1) */
-
 /* #ifndef USE_MAX_IRAM
    #define USE_MAX_IRAM  48 // использовать часть cache под IRAM, IRAM size = 49152 байт
  #endif */
