@@ -103,24 +103,20 @@
 #  define UART_TXD_BRK        (BIT(8))	/* Set this bit to send a tx break signal(need fifo reset first) */
 #  define UART_SW_DTR         (BIT(7))	/* sw dtr */
 #  define UART_SW_RTS         (BIT(6))	/* sw rts */
-#  define UART_STOP_BITS_1    (BIT(4))  /* 1 stop bit */
-#  define UART_STOP_BITS_1P5  (BIT(5))  /* 1.5 stop bits */
-#  define UART_STOP_BITS_2    (BIT(5)|BIT(4)) /* 2 stop bits */
-#  define UART_STOP_BITS(B)   ((B)==1?UART_STOP_BITS_1:(B)==2?UART_STOP_BITS_2:UART_STOP_BITS_1P5)
 #  define UART_STOP_BIT_NUM     0x00000003
 #  define UART_STOP_BIT_NUM_S 4     /* Set stop bit: 1:1bit  2:1.5bits  3:2bits */
-#  define UART_DATA_BITS_5    (0)       /* 5 data bits */
-#  define UART_DATA_BITS_6    (BIT(2))  /* 6 data bits */
-#  define UART_DATA_BITS_7    (BIT(3))  /* 7 data bits */
-#  define UART_DATA_BITS_8    (BIT(3)|BIT(2)) /* 8 data bits */
-#  define UART_DATA_BITS(B)   ((B)==8?UART_DATA_BITS_8:(B)==7?UART_DATA_BITS_7:(B)==6?UART_DATA_BITS_6:UART_DATA_BITS_5)
+#  define UART_STOP_BITS(B)   ((B)==1?(BIT(4)):(B)==2?(BIT(5)|BIT(4)):/*1.5*/BIT(5))
 #  define UART_BIT_NUM        0x00000003
 #  define UART_BIT_NUM_S      2
+#  define UART_DATA_BITS(B)   ((B)==8?(BIT(3)|BIT(2)):(B)==7?BIT(3):(B)==6?BIT(2):/*5*/0)
 				/* Set bit num:  0:5bits 1:6bits 2:7bits 3:8bits */
 #  define UART_PARITY_EN      (BIT(1))/* Set this bit to enable uart parity check */
 #  define UART_PARITY         (BIT(0))	/* Set parity check:  0:even 1:odd */
-#  define UART_PARITY_EVEN    (0)
-#  define UART_PARITY_ODD     UART_PARITY
+#  define UART_PARITY_off     (0)
+#  define UART_PARITY_even    (BIT(1))
+#  define UART_PARITY_odd     (BIT(1)|BIT(0))
+#  define UART_PARITY_(P)     UART_PARITY_##P
+#  define UART_PARITY_CONF(P) UART_PARITY_(P)
 
 #  define UART_CONF1( i )     (REG_UART_BASE( i ) + 0x24)
 #  define UART_RX_TOUT_EN     (BIT(31))

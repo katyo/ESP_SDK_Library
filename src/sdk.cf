@@ -105,6 +105,12 @@ type = val
 key = UART0_STOP_BITS
 def = 1
 
+[option "espsdk.uart0.parity"]
+info = Primary UART pairity control (off|even|odd)
+type = val
+key = UART0_PARITY
+def = off
+
 [option "espsdk.uart0.force_crlf"]
 info = Force cariage return before line feed for primary UART
 type = def
@@ -134,6 +140,12 @@ info = Secondary UART stop bits (1|1.5|2)
 type = val
 key = UART1_STOP_BITS
 def = 1
+
+[option "espsdk.uart1.parity"]
+info = Secondary UART pairity control (off|even|odd)
+type = val
+key = UART1_PARITY
+def = off
 
 [option "espsdk.uart1.force_crlf"]
 info = Force cariage return before line feed for secondary UART
